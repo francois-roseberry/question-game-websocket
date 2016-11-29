@@ -30,7 +30,7 @@ module.exports = function (config) {
 		
 		// Proxy an application in the karma domain name, to prevent CORS issues
         proxies: {
-            '/proxicity/': 'http://localhost:3000/',
+            '/question-game-websocket/': 'http://localhost:3000/',
             '/images/': 'http://localhost:3000/images/',
         },
 

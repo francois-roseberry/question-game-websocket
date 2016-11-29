@@ -23,12 +23,11 @@
 		var serverFiles = getServerFiles();
 		
 		var server = {
-			name: 'Proxicity server',
+			name: 'Question game server',
 			executable: 'node',
 			arguments: [
 				serverFiles.script,
-				'-w', serverFiles.clientDirectory,
-				'-c', serverFiles.cacheDirectory
+				'-w', serverFiles.clientDirectory
 			],
 			readyPattern: /Serving directory/
 		};
@@ -40,9 +39,8 @@
 		var basePath = path.normalize(path.join(__dirname, '..', '..'));
 		
 		return {
-			script: path.join(basePath, 'server', 'src', 'main', 'main.js'),
-			clientDirectory: path.join(basePath, 'client', 'target', 'dist'),
-			cacheDirectory: path.join(basePath, 'cache')
+			script: path.join(basePath, 'server', 'server.js'),
+			clientDirectory: path.join(basePath, 'client', 'target', 'dist')
 		};
 	}
 	
