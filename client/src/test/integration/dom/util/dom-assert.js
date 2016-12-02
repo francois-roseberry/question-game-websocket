@@ -43,6 +43,24 @@
 
                 element.click();
             },
+			
+			enterTextIn: function (selector, text) {
+				checkIsSelector(selector);
+				
+				var element = rootElement().find(selector);
+
+                if (element.length !== 1) {
+                    throw new Error("Can only enter text in a single element, but " +
+                        element.length +
+                        " found");
+                }
+				
+				if (!element.is(":visible")) {
+                    throw new Error("Cannot enter text in the element, because it is not visible");
+                }
+				
+				element.val(text);
+			},
 
             d3: d3Actions(),
 
