@@ -22,12 +22,18 @@
 		});
 		
 		describe('after setting player name', function () {
+			var playerName = 'bob';
+			
 			beforeEach(function () {
-				task.setPlayerName('player');
+				task.setPlayerName(playerName);
 			});
 			
-			it('has a status of waiting', function () {
-				expect(currentStatus.name).to.eql('waiting');
+			it('has set player name in game service too', function () {
+				expect(gameService.playerName()).to.eql(playerName);
+			});
+			
+			it('has a status of before', function () {
+				expect(currentStatus.name).to.eql('before');
 			});
 			
 			describe('after starting game', function () {
@@ -39,19 +45,29 @@
 					expect(currentStatus.name).to.eql('starting');
 				});
 				
-				it('cancelling start of game returns to the waiting status', function () {
+				it('cancelling start of game returns to the before status', function () {
 					task.cancelStart();
 					
-					expect(currentStatus.name).to.eql('waiting');
+					expect(currentStatus.name).to.eql('before');
 				});
 				
-				describe('when game service receives a question', function () {
+				describe('after game service receives a question', function () {
 					beforeEach(function() {
 						gameService.sendQuestion('2 + 2 = ?');
 					});
 					
 					it('has a status of question', function () {
 						expect(currentStatus.name).to.eql('question');
+					});
+					
+					describe('after submitting an answer', function () {
+						beforeEach(function () {
+							task.submitAnswer('5');
+						});
+						
+						it('has a status of waiting', function () {
+							expect(currentStatus.name).to.eql('waiting');
+						});
 					});
 				});
 			});

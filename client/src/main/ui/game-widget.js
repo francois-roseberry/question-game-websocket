@@ -15,7 +15,7 @@
 			widgetContainer.selectAll('*').remove();
 			status.match({
 				initial: showPlayerLogin(widgetContainer, task),
-				waiting: showStartButton(widgetContainer, task),
+				before: showStartButton(widgetContainer, task),
 				starting: showStartingControls(widgetContainer, task),
 				question: showQuestion(widgetContainer, task)
 			});

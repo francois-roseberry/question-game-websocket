@@ -65,7 +65,7 @@
 				it('clicking on the cancel button cancels the game', function () {
 					domContext.clickOn('.btn-cancel');
 					
-					expect(currentStatus.name).to.eql('waiting');
+					expect(currentStatus.name).to.eql('before');
 				});
 				
 				describe('after question is received', function () {

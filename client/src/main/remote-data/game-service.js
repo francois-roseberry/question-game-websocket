@@ -2,6 +2,7 @@
 	"use strict";
 	
 	exports.create = function () {
+		// TODO it will have the real socket
 		return new GameService();
 	}; 
 	
@@ -11,5 +12,12 @@
 	
 	GameService.prototype.questions = function () {
 		return this._questions.asObservable();
+	};
+	
+	GameService.prototype.setPlayerName = function (name, callback) {
+	};
+	
+	GameService.prototype.submitAnswer = function (answer, callback) {
+		
 	};
 }());
