@@ -20,9 +20,14 @@
 	};
 	
 	GameService.prototype.setPlayerName = function (name, callback) {
+		
 	};
 	
 	GameService.prototype.submitAnswer = function (answer, callback) {
+		
+	};
+	
+	GameService.prototype.submitChoice = function (choiceIndex) {
 		
 	};
 }());

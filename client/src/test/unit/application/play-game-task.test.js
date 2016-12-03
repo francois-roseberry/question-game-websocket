@@ -77,6 +77,16 @@
 							it('has a status of choosing', function () {
 								expect(currentStatus.name).to.eql('choosing');
 							});
+							
+							describe('after choice is submitted', function () {
+								beforeEach(function () {
+									task.submitChoice(0);
+								});
+								
+								it('has a status of waiting', function () {
+									expect(currentStatus.name).to.eql('waiting');
+								});
+							});
 						});
 					});
 				});

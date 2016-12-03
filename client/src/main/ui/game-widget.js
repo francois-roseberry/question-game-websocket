@@ -102,12 +102,21 @@
 	
 	function showChoices(widgetContainer, task) {
 		return function (choices) {
-			_.each(choices, function (choice, index) {
-				widgetContainer.append('button')
-					.classed('btn-choice', true)
-					.attr('data-index', index)
-					.text(choice);
-			});
+			widgetContainer
+				.selectAll('.btn-choice')
+				.data(choices)
+				.enter()
+				.append('button')
+				.classed('btn-choice', true)
+				.attr('data-index', function (choice, index) {
+					return index;
+				})
+				.text(function (choice) {
+					return choice;
+				})
+				.on('click', function (choice, index) {
+					task.submitChoice(index);
+				});
 		};
 	}
 }());

@@ -35,6 +35,10 @@
 		callback(true);
 	};
 	
+	FakeGameService.prototype.submitChoice = function (choiceIndex) {
+		// Do nothing.
+	};
+	
 	FakeGameService.prototype.questions = function () {
 		return this._questions.asObservable();
 	};

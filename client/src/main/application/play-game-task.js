@@ -8,7 +8,8 @@
 			_.isFunction(gameService.setPlayerName) &&
 			_.isFunction(gameService.questions) &&
 			_.isFunction(gameService.submitAnswer) &&
-			_.isFunction(gameService.choices),
+			_.isFunction(gameService.choices) &&
+			_.isFunction(gameService.submitChoice),
 			'PlayGameTask requires a valid game service');
 		
 		var status = new Rx.BehaviorSubject(initialStatus());
@@ -59,6 +60,13 @@
 				status.onNext(waitingStatus());
 			}
 		});
+	};
+	
+	PlayGameTask.prototype.submitChoice = function (choiceIndex) {
+		precondition(_.isNumber(choiceIndex), 'Submitting a choice require the index of that choice');
+		
+		this._gameService.submitChoice(choiceIndex);
+		this._status.onNext(waitingStatus());
 	};
 	
 	PlayGameTask.prototype.status = function () {

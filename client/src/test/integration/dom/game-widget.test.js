@@ -122,6 +122,16 @@
 									domContext.assertOneOf('.btn-choice[data-index=' + index + ']');
 								});
 							});
+							
+							describe('after clicking on a choice', function () {
+								beforeEach(function () {
+									domContext.clickOn('.btn-choice[data-index=0]');
+								});
+								
+								it('returns to a waiting status', function () {
+									expect(currentStatus.name).to.eql('waiting');
+								});
+							});
 						});
 					});
 				});
