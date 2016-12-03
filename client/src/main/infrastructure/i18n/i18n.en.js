@@ -6,4 +6,6 @@
 	exports.START_GAME = "Everybody's in";
 	exports.CANCEL = "Cancel";
 	exports.STARTING_SOON = "Game is starting in {seconds} seconds";
+	exports.ANSWER_CUE = "Enter your lie";
+	exports.SUBMIT_ANSWER = "Send";
 }());

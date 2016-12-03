@@ -2,6 +2,7 @@
 (function() {
 	"use strict";
 	
+	var FakeGameService = require('./fake-game-service');
 	var GameWidget = require('./game-widget');
 	var GameTask = require('./play-game-task');
 	
@@ -9,10 +10,12 @@
 	
 	describeInDom('A Game widget', function (domContext) {
 		var task;
+		var gameService;
 		var currentStatus;
 		
 		beforeEach(function () {
-			task = GameTask.start();
+			gameService = FakeGameService.create();
+			task = GameTask.start(gameService);
 			task.status().subscribe(function (status) {
 				currentStatus = status;
 			});
@@ -63,6 +66,29 @@
 					domContext.clickOn('.btn-cancel');
 					
 					expect(currentStatus.name).to.eql('waiting');
+				});
+				
+				describe('after question is received', function () {
+					beforeEach(function () {
+						gameService.sendQuestion('2 + 2 = ?');
+					});
+					
+					it('removes the starting game controls', function () {
+						domContext.assertNothingOf('.game-starting');
+						domContext.assertNothingOf('.btn-cancel');
+					});
+					
+					it('renders a text containing the question', function () {
+						domContext.assertOneOf('.question');
+					});
+					
+					it('renders an answer box', function () {
+						domContext.assertOneOf('.txt-answer');
+					});
+					
+					it('renders a submit answer button', function () {
+						domContext.assertOneOf('.btn-submit-answer');
+					});
 				});
 			});
 		});

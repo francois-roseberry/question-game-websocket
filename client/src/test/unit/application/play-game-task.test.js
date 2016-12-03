@@ -1,14 +1,17 @@
 (function() {
 	"use strict";
 	
+	var FakeGameService = require('./fake-game-service');
 	var PlayGameTask = require('./play-game-task');
 	
 	describe('A Play game task', function () {
 		var task;
+		var gameService;
 		var currentStatus;
 		
 		beforeEach(function () {
-			task = PlayGameTask.start();
+			gameService = FakeGameService.create();
+			task = PlayGameTask.start(gameService);
 			task.status().subscribe(function(status) {
 				currentStatus = status;
 			});
@@ -40,6 +43,16 @@
 					task.cancelStart();
 					
 					expect(currentStatus.name).to.eql('waiting');
+				});
+				
+				describe('when game service receives a question', function () {
+					beforeEach(function() {
+						gameService.sendQuestion('2 + 2 = ?');
+					});
+					
+					it('has a status of question', function () {
+						expect(currentStatus.name).to.eql('question');
+					});
 				});
 			});
 		});

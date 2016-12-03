@@ -14,9 +14,10 @@
 		task.status().subscribe(function (status) {
 			widgetContainer.selectAll('*').remove();
 			status.match({
-				'initial': showPlayerLogin(widgetContainer, task),
-				'waiting': showStartButton(widgetContainer, task),
-				'starting': showStartingControls(widgetContainer, task)
+				initial: showPlayerLogin(widgetContainer, task),
+				waiting: showStartButton(widgetContainer, task),
+				starting: showStartingControls(widgetContainer, task),
+				question: showQuestion(widgetContainer, task)
 			});
 		});
 	};
@@ -63,6 +64,25 @@
 				.on('click', function () {
 					task.cancelStart();
 				});
+		};
+	}
+	
+	function showQuestion(widgetContainer, task) {
+		return function (question) {
+			widgetContainer.append('p')
+				.classed('question', true)
+				.text(question);
+				
+			widgetContainer.append('input')
+				.attr({
+					type: 'text',
+					placeholder: i18n.ANSWER_CUE
+				})
+				.classed('txt-answer', true);
+				
+			widgetContainer.append('button')
+				.classed('btn-submit-answer', true)
+				.text(i18n.SUBMIT_ANSWER);
 		};
 	}
 }());

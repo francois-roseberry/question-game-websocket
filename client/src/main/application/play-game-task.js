@@ -3,12 +3,20 @@
 	
 	var precondition = require('./contract').precondition;
 	
-	exports.start = function () {
-		return new PlayGameTask();
+	exports.start = function (gameService) {
+		precondition(gameService && _.isFunction(gameService.questions), 'PlayGameTask requires a valid game service');
+		
+		var status = new Rx.BehaviorSubject(initialStatus());
+		
+		gameService.questions().subscribe(function (question) {
+			status.onNext(questionStatus(question));
+		});
+		
+		return new PlayGameTask(status);
 	};
 	
-	function PlayGameTask() {
-		this._status = new Rx.BehaviorSubject(initialStatus());
+	function PlayGameTask(status) {
+		this._status = status;
 	}
 	
 	PlayGameTask.prototype.setPlayerName = function (name) {
@@ -54,6 +62,15 @@
 			name: 'starting',
 			match: function (visitor) {
 				return visitor.starting(remainingSeconds);
+			}
+		};
+	}
+	
+	function questionStatus(question) {
+		return {
+			name: 'question',
+			match: function (visitor) {
+				return visitor.question(question);
 			}
 		};
 	}

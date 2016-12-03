@@ -1,6 +1,7 @@
 (function() {
 	"use strict";
 	
+	var GameService = require('./game-service');
 	var PlayGameTask = require('./play-game-task');
 	var GameWidget = require('./game-widget');
 	
@@ -14,7 +15,7 @@
 	function startApplication() {
 		var container = $('.app-container');
 
-		var task = PlayGameTask.start();
+		var task = PlayGameTask.start(GameService.create());
 		GameWidget.render(container, task);
 	}
 }());
