@@ -17,7 +17,8 @@
 				initial: showPlayerLogin(widgetContainer, task),
 				before: showStartButton(widgetContainer, task),
 				starting: showStartingControls(widgetContainer, task),
-				question: showQuestion(widgetContainer, task)
+				question: showQuestion(widgetContainer, task),
+				waiting: showWaiting(widgetContainer)
 			});
 		});
 	};
@@ -73,7 +74,7 @@
 				.classed('question', true)
 				.text(question);
 				
-			widgetContainer.append('input')
+			var txtAnswer = widgetContainer.append('input')
 				.attr({
 					type: 'text',
 					placeholder: i18n.ANSWER_CUE
@@ -82,7 +83,19 @@
 				
 			widgetContainer.append('button')
 				.classed('btn-submit-answer', true)
-				.text(i18n.SUBMIT_ANSWER);
+				.text(i18n.SUBMIT_ANSWER)
+				.on('click', function () {
+					var answer = $(txtAnswer[0]).val();
+					task.submitAnswer(answer);
+				});
+		};
+	}
+	
+	function showWaiting(widgetContainer) {
+		return function () {
+			widgetContainer.append('p')
+				.classed('waiting', true)
+				.text(i18n.WAITING);
 		};
 	}
 }());

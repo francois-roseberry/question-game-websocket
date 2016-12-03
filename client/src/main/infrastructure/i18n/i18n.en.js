@@ -8,4 +8,5 @@
 	exports.STARTING_SOON = "Game is starting in {seconds} seconds";
 	exports.ANSWER_CUE = "Enter your lie";
 	exports.SUBMIT_ANSWER = "Send";
+	exports.WAITING = "Waiting for other players ...";
 }());

@@ -89,6 +89,23 @@
 					it('renders a submit answer button', function () {
 						domContext.assertOneOf('.btn-submit-answer');
 					});
+					
+					describe('after answer is submitted', function () {
+						beforeEach(function () {
+							domContext.enterTextIn('.txt-answer', '5');
+							domContext.clickOn('.btn-submit-answer');
+						});
+						
+						it('removes the question controls', function () {
+							domContext.assertNothingOf('.question');
+							domContext.assertNothingOf('.txt-answer');
+							domContext.assertNothingOf('.btn-submit-answer');
+						});
+						
+						it('renders a text telling to wait for others', function () {
+							domContext.assertOneOf('.waiting');
+						});
+					});
 				});
 			});
 		});

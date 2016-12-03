@@ -8,4 +8,5 @@
 	exports.STARTING_SOON = "La partie commence dans {seconds} secondes";
 	exports.ANSWER_CUE = "Entrez un mensonge";
 	exports.SUBMIT_ANSWER = "Envoyer";
+	exports.WAITING = "En attente des autres joueurs ...";
 }());
