@@ -105,6 +105,24 @@
 						it('renders a text telling to wait for others', function () {
 							domContext.assertOneOf('.waiting');
 						});
+						
+						describe('after choices are received', function () {
+							var choices = ['2','3','4','5'];
+							beforeEach(function () {
+								gameService.sendChoices(choices);
+							});
+							
+							it('removes the waiting text', function () {
+								domContext.assertNothingOf('.waiting');
+							});
+							
+							it('renders a button per choice', function () {
+								domContext.assertElementCount('.btn-choice', choices.length);
+								_.each(choices, function (choice, index) {
+									domContext.assertOneOf('.btn-choice[data-index=' + index + ']');
+								});
+							});
+						});
 					});
 				});
 			});

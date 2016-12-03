@@ -8,10 +8,15 @@
 	
 	function GameService() {
 		this._questions = new Rx.Subject();
+		this._choices = new Rx.Subject();
 	}
 	
 	GameService.prototype.questions = function () {
 		return this._questions.asObservable();
+	};
+	
+	GameService.prototype.choices = function () {
+		return this._choices.asObservable();
 	};
 	
 	GameService.prototype.setPlayerName = function (name, callback) {

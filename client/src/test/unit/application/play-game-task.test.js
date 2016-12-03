@@ -68,6 +68,16 @@
 						it('has a status of waiting', function () {
 							expect(currentStatus.name).to.eql('waiting');
 						});
+						
+						describe('after game service receives choices', function () {							
+							beforeEach(function () {
+								gameService.sendChoices(['2','3','4','5']);
+							});
+							
+							it('has a status of choosing', function () {
+								expect(currentStatus.name).to.eql('choosing');
+							});
+						});
 					});
 				});
 			});

@@ -7,13 +7,18 @@
 		precondition(gameService &&
 			_.isFunction(gameService.setPlayerName) &&
 			_.isFunction(gameService.questions) &&
-			_.isFunction(gameService.submitAnswer),
+			_.isFunction(gameService.submitAnswer) &&
+			_.isFunction(gameService.choices),
 			'PlayGameTask requires a valid game service');
 		
 		var status = new Rx.BehaviorSubject(initialStatus());
 		
 		gameService.questions().subscribe(function (question) {
 			status.onNext(questionStatus(question));
+		});
+		
+		gameService.choices().subscribe(function (choices) {
+			status.onNext(choosingStatus(choices));
 		});
 		
 		return new PlayGameTask(status, gameService);
@@ -101,6 +106,15 @@
 			name: 'waiting',
 			match: function (visitor) {
 				return visitor.waiting();
+			}
+		};
+	}
+	
+	function choosingStatus(choices) {
+		return {
+			name: 'choosing',
+			match: function (visitor) {
+				return visitor.choosing(choices);
 			}
 		};
 	}

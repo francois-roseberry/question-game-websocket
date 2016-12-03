@@ -18,7 +18,8 @@
 				before: showStartButton(widgetContainer, task),
 				starting: showStartingControls(widgetContainer, task),
 				question: showQuestion(widgetContainer, task),
-				waiting: showWaiting(widgetContainer)
+				waiting: showWaiting(widgetContainer),
+				choosing: showChoices(widgetContainer, task)
 			});
 		});
 	};
@@ -96,6 +97,17 @@
 			widgetContainer.append('p')
 				.classed('waiting', true)
 				.text(i18n.WAITING);
+		};
+	}
+	
+	function showChoices(widgetContainer, task) {
+		return function (choices) {
+			_.each(choices, function (choice, index) {
+				widgetContainer.append('button')
+					.classed('btn-choice', true)
+					.attr('data-index', index)
+					.text(choice);
+			});
 		};
 	}
 }());
