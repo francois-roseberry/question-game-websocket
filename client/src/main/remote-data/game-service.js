@@ -9,6 +9,7 @@
 	function GameService() {
 		this._questions = new Rx.Subject();
 		this._choices = new Rx.Subject();
+		this._results = new Rx.Subject();
 	}
 	
 	GameService.prototype.questions = function () {
@@ -17,6 +18,10 @@
 	
 	GameService.prototype.choices = function () {
 		return this._choices.asObservable();
+	};
+	
+	GameService.prototype.results = function () {
+		return this._results.asObservable();
 	};
 	
 	GameService.prototype.setPlayerName = function (name, callback) {

@@ -62,7 +62,7 @@
 					
 					describe('after submitting an answer', function () {
 						beforeEach(function () {
-							task.submitAnswer('5');
+							task.submitAnswer('4');
 						});
 						
 						it('has a status of waiting', function () {
@@ -87,6 +87,19 @@
 									expect(currentStatus.name).to.eql('waiting');
 								});
 							});
+						});
+					});
+					
+					describe('after results are received', function () {
+						beforeEach(function() {
+							gameService.sendResults([
+								{choice:'4', author:'bob', choosedBy: ['alice']},
+								{choice:'5', author: 'truth', choosedBy: ['bob']}
+							]);
+						});
+						
+						it('has a status of results', function () {
+							expect(currentStatus.name).to.eql('results');
 						});
 					});
 				});

@@ -9,7 +9,8 @@
 			_.isFunction(gameService.questions) &&
 			_.isFunction(gameService.submitAnswer) &&
 			_.isFunction(gameService.choices) &&
-			_.isFunction(gameService.submitChoice),
+			_.isFunction(gameService.submitChoice) &&
+			_.isFunction(gameService.results),
 			'PlayGameTask requires a valid game service');
 		
 		var status = new Rx.BehaviorSubject(initialStatus());
@@ -20,6 +21,15 @@
 		
 		gameService.choices().subscribe(function (choices) {
 			status.onNext(choosingStatus(choices));
+		});
+		
+		// Results will be an array of result objects.
+		// Each result will be made of :
+		// -choice    : the textual choice
+		// -author    : either 'truth' or the name of the player who wrote it
+		// -choosedBy : array of player namnes who chose it
+		gameService.results().subscribe(function (results) {
+			status.onNext(resultsStatus(results));
 		});
 		
 		return new PlayGameTask(status, gameService);
@@ -123,6 +133,15 @@
 			name: 'choosing',
 			match: function (visitor) {
 				return visitor.choosing(choices);
+			}
+		};
+	}
+	
+	function resultsStatus(results) {
+		return {
+			name: 'results',
+			match: function (visitor) {
+				return visitor.results(results);
 			}
 		};
 	}
