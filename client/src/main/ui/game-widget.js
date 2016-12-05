@@ -46,6 +46,8 @@
 					$(btnJoin[0]).click();
 				}
 			});
+			
+			$(txtPlayerName[0]).focus();
 		};
 	}
 	
