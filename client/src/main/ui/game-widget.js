@@ -33,13 +33,19 @@
 				})
 				.classed('txt-player-name', true);
 				
-			widgetContainer.append('button')
+			var btnJoin = widgetContainer.append('button')
 				.classed('btn-join-game', true)
 				.text(i18n.JOIN_GAME)
 				.on('click', function () {
 					var playerName = $(txtPlayerName[0]).val();
 					task.setPlayerName(playerName);
 				});
+				
+			$(txtPlayerName[0]).on('keyup', function (e) {
+				if (e.keyCode === 13) {
+					$(btnJoin[0]).click();
+				}
+			});
 		};
 	}
 	
