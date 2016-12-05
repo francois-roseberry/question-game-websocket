@@ -36,6 +36,7 @@
         "Rx":true,
         "L": true,
         "ko":true,
-        "d3":true
+        "d3":true,
+		"io":true
     }
 }

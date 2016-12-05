@@ -16,6 +16,9 @@ app.use(express.static(program.webclient));
 io.on('connection', function(socket) {
 	var address = socket.handshake.address;
 	console.log('A user connected from ' + address.address + ':' + address.port);
+	socket.on('name', function (name) {
+		console.log('A user identified as [' + name + "]");
+	});
 	socket.on('disconnect', function() {
 		console.log('user disconnected');
 	});
