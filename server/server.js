@@ -21,7 +21,7 @@ io.on('connection', function(socket) {
 	socket.on('name', function (name) {
 		console.log('A user identified as [' + name + "], name ok");
 		// TODO : validate the name is unique
-		// TODO : the message should only be sent to this particular client, not every one
+		// TODO : the message should only be sent to this particular client, not everyone
 		socket.emit('name response', true);
 	});
 	
