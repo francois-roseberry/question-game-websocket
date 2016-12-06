@@ -22,13 +22,11 @@ io.on('connection', function(socket) {
 	socket.on('name', function (name) {
 		console.log('A user identified as [' + name + "], name ok");
 		// TODO : validate the name is unique
-		// TODO : the message should only be sent to this particular client, not everyone,
-		// using something like io.sockets.socket(player.socketId).emit('name response', true)
 		socket.emit('name response', true);
 	});
 	
 	socket.on('start', function () {
-		socket.emit('starting', 5);
+		io.emit('starting', 5);
 		// TODO use a timer for countdown here
 	});
 	
