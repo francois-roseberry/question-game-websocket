@@ -17,8 +17,16 @@ io.on('connection', function(socket) {
 	var address = socket.handshake.address;
 	console.log('A user connected from ' + address.address + ':' + address.port);
 	socket.on('name', function (name) {
-		console.log('A user identified as [' + name + "]");
+		console.log('A user identified as [' + name + "], name ok");
+		// TODO : validate the name is unique
+		socket.emit('name response', true);
 	});
+	
+	socket.on('start', function () {
+		socket.emit('starting', 5);
+		// TODO use a timer for countdown here
+	});
+	
 	socket.on('disconnect', function() {
 		console.log('user disconnected');
 	});

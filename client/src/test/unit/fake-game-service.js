@@ -8,6 +8,7 @@
 	}; 
 	
 	function FakeGameService() {
+		this._starting = new Rx.Subject();
 		this._questions = new Rx.Subject();
 		this._choices = new Rx.Subject();
 		this._results = new Rx.Subject();
@@ -36,12 +37,20 @@
 		this._results.onNext(results);
 	};
 	
+	FakeGameService.prototype.startGame = function () {
+		this._starting.onNext(5);
+	};
+	
 	FakeGameService.prototype.submitAnswer = function (answer, callback) {
 		callback(true);
 	};
 	
 	FakeGameService.prototype.submitChoice = function (choiceIndex) {
 		// Do nothing.
+	};
+	
+	FakeGameService.prototype.starting = function () {
+		return this._starting.asObservable();
 	};
 	
 	FakeGameService.prototype.questions = function () {

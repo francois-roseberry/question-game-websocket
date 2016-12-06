@@ -6,6 +6,8 @@
 	exports.start = function (gameService) {
 		precondition(gameService &&
 			_.isFunction(gameService.setPlayerName) &&
+			_.isFunction(gameService.startGame) &&
+			_.isFunction(gameService.starting) &&
 			_.isFunction(gameService.questions) &&
 			_.isFunction(gameService.submitAnswer) &&
 			_.isFunction(gameService.choices) &&
@@ -14,6 +16,10 @@
 			'PlayGameTask requires a valid game service');
 		
 		var status = new Rx.BehaviorSubject(initialStatus());
+		
+		gameService.starting().subscribe(function (remaingSeconds) {
+			status.onNext(startingStatus(remaingSeconds));
+		});
 		
 		gameService.questions().subscribe(function (question) {
 			status.onNext(questionStatus(question));
@@ -54,7 +60,7 @@
 	};
 	
 	PlayGameTask.prototype.startGame = function () {
-		this._status.onNext(startingStatus(5));
+		this._gameService.startGame();
 	};
 	
 	PlayGameTask.prototype.cancelStart = function () {
