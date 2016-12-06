@@ -53,12 +53,14 @@
 	
 	function showStartButton(widgetContainer, task) {
 		return function () {
-			widgetContainer.append('button')
+			var btnStart = widgetContainer.append('button')
 				.classed('btn-start-game', true)
 				.text(i18n.START_GAME)
 				.on('click', function () {
 					task.startGame();
 				});
+				
+			$(btnStart[0]).focus();
 		};
 	}
 	
