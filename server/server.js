@@ -26,14 +26,30 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('start', function () {
-		io.emit('starting', 5);
-		// TODO use a timer for countdown here
+		countdown(5);
+	});
+	
+	socket.on('cancel', function() {
+		// TODO : listen for cancellation
 	});
 	
 	socket.on('disconnect', function() {
 		console.log('user disconnected');
 	});
 });
+
+// Bug : all the events get sent immediately without countdown. Why ???
+function countdown(seconds) {
+	console.log('starting in ' + seconds + ' seconds');
+	io.emit('starting', seconds);
+	if (seconds === 0) {
+		return;
+	}
+	
+	var timer = setTimeout(function () {
+		countdown(seconds - 1);
+	}, 1000);
+}
 
 http.listen(port, function () {
 	console.log('Question game server listening on port ' + port);
