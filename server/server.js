@@ -15,6 +15,7 @@ app.use(express.static(program.webclient));
 
 io.on('connection', function(socket) {
 	// TODO : if there's currently a game when the user connects, should return a message and close the socket
+	// TODO : Save the client and his name in an array of players
 	
 	var address = socket.handshake.address;
 	console.log('A user connected from ' + address.address + ':' + address.port);
