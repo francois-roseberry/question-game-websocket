@@ -31,10 +31,17 @@
 					type: 'text',
 					placeholder: i18n.PLAYER_NAME_CUE
 				})
-				.classed('txt-player-name', true);
+				.classed({
+					'txt-player-name': true,
+					'form-control': true
+				});
 				
 			var btnJoin = widgetContainer.append('button')
-				.classed('btn-join-game', true)
+				.classed({
+					'btn-join-game': true,
+					'btn': true,
+					'btn-primary': true
+				})
 				.text(i18n.JOIN_GAME)
 				.on('click', function () {
 					var playerName = $(txtPlayerName[0]).val();
@@ -54,7 +61,11 @@
 	function showStartButton(widgetContainer, task) {
 		return function () {
 			var btnStart = widgetContainer.append('button')
-				.classed('btn-start-game', true)
+				.classed({
+					'btn-start-game': true,
+					'btn': true,
+					'btn-primary': true
+				})
 				.text(i18n.START_GAME)
 				.on('click', function () {
 					task.startGame();
@@ -70,12 +81,18 @@
 				.classed('game-starting', true)
 				.text(i18n.STARTING_SOON.replace('{seconds}', secondsRemaining));
 			
-			widgetContainer.append('button')
-				.classed('btn-cancel', true)
+			var btnCancel = widgetContainer.append('button')
+				.classed({
+					'btn-cancel': true,
+					'btn': true,
+					'btn-primary': true
+				})
 				.text(i18n.CANCEL)
 				.on('click', function () {
 					task.cancelStart();
 				});
+				
+			$(btnCancel[0]).focus();
 		};
 	}
 	
@@ -92,13 +109,15 @@
 				})
 				.classed('txt-answer', true);
 				
-			widgetContainer.append('button')
+			var btnSubmit = widgetContainer.append('button')
 				.classed('btn-submit-answer', true)
 				.text(i18n.SUBMIT_ANSWER)
 				.on('click', function () {
 					var answer = $(txtAnswer[0]).val();
 					task.submitAnswer(answer);
 				});
+				
+			$(btnSubmit[0]).focus();
 		};
 	}
 	

@@ -183,7 +183,7 @@ module.exports = function(grunt) {
 			}
 		},
 
-		clean: ['target/**'],
+		clean: ['target/**']
 	});
 
 	grunt.loadNpmTasks('grunt-browserify');
