@@ -26,7 +26,8 @@ io.on('connection', function(socket) {
 		console.log('A user identified as [' + name + "], name ok");
 		socket.player = {
 			name: name,
-			score: 0
+			score: 0,
+			lastAnswer: null
 		};
 		// TODO : validate the name is unique
 		socket.emit('name response', true);
@@ -56,6 +57,8 @@ io.on('connection', function(socket) {
 			socket.emit('answer response', false, ['TRUTH']);
 		} else {
 			socket.emit('answer response', true);
+			// TODO : check if all planyers have answered
+			/ If so, send back all the answers + the truth as choices
 		}
 	});
 	
