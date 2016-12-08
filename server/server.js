@@ -56,8 +56,10 @@ io.on('connection', function(socket) {
 		if (answer == ANSWER) {
 			socket.emit('answer response', false, ['TRUTH']);
 		} else {
+			console.log('Player ' + socket.player.name + ' has answered ' + answer);
+			socket.player.lastAnswer = answer;
 			socket.emit('answer response', true);
-			// TODO : check if all planyers have answered
+			// TODO : check if all planyers have answered (lastAnswer is non null)
 			/ If so, send back all the answers + the truth as choices
 		}
 	});
