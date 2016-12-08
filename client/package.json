@@ -21,10 +21,10 @@
     "karma-commonjs": "0.0.13",
     "karma-mocha": "^0.2.0",
     "karma-phantomjs-launcher": "^0.1.4",
-    "leaflet": "^0.7.7",
     "mocha": "^2.2.5",
     "phantomjs": "^1.9.7-15",
     "selenium-webdriver": "^2.44.0"
   },
-  "dependencies": {}
+  "dependencies": {
+  }
 }

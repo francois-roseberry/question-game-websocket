@@ -5,6 +5,9 @@ var io = require('socket.io')(http);
 var program = require('commander');
 
 var port = 3000;
+var countdownObject = {};
+var QUESTION = 'According to the Party in 1984, 2 + 2 = _';
+var ANSWER = "5";
 
 program
 	.version('0.1')
@@ -21,16 +24,39 @@ io.on('connection', function(socket) {
 	console.log('A user connected from ' + address.address + ':' + address.port);
 	socket.on('name', function (name) {
 		console.log('A user identified as [' + name + "], name ok");
+		socket.player = {
+			name: name,
+			score: 0
+		};
 		// TODO : validate the name is unique
 		socket.emit('name response', true);
 	});
 	
 	socket.on('start', function () {
-		countdown(5);
+		console.log('Game started by ' + socket.player.name);
+		countdown(countdownObject, 5, function () {
+			console.log('Game start, sending question');
+			// Start the game, send the first question
+			io.emit('question', QUESTION);
+		});
 	});
 	
 	socket.on('cancel', function() {
 		// TODO : listen for cancellation
+		if (countdownObject.timer) {
+			console.log('Game start cancelled by ' + socket.player.name);
+			clearTimeout(countdownObject.timer);
+			countdownObject.timer = null;
+			io.emit('cancelled');
+		}
+	});
+	
+	socket.on('answer', function (answer) {
+		if (answer == ANSWER) {
+			socket.emit('answer response', false, ['TRUTH']);
+		} else {
+			socket.emit('answer response', true);
+		}
 	});
 	
 	socket.on('disconnect', function() {
@@ -38,16 +64,17 @@ io.on('connection', function(socket) {
 	});
 });
 
-// Bug : all the events get sent immediately without countdown. Why ???
-function countdown(seconds) {
+function countdown(countdownObject, seconds, callback) {
 	console.log('starting in ' + seconds + ' seconds');
 	io.emit('starting', seconds);
 	if (seconds === 0) {
+		countdownObject.timer = null;
+		callback();
 		return;
 	}
 	
-	var timer = setTimeout(function () {
-		countdown(seconds - 1);
+	countdownObject.timer = setTimeout(function () {
+		countdown(countdownObject, seconds - 1, callback);
 	}, 1000);
 }
 

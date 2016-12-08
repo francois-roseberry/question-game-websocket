@@ -8,6 +8,7 @@
 			_.isFunction(gameService.setPlayerName) &&
 			_.isFunction(gameService.startGame) &&
 			_.isFunction(gameService.starting) &&
+			_.isFunction(gameService.cancelStart) &&
 			_.isFunction(gameService.questions) &&
 			_.isFunction(gameService.submitAnswer) &&
 			_.isFunction(gameService.choices) &&
@@ -64,7 +65,10 @@
 	};
 	
 	PlayGameTask.prototype.cancelStart = function () {
-		this._status.onNext(beforeStatus());
+		var status = this._status;
+		this._gameService.cancelStart(function () {
+			status.onNext(beforeStatus());
+		});
 	};
 	
 	PlayGameTask.prototype.submitAnswer = function (answer) {

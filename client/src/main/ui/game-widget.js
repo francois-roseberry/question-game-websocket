@@ -107,17 +107,30 @@
 					type: 'text',
 					placeholder: i18n.ANSWER_CUE
 				})
-				.classed('txt-answer', true);
+				.classed({
+					'txt-answer': true,
+					'form-control': true
+				});
 				
 			var btnSubmit = widgetContainer.append('button')
-				.classed('btn-submit-answer', true)
+				.classed({
+					'btn-submit-answer': true,
+					'btn': true,
+					'btn-primary': true
+				})
 				.text(i18n.SUBMIT_ANSWER)
 				.on('click', function () {
 					var answer = $(txtAnswer[0]).val();
 					task.submitAnswer(answer);
 				});
 				
-			$(btnSubmit[0]).focus();
+			$(txtAnswer[0]).on('keyup', function (e) {
+				if (e.keyCode === 13) {
+					$(btnSubmit[0]).click();
+				}
+			});
+				
+			$(txtAnswer[0]).focus();
 		};
 	}
 	

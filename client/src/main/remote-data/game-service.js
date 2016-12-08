@@ -5,18 +5,23 @@
 	
 	exports.create = function () {
 		var starting = new Rx.Subject();
-		return new GameService(starting);
+		var questions = new Rx.Subject();
+		return new GameService(starting, questions);
 	}; 
 	
-	function GameService(starting) {
+	function GameService(starting, questions) {
 		this._socket = io();
 		this._starting = starting;
-		this._questions = new Rx.Subject();
+		this._questions = questions;
 		this._choices = new Rx.Subject();
 		this._results = new Rx.Subject();
 		
 		this._socket.on('starting', function (remainingSeconds) {
 			starting.onNext(remainingSeconds);
+		});
+		
+		this._socket.on('question', function (question) {
+			questions.onNext(question);
 		});
 	}
 	
@@ -50,8 +55,16 @@
 		this._socket.emit('start');
 	};
 	
+	GameService.prototype.cancelStart = function (callback) {
+		this._socket.emit('cancel');
+		this._socket.once('cancelled', callback);
+	};
+	
 	GameService.prototype.submitAnswer = function (answer, callback) {
-		
+		this._socket.emit('answer', answer);
+		this._socket.once('answer response', function (success, errors) {
+			callback(success, errors);
+		});
 	};
 	
 	GameService.prototype.submitChoice = function (choiceIndex) {

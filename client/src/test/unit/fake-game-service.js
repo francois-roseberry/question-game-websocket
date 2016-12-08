@@ -41,6 +41,10 @@
 		this._starting.onNext(5);
 	};
 	
+	FakeGameService.prototype.cancelStart = function (callback) {
+		callback();
+	};
+	
 	FakeGameService.prototype.submitAnswer = function (answer, callback) {
 		callback(true);
 	};
