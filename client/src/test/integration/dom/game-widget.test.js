@@ -21,6 +21,10 @@
 			});
 			GameWidget.render(domContext.rootElement, task);
 		});
+		
+		it('renders a label for the name', function () {
+			domContext.assertOneOf('.lbl-player-name');
+		});
 			
 		it('renders a text box for inputting the name', function () {
 			domContext.assertOneOf('.txt-player-name');

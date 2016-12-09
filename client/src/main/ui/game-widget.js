@@ -28,8 +28,14 @@
 	
 	function showPlayerLogin(widgetContainer, task) {
 		return function () {
+			widgetContainer.append('label')
+				.attr('for', 'txtPlayerName')
+				.text(i18n.PLAYER_NAME_LABEL)
+				.classed('lbl-player-name', true);
+			
 			var txtPlayerName = widgetContainer.append('input')
 				.attr({
+					id: 'txtPlayerName',
 					type: 'text',
 					placeholder: i18n.PLAYER_NAME_CUE,
 					maxlength: 10

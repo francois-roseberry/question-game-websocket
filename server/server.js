@@ -43,7 +43,6 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('cancel', function() {
-		// TODO : listen for cancellation
 		if (countdownObject.timer) {
 			console.log('Game start cancelled by ' + socket.player.name);
 			clearTimeout(countdownObject.timer);
@@ -59,8 +58,8 @@ io.on('connection', function(socket) {
 			console.log('Player ' + socket.player.name + ' has answered ' + answer);
 			socket.player.lastAnswer = answer;
 			socket.emit('answer response', true);
-			// TODO : check if all planyers have answered (lastAnswer is non null)
-			/ If so, send back all the answers + the truth as choices
+			// TODO : check if all players have answered (lastAnswer is non null)
+			// If so, send back all the answers + the truth as choices
 		}
 	});
 	
