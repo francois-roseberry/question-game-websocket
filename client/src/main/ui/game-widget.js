@@ -31,7 +31,8 @@
 			var txtPlayerName = widgetContainer.append('input')
 				.attr({
 					type: 'text',
-					placeholder: i18n.PLAYER_NAME_CUE
+					placeholder: i18n.PLAYER_NAME_CUE,
+					maxlength: 10
 				})
 				.classed({
 					'txt-player-name': true,
@@ -114,7 +115,8 @@
 			var txtAnswer = widgetContainer.append('input')
 				.attr({
 					type: 'text',
-					placeholder: i18n.ANSWER_CUE
+					placeholder: i18n.ANSWER_CUE,
+					maxlength: 10
 				})
 				.classed({
 					'txt-answer': true,
