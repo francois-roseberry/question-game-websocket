@@ -4,6 +4,8 @@
 	var i18n = require('./i18n').i18n();
 	var precondition = require('./contract').precondition;
 	
+	var FORBIDDEN_CHARS = "!@£/\"\\$%?¢¤¬&*²¦²³";
+	
 	exports.render = function (container, task) {
 		precondition(container, 'Game widget requires a container');
 		precondition(task, 'Game widget requires a game task');
@@ -35,6 +37,13 @@
 					'txt-player-name': true,
 					'form-control': true
 				});
+				
+			$(txtPlayerName[0]).keypress(function (e) {
+				var chr = String.fromCharCode(e.which);
+				if (FORBIDDEN_CHARS.indexOf(chr) > 0) {
+					return false;
+				}
+			});
 				
 			var btnJoin = widgetContainer.append('button')
 				.classed({
