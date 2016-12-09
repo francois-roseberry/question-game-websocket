@@ -60,6 +60,7 @@
                 }
 				
 				element.val(text);
+				element.trigger('input');
 			},
 
             d3: d3Actions(),

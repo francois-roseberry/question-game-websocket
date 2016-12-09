@@ -53,6 +53,7 @@
 			});
 				
 			var btnJoin = widgetContainer.append('button')
+				.attr('disabled', true)
 				.classed({
 					'btn-join-game': true,
 					'btn': true,
@@ -63,6 +64,15 @@
 					var playerName = $(txtPlayerName[0]).val();
 					task.setPlayerName(playerName);
 				});
+				
+			$(txtPlayerName[0]).on('input', function () {
+				var hasText = $(txtPlayerName[0]).val() !== "";
+				if (hasText) {
+					$(btnJoin[0]).removeAttr('disabled');
+				} else {
+					$(btnJoin[0]).attr('disabled', true);
+				}
+			});
 				
 			$(txtPlayerName[0]).on('keyup', function (e) {
 				if (e.keyCode === 13) {

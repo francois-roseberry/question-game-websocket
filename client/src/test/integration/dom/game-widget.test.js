@@ -34,9 +34,18 @@
 			domContext.assertOneOf('.btn-join-game');
 		});
 		
+		it('disables join button is disabled at start', function () {
+			domContext.assertDisabled('.btn-join-game');
+		});
+		
+		it('enables it join button when there is a player name entered', function () {
+			domContext.enterTextIn('.txt-player-name', 'something');
+			domContext.assertEnabled('.btn-join-game');
+		});
+		
 		describe('after player name is submitted', function () {
 			beforeEach(function () {
-				domContext.enterTextIn('.txt-player-name', 'Joueur');
+				domContext.enterTextIn('.txt-player-name', 'player1');
 				domContext.clickOn('.btn-join-game');
 			});
 			
