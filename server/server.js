@@ -40,8 +40,7 @@ io.on('connection', function(socket) {
 	socket.on('start', function () {
 		console.log('Game started by ' + players[socket.id].name);
 		countdown(countdownObject, 5, function () {
-			console.log('Game start, sending question');
-			// Start the game, send the first question
+			console.log('Game start, sending first question');
 			io.emit('question', QUESTION);
 		});
 	});
@@ -62,8 +61,6 @@ io.on('connection', function(socket) {
 			console.log('Player ' + players[socket.id].name + ' has answered ' + answer);
 			players[socket.id].lastAnswer = answer;
 			socket.emit('answer response', true);
-			// TODO : check if all players have answered (lastAnswer is non null)
-			// If so, send back all the answers + the truth as choices
 			if (hasEveryPlayerAnswered()) {
 				var choices = computeChoices();
 				resetAnswers();
