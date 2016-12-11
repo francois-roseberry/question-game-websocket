@@ -139,6 +139,13 @@
 					'form-control': true
 				});
 				
+			$(txtAnswer[0]).keypress(function (e) {
+				var chr = String.fromCharCode(e.which);
+				if (FORBIDDEN_CHARS.indexOf(chr) > 0) {
+					return false;
+				}
+			});
+				
 			var btnSubmit = widgetContainer.append('button')
 				.classed({
 					'btn-submit-answer': true,
