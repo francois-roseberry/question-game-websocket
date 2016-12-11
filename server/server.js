@@ -3,11 +3,14 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var program = require('commander');
+var _ = require('underscore');
 
 var port = 3000;
 var countdownObject = {};
 var QUESTION = 'According to the Party in 1984, 2 + 2 = _';
 var ANSWER = "5";
+
+var players = {};
 
 program
 	.version('0.1')
@@ -24,7 +27,8 @@ io.on('connection', function(socket) {
 	console.log('A user connected from ' + address.address + ':' + address.port);
 	socket.on('name', function (name) {
 		console.log('A user identified as [' + name + "], name ok");
-		socket.player = {
+		players[socket.id] = {
+			socketId: socket.id,
 			name: name,
 			score: 0,
 			lastAnswer: null
@@ -34,7 +38,7 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('start', function () {
-		console.log('Game started by ' + socket.player.name);
+		console.log('Game started by ' + players[socket.id].name);
 		countdown(countdownObject, 5, function () {
 			console.log('Game start, sending question');
 			// Start the game, send the first question
@@ -44,7 +48,7 @@ io.on('connection', function(socket) {
 	
 	socket.on('cancel', function() {
 		if (countdownObject.timer) {
-			console.log('Game start cancelled by ' + socket.player.name);
+			console.log('Game start cancelled by ' + players[socket.id].name);
 			clearTimeout(countdownObject.timer);
 			countdownObject.timer = null;
 			io.emit('cancelled');
@@ -55,11 +59,17 @@ io.on('connection', function(socket) {
 		if (answer == ANSWER) {
 			socket.emit('answer response', false, ['TRUTH']);
 		} else {
-			console.log('Player ' + socket.player.name + ' has answered ' + answer);
-			socket.player.lastAnswer = answer;
+			console.log('Player ' + players[socket.id].name + ' has answered ' + answer);
+			players[socket.id].lastAnswer = answer;
 			socket.emit('answer response', true);
 			// TODO : check if all players have answered (lastAnswer is non null)
 			// If so, send back all the answers + the truth as choices
+			if (hasEveryPlayerAnswered()) {
+				var choices = computeChoices();
+				resetAnswers();
+				console.log('Everybody has answered, sending choices : ' + JSON.stringify(choices));
+				io.emit('choices', choices);
+			}
 		}
 	});
 	
@@ -67,6 +77,29 @@ io.on('connection', function(socket) {
 		console.log('user disconnected');
 	});
 });
+
+function resetAnswers() {
+	_.each(players, function (player) {
+		player.lastAnswer = null;
+	});
+}
+
+function computeChoices() {
+	var answers = _.map(players, function (player) {
+		return player.lastAnswer;
+	});
+	
+	console.log(answers);
+	console.log(_.uniq(answers));
+	
+	return _.uniq(answers).concat([ANSWER]);
+}
+
+function hasEveryPlayerAnswered() {
+	return _.every(players, function (player) {
+		return player.lastAnswer != null;
+	});
+}
 
 function countdown(countdownObject, seconds, callback) {
 	console.log('starting in ' + seconds + ' seconds');

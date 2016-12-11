@@ -6,14 +6,15 @@
 	exports.create = function () {
 		var starting = new Rx.Subject();
 		var questions = new Rx.Subject();
-		return new GameService(starting, questions);
+		var choices = new Rx.Subject();
+		return new GameService(starting, questions, choices);
 	}; 
 	
-	function GameService(starting, questions) {
+	function GameService(starting, questions, choices) {
 		this._socket = io();
 		this._starting = starting;
 		this._questions = questions;
-		this._choices = new Rx.Subject();
+		this._choices = choices;
 		this._results = new Rx.Subject();
 		
 		this._socket.on('starting', function (remainingSeconds) {
@@ -22,6 +23,10 @@
 		
 		this._socket.on('question', function (question) {
 			questions.onNext(question);
+		});
+		
+		this._socket.on('choices', function (choicesArray) {
+			choices.onNext(choicesArray);
 		});
 	}
 	
