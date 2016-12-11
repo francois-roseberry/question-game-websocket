@@ -4,28 +4,44 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var program = require('commander');
 var _ = require('underscore');
+var fs = require('fs');
 
 var port = 3000;
 var countdownObject = {};
-var QUESTION = 'According to the Party in 1984, 2 + 2 = _';
-var ANSWER = "5";
 
 var players = {};
 
 program
 	.version('0.1')
 	.option('-w, --webclient <directory>', 'The directory served')
+	.option('-q, --question <file>', 'The question file')
 	.parse(process.argv);
-
-app.use(express.static(program.webclient));
-
-io.on('connection', function(socket) {
-	// TODO : if there's currently a game when the user connects, should return a message and close the socket
-	// TODO : Save the client socket id and his name in an array of players, later will also contain the score
 	
-	var address = socket.handshake.address;
-	console.log('A user connected from ' + address.address + ':' + address.port);
-	socket.on('name', function (name) {
+fs.readFile(program.question, 'utf-8', function (err, data) {
+	if (err) {
+		console.log('Could not read question file');
+		return;
+	}
+	
+	app.use(express.static(program.webclient));
+	io.on('connection', onConnect(JSON.parse(data)));
+});
+
+function onConnect(questions) {
+	return function (socket) {
+		// TODO : if there's currently a game when the user connects, should return a message and close the socket
+		// TODO : Save the client socket id and his name in an array of players, later will also contain the score
+		
+		socket.on('name', onPlayerName(socket));
+		socket.on('start', onStart(socket, questions[0].question));
+		socket.on('cancel', onCancel(socket));
+		socket.on('answer', onAnswer(socket, questions[0].answer));
+		socket.on('disconnect', onDisconnect(socket));
+	};
+}
+
+function onPlayerName(socket) {
+	return function (name) {
 		console.log('A user identified as [' + name + "], name ok");
 		players[socket.id] = {
 			socketId: socket.id,
@@ -35,48 +51,56 @@ io.on('connection', function(socket) {
 		};
 		// TODO : validate the name is unique
 		socket.emit('name response', true);
-	});
-	
-	socket.on('start', function () {
+	};
+}
+
+function onStart(socket, question) {
+	return function () {
 		console.log('Game started by ' + players[socket.id].name);
 		countdown(countdownObject, 5, function () {
 			console.log('Game start, sending first question');
-			io.emit('question', QUESTION);
+			io.emit('question', question);
 		});
-	});
-	
-	socket.on('cancel', function() {
+	};
+}
+
+function onCancel(socket) {
+	return function () {
 		if (countdownObject.timer) {
 			console.log('Game start cancelled by ' + players[socket.id].name);
 			clearTimeout(countdownObject.timer);
 			countdownObject.timer = null;
 			io.emit('cancelled');
 		}
-	});
-	
-	socket.on('answer', function (answer) {
-		if (answer == ANSWER) {
+	};
+}
+
+function onAnswer(socket, truth) {
+	return function (answer) {
+		if (answer === truth) {
 			socket.emit('answer response', false, ['TRUTH']);
 		} else {
 			console.log('Player ' + players[socket.id].name + ' has answered ' + answer);
 			players[socket.id].lastAnswer = answer;
 			socket.emit('answer response', true);
 			if (hasEveryPlayerAnswered()) {
-				var choices = computeChoices();
+				var choices = computeChoices(truth);
 				resetAnswers();
 				console.log('Everybody has answered, sending choices : ' + JSON.stringify(choices));
 				io.emit('choices', choices);
 			}
 		}
-	});
-	
-	socket.on('disconnect', function() {
+	};
+}
+
+function onDisconnect(socket) {
+	return function () {
 		if (players[socket.id]) {
 			console.log('Player [' + players[socket.id].name + '] has left');
 			players[socket.id] = null;
 		}
-	});
-});
+	};
+}
 
 function resetAnswers() {
 	_.each(players, function (player) {
@@ -84,15 +108,12 @@ function resetAnswers() {
 	});
 }
 
-function computeChoices() {
+function computeChoices(truth) {
 	var answers = _.map(players, function (player) {
 		return player.lastAnswer;
 	});
 	
-	console.log(answers);
-	console.log(_.uniq(answers));
-	
-	return _.uniq(answers).concat([ANSWER]);
+	return _.uniq(answers).concat([truth]);
 }
 
 function hasEveryPlayerAnswered() {
