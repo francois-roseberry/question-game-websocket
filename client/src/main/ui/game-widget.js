@@ -173,6 +173,16 @@
 			widgetContainer.append('p')
 				.classed('waiting', true)
 				.text(i18n.WAITING);
+				
+			widgetContainer.append('div')
+				.classed('loading-container', true)
+				.append('p')
+				.classed({
+					'loading': true,
+					'fa': true,
+					'fa-spinner': true,
+					'fa-spin': true
+				});
 		};
 	}
 	
@@ -183,7 +193,11 @@
 				.data(choices)
 				.enter()
 				.append('button')
-				.classed('btn-choice', true)
+				.classed({
+					'btn-choice': true,
+					'btn': true,
+					'btn-primary': true
+				})
 				.attr('data-index', function (choice, index) {
 					return index;
 				})

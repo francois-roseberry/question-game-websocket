@@ -1,0 +1,51 @@
+.outer-container {
+	position: absolute;
+	top: 10%;
+	width: 100%;
+}
+
+.inner-container {
+	width: 50%;
+	margin: auto;
+}
+
+.btn-start-game {
+	margin: auto;
+	display: block !important;
+}
+
+.btn-cancel {
+	margin: auto;
+	display: block !important;
+}
+
+.game-starting {
+	font-size: 2em;
+	text-align: center;
+}
+
+.question {
+	font-size: 3em;
+	text-align: center;
+}
+
+.btn-choice {
+	margin: auto;
+	width: 50%;
+	display: block !important;
+	margin-bottom: 0.5em !important;
+}
+
+.waiting {
+	font-size: 3em;
+	text-align:center;
+}
+
+.loading-container {
+	margin-top: 1em;
+	text-align: center;
+}
+
+.loading {
+	font-size: 2em !important;
+}

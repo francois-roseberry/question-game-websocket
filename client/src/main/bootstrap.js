@@ -13,7 +13,7 @@
 	$(document).ready(startApplication());
 
 	function startApplication() {
-		var container = $('.app-container');
+		var container = $('.inner-container');
 
 		var task = PlayGameTask.start(GameService.create());
 		GameWidget.render(container, task);
