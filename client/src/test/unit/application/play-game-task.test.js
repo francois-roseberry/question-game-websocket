@@ -21,6 +21,12 @@
 			expect(currentStatus.name).to.eql('initial');
 		});
 		
+		it('if game service rejects the name, keeps the same status', function() {
+			gameService.rejectNextName();
+			task.setPlayerName('bob');
+			expect(currentStatus.name).to.eql('initial');
+		});
+		
 		describe('after setting player name', function () {
 			var playerName = 'bob';
 			

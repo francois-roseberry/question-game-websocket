@@ -52,10 +52,12 @@
 		precondition(!this._playerName, 'Player name has already been set');
 		
 		var self = this;
-		this._gameService.setPlayerName(name, function (success, errors) {
+		this._gameService.setPlayerName(name, function (success, error) {
 			if (success) {
 				self._playerName = name;
 				self._status.onNext(beforeStatus());
+			} else {
+				self._status.onNext(initialStatus(error));
 			}
 		});
 	};
@@ -93,11 +95,11 @@
 		return this._status.asObservable();
 	};
 	
-	function initialStatus() {
+	function initialStatus(error) {
 		return {
 			name: 'initial',
 			match: function(visitor) {
-				return visitor.initial();
+				return visitor.initial(error);
 			}
 		};
 	}

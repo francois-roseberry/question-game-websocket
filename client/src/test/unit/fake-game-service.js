@@ -8,13 +8,23 @@
 	}; 
 	
 	function FakeGameService() {
+		this._rejectNextName = false;
 		this._starting = new Rx.Subject();
 		this._questions = new Rx.Subject();
 		this._choices = new Rx.Subject();
 		this._results = new Rx.Subject();
 	}
 	
+	FakeGameService.prototype.rejectNextName = function () {
+		this._rejectNextName = true;
+	};
+	
 	FakeGameService.prototype.setPlayerName = function (name, callback) {
+		if (this._rejectNextName) {
+			callback(false, 'EXISTING');
+			return;
+		}
+		
 		this._name = name;
 		callback(true);
 	};

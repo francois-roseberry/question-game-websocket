@@ -42,15 +42,20 @@ function onConnect(questions) {
 
 function onPlayerName(socket) {
 	return function (name) {
-		console.log('A user identified as [' + name + "], name ok");
-		players[socket.id] = {
-			socketId: socket.id,
-			name: name,
-			score: 0,
-			lastAnswer: null
-		};
-		// TODO : validate the name is unique
-		socket.emit('name response', true);
+		console.log('A user identified as [' + name + "]");
+		var names = _.map(players, function (player) {
+			return player.name;
+		});
+		if (_.contains(names, name)) {
+			socket.emit('name response', false, 'EXISTING');
+		} else {
+			players[socket.id] = {
+				name: name,
+				score: 0,
+				lastAnswer: null
+			};
+			socket.emit('name response', true);
+		}
 	};
 }
 

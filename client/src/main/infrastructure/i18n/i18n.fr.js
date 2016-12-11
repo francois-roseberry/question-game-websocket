@@ -9,5 +9,6 @@
 	exports.STARTING_SOON = "La partie commence dans {seconds} secondes";
 	exports.ANSWER_CUE = "Entrez un mensonge";
 	exports.SUBMIT_ANSWER = "Envoyer";
-	exports.WAITING = "En attente des autres joueurs ...";
+	exports.WAITING = "En attente des autres joueurs";
+	exports.NAME_ERROR_EXISTING = "Ce nom est déjà utilisé. Veuillez en choisir un autre.";
 }());

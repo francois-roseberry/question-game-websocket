@@ -27,7 +27,17 @@
 	};
 	
 	function showPlayerLogin(widgetContainer, task) {
-		return function () {
+		return function (error) {
+			if (error) {
+				widgetContainer.append('div')
+					.classed({
+						'name-error': true,
+						'alert': true,
+						'alert-danger': true
+					})
+					.text(i18n['NAME_ERROR_' + error]);
+			}
+			
 			widgetContainer.append('label')
 				.attr('for', 'txtPlayerName')
 				.text(i18n.PLAYER_NAME_LABEL)

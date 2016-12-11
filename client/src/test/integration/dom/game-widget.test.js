@@ -43,6 +43,13 @@
 			domContext.assertEnabled('.btn-join-game');
 		});
 		
+		it('renders an error message if name is rejected', function () {
+			gameService.rejectNextName();
+			domContext.enterTextIn('.txt-player-name', 'player1');
+			domContext.clickOn('.btn-join-game');
+			domContext.assertOneOf('.name-error');
+		});
+		
 		describe('after player name is submitted', function () {
 			beforeEach(function () {
 				domContext.enterTextIn('.txt-player-name', 'player1');
