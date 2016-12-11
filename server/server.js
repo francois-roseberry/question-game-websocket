@@ -74,7 +74,10 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('disconnect', function() {
-		console.log('user disconnected');
+		if (players[socket.id]) {
+			console.log('Player [' + players[socket.id].name + '] has left');
+			players[socket.id] = null;
+		}
 	});
 });
 
