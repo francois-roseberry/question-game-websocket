@@ -42,13 +42,13 @@ function onConnect(questions) {
 
 function onPlayerName(socket) {
 	return function (name) {
-		console.log('A user identified as [' + name + "]");
 		var names = _.map(players, function (player) {
 			return player.name;
 		});
 		if (_.contains(names, name)) {
 			socket.emit('name response', false, 'EXISTING');
 		} else {
+			console.log('A user identified as [' + name + "]");
 			players[socket.id] = {
 				name: name,
 				score: 0,
