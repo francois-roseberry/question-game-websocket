@@ -83,7 +83,7 @@ function onCancel(socket) {
 function onAnswer(socket, truth) {
 	return function (answer) {
 		if (answer === truth) {
-			socket.emit('answer response', false, ['TRUTH']);
+			socket.emit('answer response', false, 'TRUTH');
 		} else {
 			console.log('Player ' + players[socket.id].name + ' has answered ' + answer);
 			players[socket.id].lastAnswer = answer;

@@ -66,6 +66,12 @@
 						expect(currentStatus.name).to.eql('question');
 					});
 					
+					it('if game service rejects the answer, keeps the same status', function () {
+						gameService.rejectNextAnswer();
+						task.submitAnswer('4');
+						expect(currentStatus.name).to.eql('question');
+					});
+					
 					describe('after submitting an answer', function () {
 						beforeEach(function () {
 							task.submitAnswer('4');

@@ -11,4 +11,5 @@
 	exports.SUBMIT_ANSWER = "Send";
 	exports.WAITING = "Waiting for other players";
 	exports.NAME_ERROR_EXISTING = "This name has already been chosen. Please choose another.";
+	exports.ANSWER_ERROR_TRUTH = "You must lie. Use another answer.";
 }());

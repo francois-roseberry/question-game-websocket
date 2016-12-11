@@ -133,7 +133,17 @@
 	}
 	
 	function showQuestion(widgetContainer, task) {
-		return function (question) {
+		return function (question, error) {
+			if (error) {
+				widgetContainer.append('div')
+					.classed({
+						'answer-error': true,
+						'alert': true,
+						'alert-danger': true
+					})
+					.text(i18n['ANSWER_ERROR_' + error]);
+			}
+			
 			widgetContainer.append('p')
 				.classed('question', true)
 				.text(question);

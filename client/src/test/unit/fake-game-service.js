@@ -9,6 +9,7 @@
 	
 	function FakeGameService() {
 		this._rejectNextName = false;
+		this._rejectNextAnswer = false;
 		this._starting = new Rx.Subject();
 		this._questions = new Rx.Subject();
 		this._choices = new Rx.Subject();
@@ -19,8 +20,13 @@
 		this._rejectNextName = true;
 	};
 	
+	FakeGameService.prototype.rejectNextAnswer = function () {
+		this._rejectNextAnswer = true;
+	};
+	
 	FakeGameService.prototype.setPlayerName = function (name, callback) {
 		if (this._rejectNextName) {
+			this._rejectNextName = false;
 			callback(false, 'EXISTING');
 			return;
 		}
@@ -56,6 +62,12 @@
 	};
 	
 	FakeGameService.prototype.submitAnswer = function (answer, callback) {
+		if (this._rejectNextAnswer) {
+			this._rejectNextAnswer = false;
+			callback(false, 'TRUTH');
+			return;
+		}
+		
 		callback(true);
 	};
 	

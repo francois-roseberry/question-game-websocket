@@ -11,4 +11,5 @@
 	exports.SUBMIT_ANSWER = "Envoyer";
 	exports.WAITING = "En attente des autres joueurs";
 	exports.NAME_ERROR_EXISTING = "Ce nom est déjà utilisé. Veuillez en choisir un autre.";
+	exports.ANSWER_ERROR_TRUTH = "Vous devez mentir. Utilisez une autre réponse.";
 }());

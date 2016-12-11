@@ -114,9 +114,16 @@
 						domContext.assertDisabled('.btn-submit-answer');
 					});
 					
-					it('enables its join button when there is a player name entered', function () {
+					it('enables its answer button when there is a player name entered', function () {
 						domContext.enterTextIn('.txt-answer', 'something');
 						domContext.assertEnabled('.btn-submit-answer');
+					});
+					
+					it('renders an error message if answer is rejected', function () {
+						gameService.rejectNextAnswer();
+						domContext.enterTextIn('.txt-answer', '5');
+						domContext.clickOn('.btn-submit-answer');
+						domContext.assertOneOf('.answer-error');
 					});
 					
 					describe('after answer is submitted', function () {

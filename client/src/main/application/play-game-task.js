@@ -77,10 +77,19 @@
 		precondition(_.isString(answer), 'Submitting an answer requires said answer');
 		
 		var status = this._status;
-		this._gameService.submitAnswer(answer, function (success, errors) {
-			if (success) {
-				status.onNext(waitingStatus());
-			}
+		var gameService = this._gameService;
+		status.take(1).subscribe(function (currentStatus) {
+			currentStatus.match({
+				question: function (question) {
+					gameService.submitAnswer(answer, function (success, error) {
+						if (success) {
+							status.onNext(waitingStatus());
+						} else {
+							status.onNext(questionStatus(question, error));
+						}
+					});
+				}
+			});
 		});
 	};
 	
@@ -122,11 +131,11 @@
 		};
 	}
 	
-	function questionStatus(question) {
+	function questionStatus(question, error) {
 		return {
 			name: 'question',
 			match: function (visitor) {
-				return visitor.question(question);
+				return visitor.question(question, error);
 			}
 		};
 	}
