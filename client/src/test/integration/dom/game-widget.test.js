@@ -34,11 +34,11 @@
 			domContext.assertOneOf('.btn-join-game');
 		});
 		
-		it('disables join button is disabled at start', function () {
+		it('disables join button at start', function () {
 			domContext.assertDisabled('.btn-join-game');
 		});
 		
-		it('enables it join button when there is a player name entered', function () {
+		it('enables its join button when there is a player name entered', function () {
 			domContext.enterTextIn('.txt-player-name', 'something');
 			domContext.assertEnabled('.btn-join-game');
 		});
@@ -101,6 +101,15 @@
 					
 					it('renders a submit answer button', function () {
 						domContext.assertOneOf('.btn-submit-answer');
+					});
+					
+					it('disables answer button at start', function () {
+						domContext.assertDisabled('.btn-submit-answer');
+					});
+					
+					it('enables its join button when there is a player name entered', function () {
+						domContext.enterTextIn('.txt-answer', 'something');
+						domContext.assertEnabled('.btn-submit-answer');
 					});
 					
 					describe('after answer is submitted', function () {

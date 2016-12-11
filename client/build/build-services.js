@@ -27,7 +27,8 @@
 			executable: 'node',
 			arguments: [
 				serverFiles.script,
-				'-w', serverFiles.clientDirectory
+				'-w', serverFiles.clientDirectory,
+				'-q', serverFiles.questionFile
 			],
 			readyPattern: /Serving directory/
 		};
@@ -40,6 +41,7 @@
 		
 		return {
 			script: path.join(basePath, 'server', 'server.js'),
+			questionFile: path.join(basePath, 'questions.json'),
 			clientDirectory: path.join(basePath, 'client', 'target', 'dist')
 		};
 	}

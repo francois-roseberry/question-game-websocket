@@ -147,6 +147,7 @@
 			});
 				
 			var btnSubmit = widgetContainer.append('button')
+				.attr('disabled', true)
 				.classed({
 					'btn-submit-answer': true,
 					'btn': true,
@@ -157,6 +158,15 @@
 					var answer = $(txtAnswer[0]).val();
 					task.submitAnswer(answer);
 				});
+				
+			$(txtAnswer[0]).on('input', function () {
+				var hasText = $(txtAnswer[0]).val() !== "";
+				if (hasText) {
+					$(btnSubmit[0]).removeAttr('disabled');
+				} else {
+					$(btnSubmit[0]).attr('disabled', true);
+				}
+			});
 				
 			$(txtAnswer[0]).on('keyup', function (e) {
 				if (e.keyCode === 13) {
