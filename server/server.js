@@ -36,6 +36,7 @@ function onConnect(questions) {
 		socket.on('start', onStart(socket, questions[0].question));
 		socket.on('cancel', onCancel(socket));
 		socket.on('answer', onAnswer(socket, questions[0].answer));
+		socket.on('choice', onChoice(socket, questions));
 		socket.on('disconnect', onDisconnect(socket));
 	};
 }
@@ -52,7 +53,8 @@ function onPlayerName(socket) {
 			players[socket.id] = {
 				name: name,
 				score: 0,
-				lastAnswer: null
+				lastAnswer: null,
+				lastChoice: null
 			};
 			socket.emit('name response', true);
 		}
@@ -61,7 +63,7 @@ function onPlayerName(socket) {
 
 function onStart(socket, question) {
 	return function () {
-		console.log('Game started by ' + players[socket.id].name);
+		console.log('Game started by [' + players[socket.id].name + ']');
 		countdown(countdownObject, 5, function () {
 			console.log('Game start, sending first question');
 			io.emit('question', question);
@@ -72,7 +74,7 @@ function onStart(socket, question) {
 function onCancel(socket) {
 	return function () {
 		if (countdownObject.timer) {
-			console.log('Game start cancelled by ' + players[socket.id].name);
+			console.log('Game start cancelled by [' + players[socket.id].name + ']');
 			clearTimeout(countdownObject.timer);
 			countdownObject.timer = null;
 			io.emit('cancelled');
@@ -85,15 +87,25 @@ function onAnswer(socket, truth) {
 		if (answer === truth) {
 			socket.emit('answer response', false, 'TRUTH');
 		} else {
-			console.log('Player ' + players[socket.id].name + ' has answered ' + answer);
+			console.log('Player [' + players[socket.id].name + '] has answered ' + answer);
 			players[socket.id].lastAnswer = answer;
 			socket.emit('answer response', true);
 			if (hasEveryPlayerAnswered()) {
 				var choices = computeChoices(truth);
-				resetAnswers();
 				console.log('Everybody has answered, sending choices : ' + JSON.stringify(choices));
 				io.emit('choices', choices);
 			}
+		}
+	};
+}
+
+function onChoice(socket, questions) {
+	return function (choice) {
+		console.log('Player [' + players[socket.id].name + '] has choosen ' + choice);
+		players[socket.id].lastChoice = choice;
+		if (hasEveryPlayerChosen()) {
+			// TODO calculate the scores
+			console.log('Everybody has chosen, computing scores');
 		}
 	};
 }
@@ -119,6 +131,12 @@ function computeChoices(truth) {
 	});
 	
 	return _.uniq(answers).concat([truth]);
+}
+
+function hasEveryPlayerChosen() {
+	return _.every(players, function (player) {
+		return player.lastChoice != null;
+	});
 }
 
 function hasEveryPlayerAnswered() {

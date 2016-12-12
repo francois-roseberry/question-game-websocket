@@ -1,6 +1,14 @@
 [
 	{
-		"question": "According to the Party in 1984, 2 + 2 = _",
+		"question": "1. According to the Party in 1984, 2 + 2 = _",
 		"answer": "5"
+	},
+	{
+		"question": "2. What is red and hurts your teeth ?",
+		"answer": "Brick"
+	},
+	{
+		"question": "3. What does the fox say ?",
+		"answer": "Ding ding ding"
 	}
 ]

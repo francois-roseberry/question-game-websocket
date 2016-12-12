@@ -72,7 +72,7 @@
 		});
 	};
 	
-	GameService.prototype.submitChoice = function (choiceIndex) {
-		
+	GameService.prototype.submitChoice = function (choice) {
+		this._socket.emit('choice', choice);
 	};
 }());

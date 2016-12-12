@@ -234,8 +234,8 @@
 				.text(function (choice) {
 					return choice;
 				})
-				.on('click', function (choice, index) {
-					task.submitChoice(index);
+				.on('click', function (choice) {
+					task.submitChoice(choice);
 				});
 		};
 	}

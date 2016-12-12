@@ -93,10 +93,10 @@
 		});
 	};
 	
-	PlayGameTask.prototype.submitChoice = function (choiceIndex) {
-		precondition(_.isNumber(choiceIndex), 'Submitting a choice require the index of that choice');
+	PlayGameTask.prototype.submitChoice = function (choice) {
+		precondition(_.isString(choice), 'Submitting a choice require that choice');
 		
-		this._gameService.submitChoice(choiceIndex);
+		this._gameService.submitChoice(choice);
 		this._status.onNext(waitingStatus());
 	};
 	
