@@ -65,9 +65,10 @@
 			var btnJoin = widgetContainer.append('button')
 				.attr('disabled', true)
 				.classed({
-					'btn-join-game': true,
 					'btn': true,
-					'btn-primary': true
+					'btn-primary': true,
+					'btn-lg': true,
+					'btn-join-game': true
 				})
 				.text(i18n.JOIN_GAME)
 				.on('click', function () {
@@ -98,9 +99,10 @@
 		return function () {
 			var btnStart = widgetContainer.append('button')
 				.classed({
-					'btn-start-game': true,
 					'btn': true,
-					'btn-primary': true
+					'btn-primary': true,
+					'btn-lg': true,
+					'btn-start-game': true
 				})
 				.text(i18n.START_GAME)
 				.on('click', function () {
@@ -119,9 +121,10 @@
 			
 			var btnCancel = widgetContainer.append('button')
 				.classed({
-					'btn-cancel': true,
 					'btn': true,
-					'btn-primary': true
+					'btn-primary': true,
+					'btn-lg': true,
+					'btn-cancel': true
 				})
 				.text(i18n.CANCEL)
 				.on('click', function () {
@@ -169,9 +172,10 @@
 			var btnSubmit = widgetContainer.append('button')
 				.attr('disabled', true)
 				.classed({
-					'btn-submit-answer': true,
 					'btn': true,
-					'btn-primary': true
+					'btn-primary': true,
+					'btn-lg': true,
+					'btn-submit-answer': true
 				})
 				.text(i18n.SUBMIT_ANSWER)
 				.on('click', function () {
@@ -208,10 +212,10 @@
 				.classed('loading-container', true)
 				.append('p')
 				.classed({
-					'loading': true,
 					'fa': true,
 					'fa-spinner': true,
-					'fa-spin': true
+					'fa-spin': true,
+					'loading': true
 				});
 		};
 	}
@@ -224,9 +228,11 @@
 				.enter()
 				.append('button')
 				.classed({
-					'btn-choice': true,
 					'btn': true,
-					'btn-primary': true
+					'btn-primary': true,
+					'btn-block': true,
+					'btn-md': true,
+					'btn-choice': true
 				})
 				.attr('data-index', function (choice, index) {
 					return index;
