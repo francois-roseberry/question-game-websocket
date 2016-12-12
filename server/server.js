@@ -9,6 +9,9 @@ var fs = require('fs');
 var port = 3000;
 var countdownObject = {};
 
+var POINTS_FOR_TRUTH = 1000;
+var POINTS_FOR_LIE = 500;
+
 var players = {};
 
 program
@@ -36,7 +39,7 @@ function onConnect(questions) {
 		socket.on('start', onStart(socket, questions[0].question));
 		socket.on('cancel', onCancel(socket));
 		socket.on('answer', onAnswer(socket, questions[0].answer));
-		socket.on('choice', onChoice(socket, questions));
+		socket.on('choice', onChoice(socket, questions[0].answer));
 		socket.on('disconnect', onDisconnect(socket));
 	};
 }
@@ -99,15 +102,42 @@ function onAnswer(socket, truth) {
 	};
 }
 
-function onChoice(socket, questions) {
+function onChoice(socket, truth) {
 	return function (choice) {
 		console.log('Player [' + players[socket.id].name + '] has choosen ' + choice);
 		players[socket.id].lastChoice = choice;
 		if (hasEveryPlayerChosen()) {
 			// TODO calculate the scores
 			console.log('Everybody has chosen, computing scores');
+			
+			_.each(players, function (player) {
+				// If choice is the truth, give 1000 points to that player
+				if (player.lastChoice === truth) {
+					player.score += POINTS_FOR_TRUTH;
+				} else {
+					// Otherwise, find out who created the choice and give him (or them) 500
+					_.each(players, function (potentialAuthor) {
+						if (potentialAuthor.name !== player.name && potentialAuthor.lastAnswer === player.lastChoice) {
+							potentialAuthor.score += POINTS_FOR_LIE;
+						}
+					});
+				}
+			});
+			
+			console.log(scoresArray());
+			io.emit('scores', scoresArray());
+			// TODO : wait a few seconds, then either show the next question (if any), or do nothing (end the game by letting scores show)
 		}
 	};
+}
+
+function scoresArray() {
+	return _.map(players, function (player) {
+		return {
+			name: player.name,
+			score: player.score
+		};
+	});
 }
 
 function onDisconnect(socket) {
