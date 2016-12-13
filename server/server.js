@@ -13,6 +13,7 @@ var POINTS_FOR_TRUTH = 1000;
 var POINTS_FOR_LIE = 500;
 
 var players = {};
+var questionIndex = 0;
 
 program
 	.version('0.1')
@@ -36,10 +37,10 @@ function onConnect(questions) {
 		// TODO : Save the client socket id and his name in an array of players, later will also contain the score
 		
 		socket.on('name', onPlayerName(socket));
-		socket.on('start', onStart(socket, questions[0].question));
+		socket.on('start', onStart(socket, questions[questionIndex].question));
 		socket.on('cancel', onCancel(socket));
-		socket.on('answer', onAnswer(socket, questions[0].answer));
-		socket.on('choice', onChoice(socket, questions[0].answer));
+		socket.on('answer', onAnswer(socket, questions));
+		socket.on('choice', onChoice(socket, questions));
 		socket.on('disconnect', onDisconnect(socket));
 	};
 }
@@ -85,8 +86,9 @@ function onCancel(socket) {
 	};
 }
 
-function onAnswer(socket, truth) {
+function onAnswer(socket, questions) {
 	return function (answer) {
+		var truth = questions[questionIndex].answer;
 		if (answer === truth) {
 			socket.emit('answer response', false, 'TRUTH');
 		} else {
@@ -102,7 +104,7 @@ function onAnswer(socket, truth) {
 	};
 }
 
-function onChoice(socket, truth) {
+function onChoice(socket, questions) {
 	return function (choice) {
 		console.log('Player [' + players[socket.id].name + '] has choosen ' + choice);
 		players[socket.id].lastChoice = choice;
@@ -112,7 +114,7 @@ function onChoice(socket, truth) {
 			
 			_.each(players, function (player) {
 				// If choice is the truth, give 1000 points to that player
-				if (player.lastChoice === truth) {
+				if (player.lastChoice === questions[questionIndex].answer) {
 					player.score += POINTS_FOR_TRUTH;
 				} else {
 					// Otherwise, find out who created the choice and give him (or them) 500
@@ -126,7 +128,16 @@ function onChoice(socket, truth) {
 			
 			console.log(scoresArray());
 			io.emit('scores', scoresArray());
-			// TODO : wait a few seconds, then either show the next question (if any), or do nothing (end the game by letting scores show)
+			setTimeout(function () {
+				questionIndex++;
+				if (questionIndex < questions.length) {
+					console.log('Sending next question');
+					resetAnswers();
+					io.emit('question', questions[questionIndex].question);
+				} else {
+					console.log('Game finished, no more questions');
+				}
+			}, 5000);
 		}
 	};
 }
@@ -152,6 +163,7 @@ function onDisconnect(socket) {
 function resetAnswers() {
 	_.each(players, function (player) {
 		player.lastAnswer = null;
+		player.lastChoice = null;
 	});
 }
 
