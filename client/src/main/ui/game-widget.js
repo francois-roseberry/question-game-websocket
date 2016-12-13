@@ -21,7 +21,8 @@
 				starting: showStartingControls(widgetContainer, task),
 				question: showQuestion(widgetContainer, task),
 				waiting: showWaiting(widgetContainer),
-				choosing: showChoices(widgetContainer, task)
+				choosing: showChoices(widgetContainer, task),
+				scores: showScores(widgetContainer)
 			});
 		});
 	};
@@ -242,6 +243,25 @@
 				})
 				.on('click', function (choice) {
 					task.submitChoice(choice);
+				});
+		};
+	}
+	
+	function showScores(container) {
+		return function (scores) {
+			container.append('ul')
+				.classed('scores', true)
+				.selectAll('.score')
+				.data(scores)
+				.enter()
+				.append('li')
+				.classed('score', true)
+				.append('span')
+				.attr('data-player', function (score) {
+					return score.name;
+				})
+				.text(function (score) {
+					return score.name + ' : ' + score.score;
 				});
 		};
 	}

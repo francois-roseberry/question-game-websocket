@@ -92,7 +92,7 @@
 							
 							describe('after choice is submitted', function () {
 								beforeEach(function () {
-									task.submitChoice(0);
+									task.submitChoice('4');
 								});
 								
 								it('has a status of waiting', function () {
@@ -112,6 +112,19 @@
 						
 						it('has a status of results', function () {
 							expect(currentStatus.name).to.eql('results');
+						});
+					});
+					
+					describe('after scores are received', function () {
+						beforeEach(function () {
+							gameService.sendScores([
+								{name: 'bob', score: 0},
+								{name: 'alic', score: 1000}
+							]);
+							
+							it('has a status of scores', function () {
+								expect(currentStatus.name).to.eql('scores');
+							});
 						});
 					});
 				});

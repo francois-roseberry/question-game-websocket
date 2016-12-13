@@ -14,6 +14,7 @@
 		this._questions = new Rx.Subject();
 		this._choices = new Rx.Subject();
 		this._results = new Rx.Subject();
+		this._scores = new Rx.Subject();
 	}
 	
 	FakeGameService.prototype.rejectNextName = function () {
@@ -47,6 +48,10 @@
 	
 	FakeGameService.prototype.sendChoices = function (choices) {
 		this._choices.onNext(choices);
+	};
+	
+	FakeGameService.prototype.sendScores = function (scores) {
+		this._scores.onNext(scores);
 	};
 	
 	FakeGameService.prototype.sendResults = function (results) {
@@ -89,5 +94,9 @@
 	
 	FakeGameService.prototype.results = function () {
 		return this._results.asObservable();
+	};
+	
+	FakeGameService.prototype.scores = function () {
+		return this._scores.asObservable();
 	};
 }());

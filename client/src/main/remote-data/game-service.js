@@ -7,15 +7,17 @@
 		var starting = new Rx.Subject();
 		var questions = new Rx.Subject();
 		var choices = new Rx.Subject();
-		return new GameService(starting, questions, choices);
+		var scores = new Rx.Subject();
+		return new GameService(starting, questions, choices, scores);
 	}; 
 	
-	function GameService(starting, questions, choices) {
+	function GameService(starting, questions, choices, scores) {
 		this._socket = io();
 		this._starting = starting;
 		this._questions = questions;
 		this._choices = choices;
 		this._results = new Rx.Subject();
+		this._scores = scores;
 		
 		this._socket.on('starting', function (remainingSeconds) {
 			starting.onNext(remainingSeconds);
@@ -27,6 +29,10 @@
 		
 		this._socket.on('choices', function (choicesArray) {
 			choices.onNext(choicesArray);
+		});
+		
+		this._socket.on('scores', function (scoresArray) {
+			scores.onNext(scoresArray);
 		});
 	}
 	
@@ -44,6 +50,10 @@
 	
 	GameService.prototype.results = function () {
 		return this._results.asObservable();
+	};
+	
+	GameService.prototype.scores = function () {
+		return this._scores.asObservable();
 	};
 	
 	GameService.prototype.setPlayerName = function (name, callback) {

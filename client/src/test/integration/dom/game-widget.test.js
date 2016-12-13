@@ -168,6 +168,30 @@
 									expect(currentStatus.name).to.eql('waiting');
 								});
 							});
+							
+							describe('after choices are received', function () {
+								var scores = [
+									{name: 'bob', score: 0},
+									{name: 'alice', score: 1000},
+									{name: 'george', score: 500}
+								];
+								beforeEach(function () {
+									gameService.sendScores(scores);
+								});
+								
+								it('renders a scores list', function () {
+									domContext.assertOneOf('.scores');
+								});
+								
+								it('renders a score element for each score', function () {
+									domContext.assertElementCount('.score', scores.length);
+									
+									_.each(scores, function (score) {
+										domContext.assertText('.score [data-player=' + score.name + ']',
+											score.name + ' : ' + score.score);
+									});
+								});
+							});
 						});
 					});
 				});

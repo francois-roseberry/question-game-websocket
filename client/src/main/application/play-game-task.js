@@ -39,6 +39,10 @@
 			status.onNext(resultsStatus(results));
 		});
 		
+		gameService.scores().subscribe(function (scores) {
+			status.onNext(scoresStatus(scores));
+		});
+		
 		return new PlayGameTask(status, gameService);
 	};
 	
@@ -163,6 +167,15 @@
 			name: 'results',
 			match: function (visitor) {
 				return visitor.results(results);
+			}
+		};
+	}
+	
+	function scoresStatus(scores) {
+		return {
+			name: 'scores',
+			match: function (visitor) {
+				return visitor.scores(scores);
 			}
 		};
 	}

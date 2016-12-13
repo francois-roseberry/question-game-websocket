@@ -48,3 +48,14 @@
 .loading {
 	font-size: 2em !important;
 }
+
+.scores {
+	list-style-type: none;
+	border: 2px solid black;
+	padding: 4px;
+}
+
+.score {
+	border-bottom: 2px solid black;
+	font-size: 2em;
+}
