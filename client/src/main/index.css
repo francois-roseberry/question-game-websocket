@@ -59,3 +59,7 @@
 	border-bottom: 2px solid black;
 	font-size: 2em;
 }
+
+.score:last-child {
+	border: 0;
+}

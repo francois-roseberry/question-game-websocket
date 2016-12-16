@@ -156,7 +156,7 @@
 				.attr({
 					type: 'text',
 					placeholder: i18n.ANSWER_CUE,
-					maxlength: 10
+					maxlength: 25
 				})
 				.classed({
 					'txt-answer': true,
