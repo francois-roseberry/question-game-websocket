@@ -59,6 +59,28 @@
 			expect(currentStatus.name).to.eql('players');
 		});
 		
+		describe('after players are received and player is observer', function () {
+			var players = ['bob', 'alice', 'george'];
+			
+			beforeEach(function () {
+				task.setObserver();
+				gameService.sendPlayerList(players);
+			});
+			
+			it('renders a players list', function () {
+				domContext.assertOneOf('.players');
+			});
+			
+			it('renders a player element for each player', function () {
+				domContext.assertElementCount('.player', players.length);
+				
+				_.each(players, function (player) {
+					domContext.assertText('.player [data-player=' + player + ']',
+						player);
+				});
+			});
+		});
+		
 		describe('after player name is submitted', function () {
 			beforeEach(function () {
 				domContext.enterTextIn('.txt-player-name', 'player1');
@@ -178,7 +200,7 @@
 								});
 							});
 							
-							describe('after choices are received', function () {
+							describe('after scores are received', function () {
 								var scores = [
 									{name: 'bob', score: 0},
 									{name: 'alice', score: 1000},

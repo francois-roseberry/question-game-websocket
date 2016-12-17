@@ -63,3 +63,18 @@
 .score:last-child {
 	border: 0;
 }
+
+.players {
+	list-style-type: none;
+	border: 2px solid black;
+	padding: 4px;
+}
+
+.player {
+	border-bottom: 2px solid black;
+	font-size: 2em;
+}
+
+.player:last-child {
+	border: 0;
+}

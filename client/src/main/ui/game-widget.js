@@ -108,15 +108,28 @@
 		};
 	}
 	
-	function showConnectedPlayers(widgetContainer) {
+	function showConnectedPlayers(container) {
 		return function (players) {
-			
+			container.append('ul')
+				.classed('players', true)
+				.selectAll('.player')
+				.data(players)
+				.enter()
+				.append('li')
+				.classed('player', true)
+				.append('span')
+				.attr('data-player', function (player) {
+					return player;
+				})
+				.text(function (player) {
+					return player;
+				});
 		};
 	}
 	
-	function showStartButton(widgetContainer, task) {
+	function showStartButton(container, task) {
 		return function () {
-			var btnStart = widgetContainer.append('button')
+			var btnStart = container.append('button')
 				.classed({
 					'btn': true,
 					'btn-primary': true,
@@ -132,13 +145,13 @@
 		};
 	}
 	
-	function showStartingControls(widgetContainer, task) {
+	function showStartingControls(container, task) {
 		return function (secondsRemaining) {
-			widgetContainer.append('p')
+			container.append('p')
 				.classed('game-starting', true)
 				.text(i18n.STARTING_SOON.replace('{seconds}', secondsRemaining));
 			
-			var btnCancel = widgetContainer.append('button')
+			var btnCancel = container.append('button')
 				.classed({
 					'btn': true,
 					'btn-primary': true,
@@ -154,10 +167,10 @@
 		};
 	}
 	
-	function showQuestion(widgetContainer, task) {
+	function showQuestion(container, task) {
 		return function (question, error) {
 			if (error) {
-				widgetContainer.append('div')
+				container.append('div')
 					.classed({
 						'answer-error': true,
 						'alert': true,
@@ -166,11 +179,11 @@
 					.text(i18n['ANSWER_ERROR_' + error]);
 			}
 			
-			widgetContainer.append('p')
+			container.append('p')
 				.classed('question', true)
 				.text(question);
 				
-			var txtAnswer = widgetContainer.append('input')
+			var txtAnswer = container.append('input')
 				.attr({
 					type: 'text',
 					placeholder: i18n.ANSWER_CUE,
@@ -188,7 +201,7 @@
 				}
 			});
 				
-			var btnSubmit = widgetContainer.append('button')
+			var btnSubmit = container.append('button')
 				.attr('disabled', true)
 				.classed({
 					'btn': true,
@@ -221,13 +234,13 @@
 		};
 	}
 	
-	function showWaiting(widgetContainer) {
+	function showWaiting(container) {
 		return function () {
-			widgetContainer.append('p')
+			container.append('p')
 				.classed('waiting', true)
 				.text(i18n.WAITING);
 				
-			widgetContainer.append('div')
+			container.append('div')
 				.classed('loading-container', true)
 				.append('p')
 				.classed({
@@ -239,9 +252,9 @@
 		};
 	}
 	
-	function showChoices(widgetContainer, task) {
+	function showChoices(container, task) {
 		return function (choices) {
-			widgetContainer
+			container
 				.selectAll('.btn-choice')
 				.data(choices)
 				.enter()
