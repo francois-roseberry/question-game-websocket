@@ -50,6 +50,15 @@
 			domContext.assertOneOf('.name-error');
 		});
 		
+		it('renders an observer button', function () {
+			domContext.assertOneOf('.btn-observer');
+		});
+		
+		it('when clicking the observer button, task status becomes players', function () {
+			domContext.clickOn('.btn-observer');
+			expect(currentStatus.name).to.eql('players');
+		});
+		
 		describe('after player name is submitted', function () {
 			beforeEach(function () {
 				domContext.enterTextIn('.txt-player-name', 'player1');

@@ -78,6 +78,7 @@
 	
 	PlayGameTask.prototype.setObserver = function () {
 		this._isObserver = true;
+		this._status.onNext(playersStatus([]));
 	};
 	
 	PlayGameTask.prototype.startGame = function () {

@@ -17,6 +17,7 @@
 			widgetContainer.selectAll('*').remove();
 			status.match({
 				initial: showPlayerLogin(widgetContainer, task),
+				players: showConnectedPlayers(widgetContainer),
 				before: showStartButton(widgetContainer, task),
 				starting: showStartingControls(widgetContainer, task),
 				question: showQuestion(widgetContainer, task),
@@ -93,6 +94,23 @@
 			});
 			
 			$(txtPlayerName[0]).focus();
+			
+			widgetContainer.append('button')
+				.classed({
+					'btn': true,
+					'btn-primary': true,
+					'btn-observer': true
+				})
+				.text(i18n.OBSERVE)
+				.on('click', function () {
+					task.setObserver();
+				});
+		};
+	}
+	
+	function showConnectedPlayers(widgetContainer) {
+		return function (players) {
+			
 		};
 	}
 	

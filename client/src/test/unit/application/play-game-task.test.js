@@ -21,10 +21,15 @@
 			expect(currentStatus.name).to.eql('initial');
 		});
 		
-		it('if game service rejects the name, keeps the same status', function() {
+		it('if game service rejects the name, keeps the same status', function () {
 			gameService.rejectNextName();
 			task.setPlayerName('bob');
 			expect(currentStatus.name).to.eql('initial');
+		});
+		
+		it('sends a new players status when player becomes observer', function () {
+			task.setObserver();
+			expect(currentStatus.name).to.eql('players');
 		});
 		
 		it('sends a new status if player is observer and ' +
