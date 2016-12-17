@@ -170,7 +170,7 @@
 	}
 	
 	function showQuestion(container, task) {
-		return function (question, error) {
+		return function (question, isObserver, error) {
 			if (error) {
 				container.append('div')
 					.classed({
@@ -185,54 +185,56 @@
 				.classed('question', true)
 				.text(question);
 				
-			var txtAnswer = container.append('input')
-				.attr({
-					type: 'text',
-					placeholder: i18n.ANSWER_CUE,
-					maxlength: 25
-				})
-				.classed({
-					'txt-answer': true,
-					'form-control': true
+			if (!isObserver) {
+				var txtAnswer = container.append('input')
+					.attr({
+						type: 'text',
+						placeholder: i18n.ANSWER_CUE,
+						maxlength: 25
+					})
+					.classed({
+						'txt-answer': true,
+						'form-control': true
+					});
+					
+				$(txtAnswer[0]).keypress(function (e) {
+					var chr = String.fromCharCode(e.which);
+					if (FORBIDDEN_CHARS.indexOf(chr) > 0) {
+						return false;
+					}
 				});
-				
-			$(txtAnswer[0]).keypress(function (e) {
-				var chr = String.fromCharCode(e.which);
-				if (FORBIDDEN_CHARS.indexOf(chr) > 0) {
-					return false;
-				}
-			});
-				
-			var btnSubmit = container.append('button')
-				.attr('disabled', true)
-				.classed({
-					'btn': true,
-					'btn-primary': true,
-					'btn-lg': true,
-					'btn-submit-answer': true
-				})
-				.text(i18n.SUBMIT_ANSWER)
-				.on('click', function () {
-					var answer = $(txtAnswer[0]).val();
-					task.submitAnswer(answer);
+					
+				var btnSubmit = container.append('button')
+					.attr('disabled', true)
+					.classed({
+						'btn': true,
+						'btn-primary': true,
+						'btn-lg': true,
+						'btn-submit-answer': true
+					})
+					.text(i18n.SUBMIT_ANSWER)
+					.on('click', function () {
+						var answer = $(txtAnswer[0]).val();
+						task.submitAnswer(answer);
+					});
+					
+				$(txtAnswer[0]).on('input', function () {
+					var hasText = $(txtAnswer[0]).val() !== "";
+					if (hasText) {
+						$(btnSubmit[0]).removeAttr('disabled');
+					} else {
+						$(btnSubmit[0]).attr('disabled', true);
+					}
 				});
-				
-			$(txtAnswer[0]).on('input', function () {
-				var hasText = $(txtAnswer[0]).val() !== "";
-				if (hasText) {
-					$(btnSubmit[0]).removeAttr('disabled');
-				} else {
-					$(btnSubmit[0]).attr('disabled', true);
-				}
-			});
-				
-			$(txtAnswer[0]).on('keyup', function (e) {
-				if (e.keyCode === 13) {
-					$(btnSubmit[0]).click();
-				}
-			});
-				
-			$(txtAnswer[0]).focus();
+					
+				$(txtAnswer[0]).on('keyup', function (e) {
+					if (e.keyCode === 13) {
+						$(btnSubmit[0]).click();
+					}
+				});
+					
+				$(txtAnswer[0]).focus();
+			}
 		};
 	}
 	

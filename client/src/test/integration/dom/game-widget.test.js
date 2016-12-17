@@ -125,6 +125,14 @@
 					expect(currentStatus.name).to.eql('before');
 				});
 				
+				it('when question is received and player is observer, ' +
+					'does not render answer box and button', function () {
+						task.setObserver();
+						gameService.sendQuestion('2 + 2 = ?');
+						domContext.assertNothingOf('.txt-answer');
+						domContext.assertNothingOf('.btn-submit-answer');
+					});
+				
 				describe('after question is received', function () {
 					beforeEach(function () {
 						gameService.sendQuestion('2 + 2 = ?');
