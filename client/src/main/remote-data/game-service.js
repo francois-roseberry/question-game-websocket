@@ -29,8 +29,12 @@
 			starting.onNext(remainingSeconds);
 		});
 		
-		this._socket.on('question', function (question) {
-			questions.onNext(question);
+		this._socket.on('question', function (question, questionIndex, questionCount) {
+			questions.onNext({
+				question: question, 
+				index: questionIndex,
+				total: questionCount
+			});
 		});
 		
 		this._socket.on('choices', function (choicesArray) {

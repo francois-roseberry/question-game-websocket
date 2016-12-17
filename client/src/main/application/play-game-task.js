@@ -39,7 +39,7 @@
 		var task = new PlayGameTask(status, gameService);
 		
 		gameService.questions().subscribe(function (question) {
-			status.onNext(questionStatus(question, task._isObserver));
+			status.onNext(questionStatus(question.question, question.index, question.total, task._isObserver));
 		});
 		
 		gameService.starting().subscribe(function (remainingSeconds) {
@@ -99,12 +99,12 @@
 		var gameService = this._gameService;
 		status.take(1).subscribe(function (currentStatus) {
 			currentStatus.match({
-				question: function (question, isObserver) {
+				question: function (question, questionIndex, questionCount, isObserver) {
 					gameService.submitAnswer(answer, function (success, error) {
 						if (success) {
 							status.onNext(waitingStatus());
 						} else {
-							status.onNext(questionStatus(question, isObserver, error));
+							status.onNext(questionStatus(question, questionIndex, questionCount, isObserver, error));
 						}
 					});
 				}
@@ -150,11 +150,11 @@
 		};
 	}
 	
-	function questionStatus(question, isObserver, error) {
+	function questionStatus(question, questionIndex, questionCount, isObserver, error) {
 		return {
 			name: 'question',
 			match: function (visitor) {
-				return visitor.question(question, isObserver, error);
+				return visitor.question(question, questionIndex, questionCount, isObserver, error);
 			}
 		};
 	}

@@ -78,3 +78,9 @@
 .player:last-child {
 	border: 0;
 }
+
+.question-number {
+	position: absolute;
+	right: 3%;
+	font-size: 3em !important;
+}

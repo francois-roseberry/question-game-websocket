@@ -46,9 +46,17 @@
 	};
 	
 	FakeGameService.prototype.sendQuestion = function (question) {
-		precondition(_.isString(question), 'Sending a question requires said question');
+		precondition(question &&
+			_.isString(question.question) &&
+			_.isNumber(question.index) &&
+			_.isNumber(question.total),
+			'Sending a question requires said question');
 		
-		this._questions.onNext(question);
+		this._questions.onNext({
+			question: question,
+			index: 1,
+			count: 10
+		});
 	};
 	
 	FakeGameService.prototype.sendChoices = function (choices) {

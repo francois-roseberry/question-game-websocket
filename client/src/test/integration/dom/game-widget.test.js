@@ -143,6 +143,10 @@
 						domContext.assertNothingOf('.btn-cancel');
 					});
 					
+					it('renders a text containing question number', function () {
+						domContext.assertOneOf('.question-number');
+					});
+					
 					it('renders a text containing the question', function () {
 						domContext.assertOneOf('.question');
 					});

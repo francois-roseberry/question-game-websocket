@@ -37,7 +37,7 @@ function onConnect(questions) {
 		// TODO : Save the client socket id and his name in an array of players, later will also contain the score
 		
 		socket.on('name', onPlayerName(socket));
-		socket.on('start', onStart(socket, questions[questionIndex].question));
+		socket.on('start', onStart(socket, questions));
 		socket.on('cancel', onCancel(socket));
 		socket.on('answer', onAnswer(socket, questions));
 		socket.on('choice', onChoice(socket, questions));
@@ -61,16 +61,20 @@ function onPlayerName(socket) {
 				lastChoice: null
 			};
 			socket.emit('name response', true);
+			var names = _.map(players, function (player) {
+				return player.name;
+			});
+			io.emit('players', names);
 		}
 	};
 }
 
-function onStart(socket, question) {
+function onStart(socket, questions) {
 	return function () {
 		console.log('Game started by [' + players[socket.id].name + ']');
 		countdown(countdownObject, 5, function () {
 			console.log('Game start, sending first question');
-			io.emit('question', question);
+			io.emit('question', questions[0].question, 1, questions.length);
 		});
 	};
 }
@@ -96,7 +100,8 @@ function onAnswer(socket, questions) {
 			players[socket.id].lastAnswer = answer;
 			socket.emit('answer response', true);
 			if (hasEveryPlayerAnswered()) {
-				// TODO : each player must receive not receive its own choice, thus a different choice array for everyone
+				// TODO : each player must not receive its own choice, thus a different choice array for everyone
+				// Not really sure about this one, need to check
 				var choices = computeChoices(truth);
 				console.log('Everybody has answered, sending choices : ' + JSON.stringify(choices));
 				io.emit('choices', choices);
@@ -134,7 +139,7 @@ function onChoice(socket, questions) {
 				if (questionIndex < questions.length) {
 					console.log('Sending next question');
 					resetAnswers();
-					io.emit('question', questions[questionIndex].question);
+					io.emit('question', questions[questionIndex].question, questionIndex + 1, questions.length);
 				} else {
 					console.log('Game finished, no more questions');
 				}

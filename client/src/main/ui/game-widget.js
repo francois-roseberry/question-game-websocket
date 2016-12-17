@@ -170,7 +170,7 @@
 	}
 	
 	function showQuestion(container, task) {
-		return function (question, isObserver, error) {
+		return function (question, questionIndex, questionCount, isObserver, error) {
 			if (error) {
 				container.append('div')
 					.classed({
@@ -180,6 +180,13 @@
 					})
 					.text(i18n['ANSWER_ERROR_' + error]);
 			}
+			
+			container.append('span')
+				.classed({
+					'badge': true,
+					'question-number': true
+				})
+				.text(questionIndex + '/' + questionCount);
 			
 			container.append('p')
 				.classed('question', true)
