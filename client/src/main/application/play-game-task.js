@@ -6,6 +6,7 @@
 	exports.start = function (gameService) {
 		precondition(gameService &&
 			_.isFunction(gameService.setPlayerName) &&
+			_.isFunction(gameService.players) &&
 			_.isFunction(gameService.startGame) &&
 			_.isFunction(gameService.starting) &&
 			_.isFunction(gameService.cancelStart) &&
@@ -18,8 +19,8 @@
 		
 		var status = new Rx.BehaviorSubject(initialStatus());
 		
-		gameService.starting().subscribe(function (remaingSeconds) {
-			status.onNext(startingStatus(remaingSeconds));
+		gameService.starting().subscribe(function (remainingSeconds) {
+			status.onNext(startingStatus(remainingSeconds));
 		});
 		
 		gameService.questions().subscribe(function (question) {
@@ -34,7 +35,7 @@
 		// Each result will be made of :
 		// -choice    : the textual choice
 		// -author    : either 'truth' or the name of the player who wrote it
-		// -choosedBy : array of player namnes who chose it
+		// -choosedBy : array of player names who chose it
 		gameService.results().subscribe(function (results) {
 			status.onNext(resultsStatus(results));
 		});
@@ -43,12 +44,21 @@
 			status.onNext(scoresStatus(scores));
 		});
 		
-		return new PlayGameTask(status, gameService);
+		var task = new PlayGameTask(status, gameService);
+		
+		gameService.players().subscribe(function (playerArray) {
+			if (task._isObserver) {
+				status.onNext(playersStatus(playerArray));
+			}
+		});
+		
+		return task;
 	};
 	
 	function PlayGameTask(status, gameService) {
 		this._status = status;
 		this._gameService = gameService;
+		this._isObserver = false;
 	}
 	
 	PlayGameTask.prototype.setPlayerName = function (name) {
@@ -64,6 +74,10 @@
 				self._status.onNext(initialStatus(error));
 			}
 		});
+	};
+	
+	PlayGameTask.prototype.setObserver = function () {
+		this._isObserver = true;
 	};
 	
 	PlayGameTask.prototype.startGame = function () {
@@ -176,6 +190,15 @@
 			name: 'scores',
 			match: function (visitor) {
 				return visitor.scores(scores);
+			}
+		};
+	}
+	
+	function playersStatus(playerArray) {
+		return {
+			name: 'players',
+			match: function (visitor) {
+				return visitor.players(playerArray);
 			}
 		};
 	}

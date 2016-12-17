@@ -4,20 +4,26 @@
 	var precondition = require('./contract').precondition;
 	
 	exports.create = function () {
+		var players = new Rx.Subject();
 		var starting = new Rx.Subject();
 		var questions = new Rx.Subject();
 		var choices = new Rx.Subject();
 		var scores = new Rx.Subject();
-		return new GameService(starting, questions, choices, scores);
+		return new GameService(players, starting, questions, choices, scores);
 	}; 
 	
-	function GameService(starting, questions, choices, scores) {
+	function GameService(players, starting, questions, choices, scores) {
 		this._socket = io();
+		this._players = players;
 		this._starting = starting;
 		this._questions = questions;
 		this._choices = choices;
 		this._results = new Rx.Subject();
 		this._scores = scores;
+		
+		this._socket.on('players', function (playersArray) {
+			players.onNext(playersArray);
+		});
 		
 		this._socket.on('starting', function (remainingSeconds) {
 			starting.onNext(remainingSeconds);
@@ -35,6 +41,10 @@
 			scores.onNext(scoresArray);
 		});
 	}
+	
+	GameService.prototype.players = function () {
+		return this._players.asObservable();
+	};
 	
 	GameService.prototype.starting = function () {
 		return this._starting.asObservable();

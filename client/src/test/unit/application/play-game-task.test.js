@@ -27,6 +27,19 @@
 			expect(currentStatus.name).to.eql('initial');
 		});
 		
+		it('sends a new status if player is observer and ' +
+			'game service receives player array', function () {
+				task.setObserver();
+				gameService.sendPlayerList(['bob']);
+				expect(currentStatus.name).to.eql('players');
+			});
+		
+		it('does not send a new status if player is not observer and ' +
+			'game service receives player array', function () {
+				gameService.sendPlayerList(['bob']);
+				expect(currentStatus.name).to.eql('initial');
+			});
+		
 		describe('after setting player name', function () {
 			var playerName = 'bob';
 			

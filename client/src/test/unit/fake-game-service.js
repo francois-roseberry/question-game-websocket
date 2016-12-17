@@ -10,6 +10,7 @@
 	function FakeGameService() {
 		this._rejectNextName = false;
 		this._rejectNextAnswer = false;
+		this._players = new Rx.Subject();
 		this._starting = new Rx.Subject();
 		this._questions = new Rx.Subject();
 		this._choices = new Rx.Subject();
@@ -38,6 +39,10 @@
 	
 	FakeGameService.prototype.playerName = function () {
 		return this._name;
+	};
+	
+	FakeGameService.prototype.sendPlayerList = function (playersArray) {
+		this._players.onNext(playersArray);
 	};
 	
 	FakeGameService.prototype.sendQuestion = function (question) {
@@ -78,6 +83,10 @@
 	
 	FakeGameService.prototype.submitChoice = function (choiceIndex) {
 		// Do nothing.
+	};
+	
+	FakeGameService.prototype.players = function () {
+		return this._players.asObservable();
 	};
 	
 	FakeGameService.prototype.starting = function () {
