@@ -96,7 +96,13 @@
 				domContext.assertOneOf('.btn-start-game');
 			});
 			
-			describe('after starting game', function () {
+			it('when starting game and player is observer, does not render cancel button', function () {
+				task.setObserver();
+				task.startGame();
+				domContext.assertNothingOf('.btn-cancel');
+			});
+			
+			describe('after starting game and player is not observer', function () {
 				beforeEach(function () {
 					task.startGame();
 				});

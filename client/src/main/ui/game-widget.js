@@ -146,24 +146,26 @@
 	}
 	
 	function showStartingControls(container, task) {
-		return function (secondsRemaining) {
+		return function (secondsRemaining, isObserver) {
 			container.append('p')
 				.classed('game-starting', true)
 				.text(i18n.STARTING_SOON.replace('{seconds}', secondsRemaining));
 			
-			var btnCancel = container.append('button')
-				.classed({
-					'btn': true,
-					'btn-primary': true,
-					'btn-lg': true,
-					'btn-cancel': true
-				})
-				.text(i18n.CANCEL)
-				.on('click', function () {
-					task.cancelStart();
-				});
-				
-			$(btnCancel[0]).focus();
+			if (!isObserver) {
+				var btnCancel = container.append('button')
+					.classed({
+						'btn': true,
+						'btn-primary': true,
+						'btn-lg': true,
+						'btn-cancel': true
+					})
+					.text(i18n.CANCEL)
+					.on('click', function () {
+						task.cancelStart();
+					});
+					
+				$(btnCancel[0]).focus();
+			}
 		};
 	}
 	

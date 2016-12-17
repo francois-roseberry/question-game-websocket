@@ -19,10 +19,6 @@
 		
 		var status = new Rx.BehaviorSubject(initialStatus());
 		
-		gameService.starting().subscribe(function (remainingSeconds) {
-			status.onNext(startingStatus(remainingSeconds));
-		});
-		
 		gameService.questions().subscribe(function (question) {
 			status.onNext(questionStatus(question));
 		});
@@ -45,6 +41,10 @@
 		});
 		
 		var task = new PlayGameTask(status, gameService);
+		
+		gameService.starting().subscribe(function (remainingSeconds) {
+			status.onNext(startingStatus(remainingSeconds, task._isObserver));
+		});
 		
 		gameService.players().subscribe(function (playerArray) {
 			if (task._isObserver) {
@@ -141,11 +141,11 @@
 		};
 	}
 	
-	function startingStatus(remainingSeconds) {
+	function startingStatus(remainingSeconds, isObserver) {
 		return {
 			name: 'starting',
 			match: function (visitor) {
-				return visitor.starting(remainingSeconds);
+				return visitor.starting(remainingSeconds, isObserver);
 			}
 		};
 	}
