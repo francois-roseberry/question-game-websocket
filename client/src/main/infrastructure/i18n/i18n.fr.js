@@ -11,6 +11,7 @@
 	exports.SUBMIT_ANSWER = "Envoyer";
 	exports.WAITING = "En attente des autres joueurs";
 	exports.NAME_ERROR_EXISTING = "Ce nom est déjà utilisé. Veuillez en choisir un autre.";
+	exports.NAME_ERROR_ALREADY_STARTED = "Vous ne pouvez joindre une partie déjà commencée. Revenez plus tard.";
 	exports.ANSWER_ERROR_TRUTH = "Vous devez mentir. Utilisez une autre réponse.";
 	exports.OBSERVE = "Observer";
 }());

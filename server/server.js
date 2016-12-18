@@ -14,6 +14,7 @@ var POINTS_FOR_LIE = 500;
 
 var players = {};
 var questionIndex = 0;
+var gameStarted = false;
 
 program
 	.version('0.1')
@@ -47,6 +48,11 @@ function onConnect(questions) {
 
 function onPlayerName(socket) {
 	return function (name) {
+		if (gameStarted) {
+			socket.emit('name response', false, 'ALREADY_STARTED');
+			return;
+		}
+		
 		var names = _.map(players, function (player) {
 			return player.name;
 		});
@@ -71,8 +77,14 @@ function onPlayerName(socket) {
 
 function onStart(socket, questions) {
 	return function () {
+		if (!players[socket.id]) {
+			console.log('Game cannot be started by a player who is not logged in');
+			return;
+		}
+		
 		console.log('Game started by [' + players[socket.id].name + ']');
 		countdown(countdownObject, 5, function () {
+			gameStarted = true;
 			console.log('Game start, sending first question');
 			io.emit('question', questions[0].question, 1, questions.length);
 		});
@@ -81,6 +93,11 @@ function onStart(socket, questions) {
 
 function onCancel(socket) {
 	return function () {
+		if (!players[socket.id]) {
+			console.log('Game cannot be cancelled by a user who is not logged in');
+			return
+		}
+		
 		if (countdownObject.timer) {
 			console.log('Game start cancelled by [' + players[socket.id].name + ']');
 			clearTimeout(countdownObject.timer);
@@ -92,6 +109,11 @@ function onCancel(socket) {
 
 function onAnswer(socket, questions) {
 	return function (answer) {
+		if (!players[socket.id]) {
+			console.log('Question cannot be answered by a player who is not logged in');
+			return;
+		}
+		
 		var truth = questions[questionIndex].answer;
 		if (answer === truth) {
 			socket.emit('answer response', false, 'TRUTH');
