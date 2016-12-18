@@ -4,6 +4,7 @@
 	exports.JOIN_GAME = "Joindre";
 	exports.PLAYER_NAME_LABEL = "Nom";
 	exports.PLAYER_NAME_CUE = "Entrez votre nom";
+	exports.NO_CONNECTED_PLAYERS = "Il semble n'y avoir personne. Amenez des gens ici !";
 	exports.START_GAME = "Tout le monde est présent";
 	exports.CANCEL = "Annuler";
 	exports.STARTING_SOON = "La partie commence dans {seconds} secondes";

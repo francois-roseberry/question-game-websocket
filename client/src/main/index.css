@@ -84,3 +84,9 @@
 	right: 3%;
 	font-size: 3em !important;
 }
+
+.no-player {
+	color: #666;
+	font-weight: bold;
+	font-size: 3em;
+}

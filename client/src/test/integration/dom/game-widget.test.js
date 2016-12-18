@@ -59,6 +59,26 @@
 			expect(currentStatus.name).to.eql('players');
 		});
 		
+		describe('when player is observer', function () {
+			beforeEach(function () {
+				task.setObserver();
+			});
+			
+			describe('when empty player list if received', function () {
+				beforeEach(function () {
+					gameService.sendPlayerList([]);
+				});
+				
+				it('does not render a player list', function () {
+					domContext.assertNothingOf('.players');
+				});
+				
+				it('renders a no player message', function () {
+					domContext.assertOneOf('.no-player');
+				});
+			});
+		});
+		
 		describe('after players are received and player is observer', function () {
 			var players = ['bob', 'alice', 'george'];
 			

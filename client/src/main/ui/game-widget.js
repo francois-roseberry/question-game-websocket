@@ -117,6 +117,17 @@
 	
 	function showConnectedPlayers(container) {
 		return function (players) {
+			if (players.length === 0) {
+				container.append('span')
+					.classed({
+						'text-center': true,
+						'no-player': true
+					})
+					.text(i18n.NO_CONNECTED_PLAYERS);
+					
+				return;
+			}
+			
 			container.append('ul')
 				.classed('players', true)
 				.selectAll('.player')
