@@ -10,7 +10,7 @@
 	exports.STARTING_SOON = "La partie commence dans {seconds} secondes";
 	exports.ANSWER_CUE = "Entrez un mensonge";
 	exports.SUBMIT_ANSWER = "Envoyer";
-	exports.WAITING = "En attente des autres joueurs";
+	exports.WAITING = "En attente";
 	exports.NAME_ERROR_EXISTING = "Ce nom est déjà utilisé. Veuillez en choisir un autre.";
 	exports.NAME_ERROR_ALREADY_STARTED = "Vous ne pouvez joindre une partie déjà commencée. Revenez plus tard.";
 	exports.NAME_ERROR_TRUTH = "Vous ne pouvez choisir le nom TRUTH. Veuillez en choisir un autre.";

@@ -10,7 +10,7 @@
 	exports.STARTING_SOON = "Game is starting in {seconds} seconds";
 	exports.ANSWER_CUE = "Enter your lie";
 	exports.SUBMIT_ANSWER = "Send";
-	exports.WAITING = "Waiting for other players";
+	exports.WAITING = "Waiting";
 	exports.NAME_ERROR_EXISTING = "This name has already been chosen. Please choose another.";
 	exports.NAME_ERROR_ALREADY_STARTED = "You cannot join a game that has already been started. Please comeback another time.";
 	exports.NAME_ERROR_TRUTH = "You cannot choose the name TRUTH. Please choose another.";
