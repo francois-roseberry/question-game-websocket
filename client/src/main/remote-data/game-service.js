@@ -44,6 +44,7 @@
 		});
 		
 		this._socket.on('result', function (result) {
+			console.log('GameService : result received');
 			results.onNext(result);
 		});
 		

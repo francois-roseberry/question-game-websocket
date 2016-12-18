@@ -312,17 +312,25 @@
 	
 	function showResults(container) {
 		return function (result) {
-			container.append('span')
-				.classed('result-choice', true)
-				.text(result.choice);
-				
 			container.append('div')
+				.classed('result-choice', true)
+				.text(i18n.RESULT_CHOICE.replace('{choice}', result.choice));
+				
+			container.append('ul')
 				.classed('result-authors', true)
 				.selectAll('.result-author')
 				.data(result.authors)
 				.enter()
-				.append('div')
-				.classed('result-author', true)
+				.append('li')
+				.classed({
+					'result-author': true,
+					'result-truth': function (author) {
+						return author === 'TRUTH';
+					},
+					'result-lie': function (author) {
+						return author !== 'TRUTH';
+					}
+				})
 				.attr('data-author', function (author) {
 					return author;
 				})

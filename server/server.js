@@ -34,8 +34,8 @@ fs.readFile(program.question, 'utf-8', function (err, data) {
 
 function onConnect(questions) {
 	return function (socket) {
+		
 		// TODO : if there's currently a game when the user connects, should return a message and close the socket
-		// TODO : Save the client socket id and his name in an array of players, later will also contain the score
 		
 		socket.on('name', onPlayerName(socket));
 		socket.on('start', onStart(socket, questions));

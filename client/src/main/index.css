@@ -91,3 +91,39 @@
 	font-weight: bold;
 	font-size: 3em;
 }
+
+.result-authors {
+	list-style-type: none;
+	padding-top: 4em;
+	padding-bottom: 6em;
+}
+
+.result-author, .result-choice, .result-chooser {
+	font-weight: bold;
+	font-size: 5em;
+}
+
+.result-choice {
+	text-align: center;
+}
+
+.result-author {
+	font-size: 6em;
+	text-align: center;
+}
+
+.result-truth {
+	color: #1B8F00;
+	padding: 16px;
+	border: 3px solid rgb(27, 143, 0);
+	background-color: #CFFFCF;
+}
+
+.result-lie {
+	color: rgb(180, 0, 0);
+}
+
+.result-chooser {
+	font-size: 3em;
+	text-align: center;
+}
