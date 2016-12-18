@@ -5,7 +5,7 @@
 }
 
 .inner-container {
-	width: 50%;
+	width: 60%;
 	margin: auto;
 }
 
@@ -24,9 +24,19 @@
 	text-align: center;
 }
 
+.game-starting.observer {
+	font-size: 8em;
+	font-weight: bold;
+}
+
 .question {
-	font-size: 3em;
+	font-size: 1em;
 	text-align: center;
+}
+
+.question.observer {
+	font-size: 8em;
+	font-weight: bold;
 }
 
 .btn-choice {
@@ -57,7 +67,9 @@
 
 .score {
 	border-bottom: 2px solid black;
-	font-size: 2em;
+	font-size: 3em;
+	font-weight: bold;
+	padding: 6px;
 	overflow: auto;
 }
 
@@ -73,7 +85,8 @@
 
 .player {
 	border-bottom: 2px solid black;
-	font-size: 2em;
+	font-size: 4em;
+	font-weight: bold;
 }
 
 .player:last-child {
@@ -83,7 +96,11 @@
 .question-number {
 	position: absolute;
 	right: 3%;
-	font-size: 3em !important;
+	font-size: 4em !important;
+}
+
+.question-number:not(.observer) {
+	display: none;
 }
 
 .no-player {
@@ -114,6 +131,7 @@
 
 .result-truth {
 	color: #1B8F00;
+	font-weight: bold;
 	padding: 16px;
 	border: 3px solid rgb(27, 143, 0);
 	background-color: #CFFFCF;

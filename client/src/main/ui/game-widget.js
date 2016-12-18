@@ -167,7 +167,10 @@
 	function showStartingControls(container, task) {
 		return function (secondsRemaining, isObserver) {
 			container.append('p')
-				.classed('game-starting', true)
+				.classed({
+					'game-starting': true,
+					'observer': isObserver
+				})
 				.text(i18n.STARTING_SOON.replace('{seconds}', secondsRemaining));
 			
 			if (!isObserver) {
@@ -203,12 +206,16 @@
 			container.append('span')
 				.classed({
 					'badge': true,
-					'question-number': true
+					'question-number': true,
+					'observer': isObserver
 				})
 				.text(questionIndex + '/' + questionCount);
 			
 			container.append('p')
-				.classed('question', true)
+				.classed({
+					'question': true,
+					'observer': isObserver
+				})
 				.text(question);
 				
 			if (!isObserver) {
