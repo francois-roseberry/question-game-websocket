@@ -154,6 +154,11 @@
 				task.startGame();
 				expect(currentStatus.name).to.eql('starting');
 			});
+			
+			it('sends question status if question is received', function () {
+				gameService.sendQuestion('2 + 2 = ?');
+				expect(currentStatus.name).to.eql('question');
+			});
 		});
 		
 		describe('after setting player name', function () {

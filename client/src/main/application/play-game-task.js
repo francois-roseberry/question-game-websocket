@@ -20,7 +20,7 @@
 		var task = new PlayGameTask(gameService);
 		
 		gameService.questions().subscribe(function (question) {
-			if (task._playerName) {
+			if (task._playerName || task._isObserver) {
 				task._status.onNext(
 					questionStatus(question.question, question.index, question.total, task._isObserver)
 				);
