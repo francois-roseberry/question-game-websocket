@@ -28,7 +28,7 @@
 		});
 		
 		gameService.starting().subscribe(function (remainingSeconds) {
-			if (task._playerName) {
+			if (task._playerName || task._isObserver) {
 				task._status.onNext(startingStatus(remainingSeconds, task._isObserver));
 			}
 		});

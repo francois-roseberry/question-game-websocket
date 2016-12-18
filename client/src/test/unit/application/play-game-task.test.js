@@ -149,6 +149,11 @@
 				
 				expect(currentStatus.name).to.eql('choosing');
 			});
+			
+			it('sends starting status if starting is received', function () {
+				task.startGame();
+				expect(currentStatus.name).to.eql('starting');
+			});
 		});
 		
 		describe('after setting player name', function () {
