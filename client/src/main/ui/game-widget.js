@@ -200,7 +200,9 @@
 				.text(question);
 				
 			if (!isObserver) {
-				var txtAnswer = container.append('input')
+				var txtAnswer = container.append('div')
+					.classed('form-group', true)
+					.append('input')
 					.attr({
 						type: 'text',
 						placeholder: i18n.ANSWER_CUE,
