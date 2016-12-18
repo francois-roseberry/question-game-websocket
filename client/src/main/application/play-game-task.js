@@ -40,7 +40,7 @@
 		});
 		
 		gameService.choices().subscribe(function (choices) {
-			if (task._playerName) {
+			if (task._playerName || task._isObserver) {
 				task._status.onNext(choosingStatus(choices));
 			}
 		});

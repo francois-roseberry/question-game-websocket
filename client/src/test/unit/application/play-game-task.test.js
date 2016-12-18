@@ -132,11 +132,17 @@
 				expect(currentStatus.name).to.eql('players');
 			});
 				
-			it('sends results status if resuts are received', function () {
+			it('sends results status if results are received', function () {
 				gameService.sendResult({
 					choice:'4', authors: ['bob'], choosedBy: ['alice']
 				});
 				expect(currentStatus.name).to.eql('results');
+			});
+							
+			it('send choosing status if choices are received', function () {
+				gameService.sendChoices(['2','3','4','5']);
+				
+				expect(currentStatus.name).to.eql('choosing');
 			});
 		});
 		
