@@ -46,11 +46,7 @@
 	};
 	
 	FakeGameService.prototype.sendQuestion = function (question) {
-		precondition(question &&
-			_.isString(question.question) &&
-			_.isNumber(question.index) &&
-			_.isNumber(question.total),
-			'Sending a question requires said question');
+		precondition(_.isString(question), 'Sending a question requires said question');
 		
 		this._questions.onNext({
 			question: question,
@@ -67,8 +63,14 @@
 		this._scores.onNext(scores);
 	};
 	
-	FakeGameService.prototype.sendResults = function (results) {
-		this._results.onNext(results);
+	FakeGameService.prototype.sendResult = function (result) {
+		precondition(result &&
+			_.isString(result.choice) &&
+			_.isArray(result.authors) &&
+			_.isArray(result.choosedBy),
+			'Sending a result requires said result');
+		
+		this._results.onNext(result);
 	};
 	
 	FakeGameService.prototype.startGame = function () {

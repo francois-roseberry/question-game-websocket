@@ -17,46 +17,51 @@
 			_.isFunction(gameService.results),
 			'PlayGameTask requires a valid game service');
 		
-		var status = new Rx.BehaviorSubject(initialStatus());
-		
-		gameService.choices().subscribe(function (choices) {
-			status.onNext(choosingStatus(choices));
-		});
-		
-		// Results will be an array of result objects.
-		// Each result will be made of :
-		// -choice    : the textual choice
-		// -author    : either 'truth' or the name of the player who wrote it
-		// -choosedBy : array of player names who chose it
-		gameService.results().subscribe(function (results) {
-			status.onNext(resultsStatus(results));
-		});
-		
-		gameService.scores().subscribe(function (scores) {
-			status.onNext(scoresStatus(scores));
-		});
-		
-		var task = new PlayGameTask(status, gameService);
+		var task = new PlayGameTask(gameService);
 		
 		gameService.questions().subscribe(function (question) {
-			status.onNext(questionStatus(question.question, question.index, question.total, task._isObserver));
+			if (task._playerName) {
+				task._status.onNext(
+					questionStatus(question.question, question.index, question.total, task._isObserver)
+				);
+			}
 		});
 		
 		gameService.starting().subscribe(function (remainingSeconds) {
-			status.onNext(startingStatus(remainingSeconds, task._isObserver));
+			if (task._playerName) {
+				task._status.onNext(startingStatus(remainingSeconds, task._isObserver));
+			}
 		});
 		
 		gameService.players().subscribe(function (playerArray) {
 			if (task._isObserver) {
-				status.onNext(playersStatus(playerArray));
+				task._status.onNext(playersStatus(playerArray));
+			}
+		});
+		
+		gameService.choices().subscribe(function (choices) {
+			if (task._playerName) {
+				task._status.onNext(choosingStatus(choices));
+			}
+		});
+		
+		gameService.results().subscribe(function (results) {
+			if (task._playerName || task._isObserver) {
+				task._status.onNext(resultsStatus(results));
+			}
+		});
+		
+		gameService.scores().subscribe(function (scores) {
+			if (task._playerName || task._isObserver) {
+				task._status.onNext(scoresStatus(scores));
 			}
 		});
 		
 		return task;
 	};
 	
-	function PlayGameTask(status, gameService) {
-		this._status = status;
+	function PlayGameTask(gameService) {
+		this._status = new Rx.BehaviorSubject(initialStatus());
 		this._gameService = gameService;
 		this._isObserver = false;
 	}

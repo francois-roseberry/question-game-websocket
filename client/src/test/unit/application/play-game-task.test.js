@@ -44,6 +44,58 @@
 				gameService.sendPlayerList(['bob']);
 				expect(currentStatus.name).to.eql('initial');
 			});
+			
+		it('does not send starting status if game is starting and player is not logged in', function () {
+			task.startGame();
+			expect(currentStatus.name).to.eql('initial');
+		});
+		
+		it('does not send question status if question is received and player is not logged in', function () {
+			gameService.sendQuestion('2 + 2 = ?');
+			expect(currentStatus.name).to.eql('initial');
+		});
+		
+		it('does not send choices status if choices are received and player is not logged in', function () {
+			gameService.sendChoices(['2','3','4','5']);
+			expect(currentStatus.name).to.eql('initial');
+		});
+		
+		it('does not send result status if results are received and player is not logged in', function () {
+			gameService.sendResult({
+				choice:'4', authors: ['bob'], choosedBy: ['alice']
+			});
+			expect(currentStatus.name).to.eql('initial');
+		});
+		
+		it('does not send scores status if scores are received and player is not logged in', function () {
+			gameService.sendScores([
+				{name: 'bob', score: 0},
+				{name: 'alic', score: 1000}
+			]);
+			expect(currentStatus.name).to.eql('initial');
+		});
+		
+		describe('when user if observer', function () {
+			beforeEach(function () {
+				task.setObserver();
+			});
+			
+			it('send result status if results are received', function () {
+				gameService.sendResult({
+					choice:'4', authors: ['bob'], choosedBy: ['alice']
+				});
+				expect(currentStatus.name).to.eql('results');
+			});
+			
+			it('send scores status if scores are received', function () {
+				gameService.sendScores([
+					{name: 'bob', score: 0},
+					{name: 'alic', score: 1000}
+				]);
+				
+				expect(currentStatus.name).to.eql('scores');
+			});
+		});
 		
 		describe('after setting player name', function () {
 			var playerName = 'bob';
@@ -122,10 +174,9 @@
 					
 					describe('after results are received', function () {
 						beforeEach(function() {
-							gameService.sendResults([
-								{choice:'4', author:'bob', choosedBy: ['alice']},
-								{choice:'5', author: 'truth', choosedBy: ['bob']}
-							]);
+							gameService.sendResult({
+								choice:'4', authors: ['bob'], choosedBy: ['alice']
+							});
 						});
 						
 						it('has a status of results', function () {
