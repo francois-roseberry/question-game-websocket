@@ -134,10 +134,14 @@ function onAnswer(socket, questions) {
 
 function onChoice(socket, questions) {
 	return function (choice) {
+		if (!players[socket.id]) {
+			console.log('A choice cannot be made by a player who is not logged in');
+			return;
+		}
+		
 		console.log('Player [' + players[socket.id].name + '] has choosen ' + choice);
 		players[socket.id].lastChoice = choice;
 		if (hasEveryPlayerChosen()) {
-			// TODO calculate the scores
 			console.log('Everybody has chosen, computing scores');
 			
 			_.each(players, function (player) {
