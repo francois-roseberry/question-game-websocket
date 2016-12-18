@@ -122,8 +122,6 @@ function onAnswer(socket, questions) {
 			players[socket.id].lastAnswer = answer;
 			socket.emit('answer response', true);
 			if (hasEveryPlayerAnswered()) {
-				// TODO : each player must not receive its own choice, thus a different choice array for everyone
-				// Not really sure about this one, need to check
 				var choices = computeChoices(truth);
 				console.log('Everybody has answered, sending choices : ' + JSON.stringify(choices));
 				io.emit('choices', choices);
