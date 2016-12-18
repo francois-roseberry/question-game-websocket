@@ -10,7 +10,6 @@
 		precondition(container, 'Game widget requires a container');
 		precondition(task, 'Game widget requires a game task');
 		
-		
 		var widgetContainer = d3.select(container[0]).append('div');
 		
 		task.status().subscribe(function (status) {
@@ -28,10 +27,10 @@
 		});
 	};
 	
-	function showPlayerLogin(widgetContainer, task) {
+	function showPlayerLogin(container, task) {
 		return function (error) {
 			if (error) {
-				widgetContainer.append('div')
+				container.append('div')
 					.classed({
 						'name-error': true,
 						'alert': true,
@@ -40,17 +39,20 @@
 					.text(i18n['NAME_ERROR_' + error]);
 			}
 			
-			widgetContainer.append('label')
+			var form = container.append('div')
+				.classed('form-group', true);
+			
+			form.append('label')
 				.attr('for', 'txtPlayerName')
 				.text(i18n.PLAYER_NAME_LABEL)
 				.classed('lbl-player-name', true);
 			
-			var txtPlayerName = widgetContainer.append('input')
+			var txtPlayerName = form.append('input')
 				.attr({
 					id: 'txtPlayerName',
 					type: 'text',
 					placeholder: i18n.PLAYER_NAME_CUE,
-					maxlength: 10
+					maxlength: 15
 				})
 				.classed({
 					'txt-player-name': true,
@@ -64,7 +66,7 @@
 				}
 			});
 				
-			var btnJoin = widgetContainer.append('button')
+			var btnJoin = container.append('button')
 				.attr('disabled', true)
 				.classed({
 					'btn': true,
@@ -95,10 +97,11 @@
 			
 			$(txtPlayerName[0]).focus();
 			
-			widgetContainer.append('button')
+			container.append('button')
 				.classed({
 					'btn': true,
 					'btn-primary': true,
+					'btn-lg': true,
 					'btn-observer': true
 				})
 				.text(i18n.OBSERVE)
