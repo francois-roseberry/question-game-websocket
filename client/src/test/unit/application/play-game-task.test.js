@@ -67,6 +67,11 @@
 				task.setPlayerName('bob');
 				expect(currentStatus.name).to.eql('initial');
 			});
+			
+			it('cannot be named TRUTH', function () {
+				task.setPlayerName('TRUTH');
+				expect(currentStatus.name).to.eql('initial');
+			});
 		});
 		
 		describe('when user is a player', function () {

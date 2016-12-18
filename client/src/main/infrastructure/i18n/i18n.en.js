@@ -13,6 +13,7 @@
 	exports.WAITING = "Waiting for other players";
 	exports.NAME_ERROR_EXISTING = "This name has already been chosen. Please choose another.";
 	exports.NAME_ERROR_ALREADY_STARTED = "You cannot join a game that has already been started. Please comeback another time.";
+	exports.NAME_ERROR_TRUTH = "You cannot choose the name TRUTH. Please choose another.";
 	exports.ANSWER_ERROR_TRUTH = "You must lie. Use another answer.";
 	exports.OBSERVE = "Observe";
 	exports.RESULT_CHOICE = "Choice : {choice}";

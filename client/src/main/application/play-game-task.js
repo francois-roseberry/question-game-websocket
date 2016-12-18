@@ -70,6 +70,11 @@
 		precondition(_.isString(name), 'Player name must be a string');
 		precondition(!this._playerName, 'Player name has already been set');
 		
+		if (name === 'TRUTH') {
+			this._status.onNext(initialStatus('TRUTH'));
+			return;
+		}
+		
 		var self = this;
 		this._gameService.setPlayerName(name, function (success, error) {
 			if (success) {
