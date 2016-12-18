@@ -256,8 +256,11 @@
 									domContext.assertElementCount('.score', scores.length);
 									
 									_.each(scores, function (score) {
-										domContext.assertText('.score [data-player=' + score.name + ']',
-											score.name + ' : ' + score.score);
+										domContext.assertText('.score[data-player=' + score.name + '] .score-name',
+											score.name);
+											
+										domContext.assertText('.score[data-player=' + score.name + '] .score-value',
+											score.score + '');
 									});
 								});
 							});

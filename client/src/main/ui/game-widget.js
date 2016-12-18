@@ -311,19 +311,33 @@
 	
 	function showScores(container) {
 		return function (scores) {
-			container.append('ul')
+			var scoreElements = container.append('div')
 				.classed('scores', true)
 				.selectAll('.score')
 				.data(scores)
 				.enter()
-				.append('li')
+				.append('div')
 				.classed('score', true)
-				.append('span')
 				.attr('data-player', function (score) {
 					return score.name;
+				});
+				
+			scoreElements.append('span')
+				.classed({
+					'score-name': true,
+					'pull-left': true
 				})
 				.text(function (score) {
-					return score.name + ' : ' + score.score;
+					return score.name;
+				});
+				
+			scoreElements.append('span')
+				.classed({
+					'score-value': true,
+					'pull-right': true
+				})
+				.text(function (score) {
+					return score.score;
 				});
 		};
 	}
