@@ -41,7 +41,7 @@
 		
 		gameService.choices().subscribe(function (choices) {
 			if (task._playerName || task._isObserver) {
-				task._status.onNext(choosingStatus(choices));
+				task._status.onNext(choosingStatus(choices, task._isObserver));
 			}
 		});
 		
@@ -178,11 +178,11 @@
 		};
 	}
 	
-	function choosingStatus(choices) {
+	function choosingStatus(choices, isObserver) {
 		return {
 			name: 'choosing',
 			match: function (visitor) {
-				return visitor.choosing(choices);
+				return visitor.choosing(choices, isObserver);
 			}
 		};
 	}

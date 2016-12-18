@@ -292,18 +292,20 @@
 	}
 	
 	function showChoices(container, task) {
-		return function (choices) {
+		return function (choices, isObserver) {
 			container
 				.selectAll('.btn-choice')
 				.data(choices)
 				.enter()
-				.append('button')
+				.append(isObserver ? 'div' : 'button')
 				.classed({
-					'btn': true,
-					'btn-primary': true,
-					'btn-block': true,
-					'btn-md': true,
-					'btn-choice': true
+					'btn': !isObserver,
+					'btn-primary': !isObserver,
+					'btn-block': !isObserver,
+					'btn-md': !isObserver,
+					'btn-choice': true,
+					'observer': isObserver,
+					'col-md-4': isObserver
 				})
 				.attr('data-index', function (choice, index) {
 					return index;
