@@ -97,6 +97,10 @@
 			
 			$(txtPlayerName[0]).focus();
 			
+			container.append('br');
+			container.append('br');
+			container.append('br');
+			
 			container.append('button')
 				.classed({
 					'btn': true,
