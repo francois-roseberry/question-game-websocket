@@ -7,7 +7,7 @@
 	exports.NO_CONNECTED_PLAYERS = "Il semble n'y avoir personne. Amenez des gens ici !";
 	exports.START_GAME = "Tout le monde est présent";
 	exports.CANCEL = "Annuler";
-	exports.STARTING_SOON = "La partie commence dans {seconds} secondes";
+	exports.STARTING_SOON = "La partie commence dans {seconds} seconde(s)";
 	exports.ANSWER_CUE = "Entrez un mensonge";
 	exports.SUBMIT_ANSWER = "Envoyer";
 	exports.WAITING = "En attente";

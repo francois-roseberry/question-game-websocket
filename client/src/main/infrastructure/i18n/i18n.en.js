@@ -7,7 +7,7 @@
 	exports.NO_CONNECTED_PLAYERS = "Feels a little empty here. Get people to join in !";
 	exports.START_GAME = "Everybody's in";
 	exports.CANCEL = "Cancel";
-	exports.STARTING_SOON = "Game is starting in {seconds} seconds";
+	exports.STARTING_SOON = "Game is starting in {seconds} second(s)";
 	exports.ANSWER_CUE = "Enter your lie";
 	exports.SUBMIT_ANSWER = "Send";
 	exports.WAITING = "Waiting";

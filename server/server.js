@@ -107,7 +107,7 @@ function onCancel(socket) {
 function onAnswer(socket, questions) {
 	return function (answer) {
 		if (!players[socket.id]) {
-			console.log('Question cannot be answered by a player who is not logged in');
+			console.log('Question cannot be answered by a user who is not logged in');
 			return;
 		}
 		
@@ -139,34 +139,108 @@ function onChoice(socket, questions) {
 		if (hasEveryPlayerChosen()) {
 			console.log('Everybody has chosen, computing scores');
 			
+			var truth = questions[questionIndex].answer;
+			var resultsMap = {};
+			resultsMap[truth] = { authors: ['TRUTH'], choosedBy: []};
+			
+			_.each(players, function (player) {
+				resultsMap[player.lastChoice] = getResult(resultsMap, player);
+			});
+			
 			_.each(players, function (player) {
 				// If choice is the truth, give 1000 points to that player
-				if (player.lastChoice === questions[questionIndex].answer) {
+				// and add that player in its list of choosers
+				if (player.lastChoice === truth) {
 					player.score += POINTS_FOR_TRUTH;
+					resultsMap[truth].choosedBy.push(player.name);
 				} else {
-					// Otherwise, find out who created the choice and give him (or them) 500
+					// Otherwise, find out who created the choice and give each author 500 points
 					_.each(players, function (potentialAuthor) {
+						// Do not give points to a player who picks his own answer
 						if (potentialAuthor.name !== player.name && potentialAuthor.lastAnswer === player.lastChoice) {
 							potentialAuthor.score += POINTS_FOR_LIE;
+							
 						}
 					});
+					// and add this player to the list of choosers of that choice
+					resultsMap[player.lastChoice].choosedBy.push(player.name);
 				}
 			});
 			
-			console.log(scoresArray());
-			io.emit('scores', scoresArray());
-			setTimeout(function () {
-				questionIndex++;
-				if (questionIndex < questions.length) {
-					console.log('Sending next question');
-					resetAnswers();
-					io.emit('question', questions[questionIndex].question, questionIndex + 1, questions.length);
-				} else {
-					console.log('Game finished, no more questions');
-				}
-			}, 5000);
+			resultsMap = removeUnpickedChoices(resultsMap, truth);
+			var results = placeResultsIntoArray(resultsMap, truth);
+			
+			sendResultsOneByOne(0, results, function () {
+				console.log(scoresArray());
+				io.emit('scores', scoresArray());
+				setTimeout(function () {
+					questionIndex++;
+					if (questionIndex < questions.length) {
+						console.log('Sending next question');
+						resetAnswers();
+						io.emit('question', questions[questionIndex].question, questionIndex + 1, questions.length);
+					} else {
+						console.log('Game finished, no more questions');
+					}
+				}, 5000);
+			});
 		}
 	};
+}
+
+function sendResultsOneByOne(index, results, callback) {
+	if (index === results.length) {
+		console.log('No more results to send');
+		callback();
+		return;
+	}
+	
+	console.log('Sending result : ' + JSON.stringify(results[index]));
+	io.emit('result', results[index]);
+	
+	setTimeout(function () {
+		sendResultsOneByOne(index + 1, results, callback);
+	}, 3000);
+}
+
+function placeResultsIntoArray(resultsMap, truth) {
+	var results = [];
+	_.each(_.keys(resultsMap), function (choice) {
+		if (resultsMap[choice].authors[0] !== 'TRUTH') {
+			results.push({
+				choice: choice,
+				authors: resultsMap[choice].authors,
+				choosedBy: resultsMap[choice].choosedBy
+			});
+		}
+	});
+	// Insert truth at the end
+	results.push({
+		choice: truth,
+		authors: ['TRUTH'], 
+		choosedBy: resultsMap[truth].choosedBy
+	});
+	return results;
+}
+
+function removeUnpickedChoices(resultsMap, truth) {
+	var newResultsMap = {};
+	_.each(_.keys(resultsMap), function (choice) {
+		if (choice === truth || (choice !== truth && resultsMap[choice].choosedBy.length > 0)) {
+			newResultsMap[choice] = resultsMap[choice];
+		}
+	});
+	return newResultsMap;
+}
+
+function getResult(resultsMap, player) {
+	if (resultsMap[player.lastChoice]) {
+		var result = resultsMap[player.lastChoice];
+		result.authors.push(player.name);
+		return result;
+	}
+	
+	return {authors: [player.name], choosedBy:[]};
 }
 
 function scoresArray() {
