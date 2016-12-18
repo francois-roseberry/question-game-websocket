@@ -34,7 +34,6 @@ fs.readFile(program.question, 'utf-8', function (err, data) {
 
 function onConnect(questions) {
 	return function (socket) {
-		
 		// TODO : if there's currently a game when the user connects, should return a message and close the socket
 		
 		socket.on('name', onPlayerName(socket));

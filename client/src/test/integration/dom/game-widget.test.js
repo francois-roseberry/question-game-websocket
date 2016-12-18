@@ -6,6 +6,7 @@
 	var GameWidget = require('./game-widget');
 	var GameTask = require('./play-game-task');
 	
+	var i18n = require('./i18n').i18n();
 	var describeInDom = require('./dom-fixture').describeInDom;
 	
 	describeInDom('A Game widget', function (domContext) {
@@ -247,7 +248,8 @@
 								
 								it('renders the choice label', function () {
 									domContext.assertOneOf('.result-choice');
-									domContext.assertText('.result-choice', result.choice);
+									domContext.assertText('.result-choice',
+										i18n.RESULT_CHOICE.replace('{choice}', result.choice));
 								});
 								
 								it('renders list of authors', function () {

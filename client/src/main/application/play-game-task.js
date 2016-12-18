@@ -46,10 +46,9 @@
 		});
 		
 		gameService.results().subscribe(function (results) {
-			// Temporary
-			//if (task._playerName || task._isObserver) {
+			if (task._playerName || task._isObserver) {
 				task._status.onNext(resultsStatus(results));
-			//}
+			}
 		});
 		
 		gameService.scores().subscribe(function (scores) {
