@@ -22,6 +22,7 @@
 				question: showQuestion(widgetContainer, task),
 				waiting: showWaiting(widgetContainer),
 				choosing: showChoices(widgetContainer, task),
+				results: showResults(widgetContainer),
 				scores: showScores(widgetContainer)
 			});
 		});
@@ -305,6 +306,48 @@
 				})
 				.on('click', function (choice) {
 					task.submitChoice(choice);
+				});
+		};
+	}
+	
+	function showResults(container) {
+		return function (result) {
+			container.append('span')
+				.classed('result-choice', true)
+				.text(result.choice);
+				
+			container.append('div')
+				.classed('result-authors', true)
+				.selectAll('.result-author')
+				.data(result.authors)
+				.enter()
+				.append('div')
+				.classed('result-author', true)
+				.attr('data-author', function (author) {
+					return author;
+				})
+				.text(function (author) {
+					if (author === 'TRUTH') {
+						return i18n.RESULT_CHOICE_TRUTH;
+					}
+					
+					return i18n.RESULT_CHOICE_LIE
+						.replace('{author}', author);
+				});
+				
+			container.append('div')
+				.classed('result-choosers', true)
+				.selectAll('.result-chooser')
+				.data(result.choosedBy)
+				.enter()
+				.append('div')
+				.classed('result-chooser', true)
+				.attr('data-chooser', function (chooser) {
+					return chooser;
+				})
+				.text(function (chooser) {
+					return i18n.RESULT_CHOOSED_BY
+						.replace('{chooser}', chooser);
 				});
 		};
 	}

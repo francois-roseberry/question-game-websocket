@@ -238,6 +238,35 @@
 								});
 							});
 							
+							describe('after receiving results', function () {
+								var result = { choice: 'alibaba', authors: ['bob'], choosedBy: ['alice', 'george']};
+								
+								beforeEach(function () {
+									gameService.sendResult(result);
+								});
+								
+								it('renders the choice label', function () {
+									domContext.assertOneOf('.result-choice');
+									domContext.assertText('.result-choice', result.choice);
+								});
+								
+								it('renders list of authors', function () {
+									domContext.assertOneOf('.result-authors');
+									
+									_.each(result.authors, function (author) {
+										domContext.assertOneOf('.result-author[data-author=' + author + ']');
+									});
+								});
+								
+								it('renders the list of who choosed it', function () {
+									domContext.assertOneOf('.result-choosers');
+									
+									_.each(result.choosedBy, function (chooser) {
+										domContext.assertOneOf('.result-chooser[data-chooser=' + chooser + ']');
+									});
+								});
+							});
+							
 							describe('after scores are received', function () {
 								var scores = [
 									{name: 'bob', score: 0},

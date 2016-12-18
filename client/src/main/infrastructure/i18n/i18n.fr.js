@@ -15,4 +15,7 @@
 	exports.NAME_ERROR_ALREADY_STARTED = "Vous ne pouvez joindre une partie déjà commencée. Revenez plus tard.";
 	exports.ANSWER_ERROR_TRUTH = "Vous devez mentir. Utilisez une autre réponse.";
 	exports.OBSERVE = "Observer";
+	exports.RESULT_CHOICE_TRUTH = "Vraie réponse";
+	exports.RESULT_CHOICE_LIE = "Mensonge de {author}";
+	exports.RESULT_CHOOSED_BY = "Choisi par {chooser}";
 }());

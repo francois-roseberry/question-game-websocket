@@ -15,4 +15,7 @@
 	exports.NAME_ERROR_ALREADY_STARTED = "You cannot join a game that has already been started. Please comeback another time.";
 	exports.ANSWER_ERROR_TRUTH = "You must lie. Use another answer.";
 	exports.OBSERVE = "Observe";
+	exports.RESULT_CHOICE_TRUTH = "Truth";
+	exports.RESULT_CHOICE_LIE = "{}'s lie";
+	exports.RESULT_CHOOSED_BY = "Choosed by {chooser}";
 }());
