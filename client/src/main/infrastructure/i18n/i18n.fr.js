@@ -8,7 +8,7 @@
 	exports.START_GAME = "Tout le monde est présent";
 	exports.CANCEL = "Annuler";
 	exports.STARTING_SOON = "La partie commence dans {seconds} seconde(s)";
-	exports.ANSWER_CUE = "Entrez un mensonge";
+	exports.ANSWER_CUE = "Entrez votre mensonge";
 	exports.SUBMIT_ANSWER = "Envoyer";
 	exports.WAITING = "En attente";
 	exports.NAME_ERROR_EXISTING = "Ce nom est déjà utilisé. Veuillez en choisir un autre.";
