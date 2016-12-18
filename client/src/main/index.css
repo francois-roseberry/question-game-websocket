@@ -5,7 +5,7 @@
 }
 
 .inner-container {
-	width: 60%;
+	width: 80%;
 	margin: auto;
 }
 
@@ -35,7 +35,7 @@
 }
 
 .question.observer {
-	font-size: 8em;
+	font-size: 7em;
 	font-weight: bold;
 }
 
