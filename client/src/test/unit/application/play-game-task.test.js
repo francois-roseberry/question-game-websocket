@@ -21,58 +21,88 @@
 			expect(currentStatus.name).to.eql('initial');
 		});
 		
-		it('if game service rejects the name, keeps the same status', function () {
-			gameService.rejectNextName();
-			task.setPlayerName('bob');
-			expect(currentStatus.name).to.eql('initial');
-		});
-		
-		it('sends a new players status when player becomes observer', function () {
-			task.setObserver();
-			expect(currentStatus.name).to.eql('players');
-		});
-		
-		it('sends a new status if player is observer and ' +
-			'game service receives player array', function () {
-				task.setObserver();
-				gameService.sendPlayerList(['bob']);
-				expect(currentStatus.name).to.eql('players');
+		describe('when user is not logged in', function () {
+			it('does not send starting status if game is starting', function () {
+				task.startGame();
+				expect(currentStatus.name).to.eql('initial');
 			});
-		
-		it('does not send a new status if player is not observer and ' +
-			'game service receives player array', function () {
+			
+			it('does not send a new status if game service receives player list', function () {
 				gameService.sendPlayerList(['bob']);
 				expect(currentStatus.name).to.eql('initial');
 			});
 			
-		it('does not send starting status if game is starting and player is not logged in', function () {
-			task.startGame();
-			expect(currentStatus.name).to.eql('initial');
-		});
-		
-		it('does not send question status if question is received and player is not logged in', function () {
-			gameService.sendQuestion('2 + 2 = ?');
-			expect(currentStatus.name).to.eql('initial');
-		});
-		
-		it('does not send choices status if choices are received and player is not logged in', function () {
-			gameService.sendChoices(['2','3','4','5']);
-			expect(currentStatus.name).to.eql('initial');
-		});
-		
-		it('does not send result status if results are received and player is not logged in', function () {
-			gameService.sendResult({
-				choice:'4', authors: ['bob'], choosedBy: ['alice']
+			it('does not send a new status if question is received', function () {
+				gameService.sendQuestion('2 + 2 = ?');
+				expect(currentStatus.name).to.eql('initial');
 			});
-			expect(currentStatus.name).to.eql('initial');
+			
+			it('does not send a new status if choices are received', function () {
+				gameService.sendChoices(['2','3','4','5']);
+				expect(currentStatus.name).to.eql('initial');
+			});
+			
+			it('does not send a new status if results are received', function () {
+				gameService.sendResult({
+					choice:'4', authors: ['bob'], choosedBy: ['alice']
+				});
+				expect(currentStatus.name).to.eql('initial');
+			});
+			
+			it('does not send scores status if scores are received', function () {
+				gameService.sendScores([
+					{name: 'bob', score: 0},
+					{name: 'alice', score: 1000}
+				]);
+				expect(currentStatus.name).to.eql('initial');
+			});
+			
+			it('sends a new players status when player becomes observer', function () {
+				task.setObserver();
+				expect(currentStatus.name).to.eql('players');
+			});
+			
+			it('if game service rejects the name, keeps the same status', function () {
+				gameService.rejectNextName();
+				task.setPlayerName('bob');
+				expect(currentStatus.name).to.eql('initial');
+			});
 		});
 		
-		it('does not send scores status if scores are received and player is not logged in', function () {
-			gameService.sendScores([
-				{name: 'bob', score: 0},
-				{name: 'alic', score: 1000}
-			]);
-			expect(currentStatus.name).to.eql('initial');
+		describe('when user is a player', function () {
+			var playerName = 'bob';
+			
+			beforeEach(function () {
+				task.setPlayerName(playerName);
+			});
+			
+			it('has set player name in game service too', function () {
+				expect(gameService.playerName()).to.eql(playerName);
+			});
+			
+			it('has a status of before', function () {
+				expect(currentStatus.name).to.eql('before');
+			});
+			
+			it('does not send a new status if game service receives player list', function () {
+				gameService.sendPlayerList(['bob']);
+				expect(currentStatus.name).to.eql('before');
+			});
+			
+			it('does not send a new status if game service receives result', function () {
+				gameService.sendResult({
+					choice:'4', authors: ['bob'], choosedBy: ['alice']
+				});
+				expect(currentStatus.name).to.eql('before');
+			});
+			
+			it('does not send a new status if game service receive scores', function () {
+				gameService.sendScores([
+					{name: 'bob', score: 0},
+					{name: 'alice', score: 1000}
+				]);
+				expect(currentStatus.name).to.eql('before');
+			});
 		});
 		
 		describe('when user if observer', function () {
@@ -90,9 +120,30 @@
 			it('send scores status if scores are received', function () {
 				gameService.sendScores([
 					{name: 'bob', score: 0},
-					{name: 'alic', score: 1000}
+					{name: 'alice', score: 1000}
 				]);
 				
+				expect(currentStatus.name).to.eql('scores');
+			});
+			
+			it('sends a new status if game service receives player list', function () {
+				task.setObserver();
+				gameService.sendPlayerList(['bob']);
+				expect(currentStatus.name).to.eql('players');
+			});
+				
+			it('has a status of results if game service receive result', function () {
+				gameService.sendResult({
+					choice:'4', authors: ['bob'], choosedBy: ['alice']
+				});
+				expect(currentStatus.name).to.eql('results');
+			});
+						
+			it('has a status of scores if game service receives scores', function () {
+				gameService.sendScores([
+					{name: 'bob', score: 0},
+					{name: 'alice', score: 1000}
+				]);
 				expect(currentStatus.name).to.eql('scores');
 			});
 		});
@@ -102,14 +153,6 @@
 			
 			beforeEach(function () {
 				task.setPlayerName(playerName);
-			});
-			
-			it('has set player name in game service too', function () {
-				expect(gameService.playerName()).to.eql(playerName);
-			});
-			
-			it('has a status of before', function () {
-				expect(currentStatus.name).to.eql('before');
 			});
 			
 			describe('after starting game', function () {
@@ -168,31 +211,6 @@
 								it('has a status of waiting', function () {
 									expect(currentStatus.name).to.eql('waiting');
 								});
-							});
-						});
-					});
-					
-					describe('after results are received', function () {
-						beforeEach(function() {
-							gameService.sendResult({
-								choice:'4', authors: ['bob'], choosedBy: ['alice']
-							});
-						});
-						
-						it('has a status of results', function () {
-							expect(currentStatus.name).to.eql('results');
-						});
-					});
-					
-					describe('after scores are received', function () {
-						beforeEach(function () {
-							gameService.sendScores([
-								{name: 'bob', score: 0},
-								{name: 'alic', score: 1000}
-							]);
-							
-							it('has a status of scores', function () {
-								expect(currentStatus.name).to.eql('scores');
 							});
 						});
 					});

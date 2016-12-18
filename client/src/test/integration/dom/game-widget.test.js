@@ -78,26 +78,86 @@
 					domContext.assertOneOf('.no-player');
 				});
 			});
-		});
-		
-		describe('after players are received and player is observer', function () {
+			
 			var players = ['bob', 'alice', 'george'];
 			
-			beforeEach(function () {
+			it('if game service receive results, renders a players list', function () {
 				task.setObserver();
 				gameService.sendPlayerList(players);
-			});
-			
-			it('renders a players list', function () {
+				
 				domContext.assertOneOf('.players');
-			});
-			
-			it('renders a player element for each player', function () {
 				domContext.assertElementCount('.player', players.length);
 				
 				_.each(players, function (player) {
 					domContext.assertText('.player [data-player=' + player + ']',
 						player);
+				});
+			});
+			
+			describe('after receiving results', function () {
+				var result = { choice: 'alibaba', authors: ['bob'], choosedBy: ['alice', 'george']};
+				
+				beforeEach(function () {
+					gameService.sendResult(result);
+				});
+				
+				it('renders the choice label', function () {
+					domContext.assertOneOf('.result-choice');
+					domContext.assertText('.result-choice',
+						i18n.RESULT_CHOICE.replace('{choice}', result.choice));
+				});
+				
+				it('renders the list of authors', function () {
+					domContext.assertOneOf('.result-authors');
+					
+					_.each(result.authors, function (author) {
+						domContext.assertOneOf('.result-author[data-author=' + author + ']');
+						
+						if (author === 'TRUTH') {
+							domContext.assertCssClass('.result-author[data-author=' + author + ']', 'result-truth');
+							domContext.assertText('.result-author[data-author=' + author + ']',
+								i18n.RESULT_CHOICE_TRUTH);
+						} else {
+							domContext.assertCssClass('.result-author[data-author=' + author + ']', 'result-lie');
+							domContext.assertText('.result-author[data-author=' + author + ']',
+								i18n.RESULT_CHOICE_LIE.replace('{author}', author));
+						}
+					});
+				});
+				
+				it('renders the list of who choosed it', function () {
+					domContext.assertOneOf('.result-choosers');
+					
+					_.each(result.choosedBy, function (chooser) {
+						domContext.assertOneOf('.result-chooser[data-chooser=' + chooser + ']');
+					});
+				});
+			});
+			
+			describe('after receiving scores', function () {
+				var scores = [
+					{name: 'bob', score: 0},
+					{name: 'alice', score: 1000},
+					{name: 'george', score: 500}
+				];
+				beforeEach(function () {
+					gameService.sendScores(scores);
+				});
+				
+				it('renders a scores list', function () {
+					domContext.assertOneOf('.scores');
+				});
+				
+				it('renders a score element for each score', function () {
+					domContext.assertElementCount('.score', scores.length);
+					
+					_.each(scores, function (score) {
+						domContext.assertText('.score[data-player=' + score.name + '] .score-name',
+							score.name);
+							
+						domContext.assertText('.score[data-player=' + score.name + '] .score-value',
+							score.score + '');
+					});
 				});
 			});
 		});
@@ -236,63 +296,6 @@
 								
 								it('returns to a waiting status', function () {
 									expect(currentStatus.name).to.eql('waiting');
-								});
-							});
-							
-							describe('after receiving results', function () {
-								var result = { choice: 'alibaba', authors: ['bob'], choosedBy: ['alice', 'george']};
-								
-								beforeEach(function () {
-									gameService.sendResult(result);
-								});
-								
-								it('renders the choice label', function () {
-									domContext.assertOneOf('.result-choice');
-									domContext.assertText('.result-choice',
-										i18n.RESULT_CHOICE.replace('{choice}', result.choice));
-								});
-								
-								it('renders list of authors', function () {
-									domContext.assertOneOf('.result-authors');
-									
-									_.each(result.authors, function (author) {
-										domContext.assertOneOf('.result-author[data-author=' + author + ']');
-									});
-								});
-								
-								it('renders the list of who choosed it', function () {
-									domContext.assertOneOf('.result-choosers');
-									
-									_.each(result.choosedBy, function (chooser) {
-										domContext.assertOneOf('.result-chooser[data-chooser=' + chooser + ']');
-									});
-								});
-							});
-							
-							describe('after scores are received', function () {
-								var scores = [
-									{name: 'bob', score: 0},
-									{name: 'alice', score: 1000},
-									{name: 'george', score: 500}
-								];
-								beforeEach(function () {
-									gameService.sendScores(scores);
-								});
-								
-								it('renders a scores list', function () {
-									domContext.assertOneOf('.scores');
-								});
-								
-								it('renders a score element for each score', function () {
-									domContext.assertElementCount('.score', scores.length);
-									
-									_.each(scores, function (score) {
-										domContext.assertText('.score[data-player=' + score.name + '] .score-name',
-											score.name);
-											
-										domContext.assertText('.score[data-player=' + score.name + '] .score-value',
-											score.score + '');
-									});
 								});
 							});
 						});
