@@ -132,19 +132,11 @@
 				expect(currentStatus.name).to.eql('players');
 			});
 				
-			it('has a status of results if game service receive result', function () {
+			it('sends results status if resuts are received', function () {
 				gameService.sendResult({
 					choice:'4', authors: ['bob'], choosedBy: ['alice']
 				});
 				expect(currentStatus.name).to.eql('results');
-			});
-						
-			it('has a status of scores if game service receives scores', function () {
-				gameService.sendScores([
-					{name: 'bob', score: 0},
-					{name: 'alice', score: 1000}
-				]);
-				expect(currentStatus.name).to.eql('scores');
 			});
 		});
 		
