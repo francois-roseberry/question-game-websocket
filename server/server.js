@@ -16,9 +16,12 @@ var TIME_AFTER_SCORES = 5000;
 var SECONDS_BEFORE_START = 5;
 
 var countdownObject = {};
+var resultCooldownTimer = null;
+var scoreCooldownTimer = null;
 var players = {};
 var questionIndex = 0;
 var gameStarted = false;
+var gameEnded = false;
 
 program
 	.version('0.1')
@@ -180,13 +183,14 @@ function onChoice(socket, questions) {
 				var isFinal = (questionIndex === questions.length);
 				io.emit('scores', scoresArray(), isFinal);
 				
-				setTimeout(function () {
+				var scoreCooldownTimer = setTimeout(function () {
 					if (questionIndex < questions.length) {
 						console.log('Sending next question');
 						resetAnswers();
 						io.emit('question', questions[questionIndex].question, questionIndex + 1, questions.length);
 					} else {
 						console.log('Game finished, no more questions');
+						gameEnded = true;
 					}
 				}, TIME_AFTER_SCORES);
 			});
@@ -204,7 +208,7 @@ function sendResultsOneByOne(index, results, callback) {
 	console.log('Sending result : ' + JSON.stringify(results[index]));
 	io.emit('result', results[index]);
 	
-	setTimeout(function () {
+	resultCooldownTimer = setTimeout(function () {
 		sendResultsOneByOne(index + 1, results, callback);
 	}, TIME_BETWEEN_RESULTS);
 }
@@ -262,9 +266,38 @@ function onDisconnect(socket) {
 	return function () {
 		if (players[socket.id]) {
 			console.log('Player [' + players[socket.id].name + '] has left');
-			players[socket.id] = null;
+			if ((countdownObject.timer || gameStarted) && !gameEnded) {
+				clearGameTimers();
+				gameEnded = true;
+				io.emit('quit', players[socket.id].name);
+			}
+			
+			delete players[socket.id];
+			
+			if (!gameStarted && !gameEnded) {
+				var names = _.map(players, function (player) {
+					return player.name;
+				});
+				io.emit('players', names);
+			}
 		}
 	};
+}
+
+
+function clearGameTimers() {
+	if (countdownObject.timer) {
+		clearTimeout(countdownObject.timer);
+		countdownObject.timer = null;
+	}
+	if (resultCooldownTimer) {
+		clearTimeout(resultCooldownTimer);
+		resultCooldownTimer = null;
+	}
+	if (scoreCooldownTimer) {
+		clearTimeout(scoreCooldownTimer);
+		scoreCooldownTimer = null;
+	}
 }
 
 function resetAnswers() {

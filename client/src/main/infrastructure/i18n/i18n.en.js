@@ -22,4 +22,5 @@
 	exports.RESULT_CHOOSED_BY = "Choosed by {chooser}";
 	exports.FINAL_SCORES = "Final scores";
 	exports.INTERMEDIATE_SCORES = "Scores";
+	exports.PLAYER_QUIT = "Game has ended because {player} has left the game";
 }());

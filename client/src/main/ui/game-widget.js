@@ -23,7 +23,8 @@
 				waiting: showWaiting(widgetContainer),
 				choosing: showChoices(widgetContainer, task),
 				results: showResults(widgetContainer),
-				scores: showScores(widgetContainer)
+				scores: showScores(widgetContainer),
+				quit: showQuitMessage(widgetContainer)
 			});
 		});
 	};
@@ -403,6 +404,14 @@
 				.text(function (score) {
 					return score.score;
 				});
+		};
+	}
+	
+	function showQuitMessage(container) {
+		return function (playerName) {
+			container.append('p')
+				.classed('player-quit', true)
+				.text(i18n.PLAYER_QUIT.replace('{player}', playerName));
 		};
 	}
 }());

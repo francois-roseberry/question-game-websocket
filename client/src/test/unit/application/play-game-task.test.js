@@ -72,6 +72,11 @@
 				task.setPlayerName('TRUTH');
 				expect(currentStatus.name).to.eql('initial');
 			});
+			
+			it('send quit status if game service receives quit', function () {
+				gameService.rageQuit('bob');
+				expect(currentStatus.name).to.eql('quit');
+			});
 		});
 		
 		describe('when user is a player', function () {
@@ -101,12 +106,17 @@
 				expect(currentStatus.name).to.eql('before');
 			});
 			
-			it('does not send a new status if game service receive scores', function () {
+			it('does not send a new status if game service receives scores', function () {
 				gameService.sendScores([
 					{name: 'bob', score: 0},
 					{name: 'alice', score: 1000}
 				]);
 				expect(currentStatus.name).to.eql('before');
+			});
+			
+			it('send quit status if game service receives quit', function () {
+				gameService.rageQuit('bob');
+				expect(currentStatus.name).to.eql('quit');
 			});
 		});
 		
@@ -158,6 +168,11 @@
 			it('sends question status if question is received', function () {
 				gameService.sendQuestion('2 + 2 = ?');
 				expect(currentStatus.name).to.eql('question');
+			});
+			
+			it('send quit status if quit is received', function () {
+				gameService.rageQuit('bob');
+				expect(currentStatus.name).to.eql('quit');
 			});
 		});
 		

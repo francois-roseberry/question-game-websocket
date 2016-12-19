@@ -14,7 +14,9 @@
 			_.isFunction(gameService.submitAnswer) &&
 			_.isFunction(gameService.choices) &&
 			_.isFunction(gameService.submitChoice) &&
-			_.isFunction(gameService.results),
+			_.isFunction(gameService.results) &&
+			_.isFunction(gameService.scores) &&
+			_.isFunction(gameService.playerQuit),
 			'PlayGameTask requires a valid game service');
 		
 		var task = new PlayGameTask(gameService);
@@ -55,6 +57,10 @@
 			if (task._isObserver) {
 				task._status.onNext(scoresStatus(scores.scores, scores.isFinal));
 			}
+		});
+		
+		gameService.playerQuit().subscribe(function (playerName) {
+			task._status.onNext(quitStatus(playerName));
 		});
 		
 		return task;
@@ -210,6 +216,15 @@
 			name: 'players',
 			match: function (visitor) {
 				return visitor.players(playerArray);
+			}
+		};
+	}
+	
+	function quitStatus(playerName) {
+		return {
+			name: 'quit',
+			match: function (visitor) {
+				return visitor.quit(playerName);
 			}
 		};
 	}

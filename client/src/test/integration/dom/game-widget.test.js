@@ -60,6 +60,19 @@
 			expect(currentStatus.name).to.eql('players');
 		});
 		
+		describe('when game service receives quit', function () {
+			var playerName = 'bob';
+			beforeEach(function () {
+				gameService.rageQuit(playerName);
+			});
+			
+			it('renders a message telling why game ended', function () {
+				domContext.assertOneOf('.player-quit');
+				
+				domContext.assertText('.player-quit', i18n.PLAYER_QUIT.replace('{player}', playerName));
+			});
+		});
+		
 		describe('when player is observer', function () {
 			beforeEach(function () {
 				task.setObserver();

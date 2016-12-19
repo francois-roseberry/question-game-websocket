@@ -16,6 +16,7 @@
 		this._choices = new Rx.Subject();
 		this._results = new Rx.Subject();
 		this._scores = new Rx.Subject();
+		this._playerQuit = new Rx.Subject();
 	}
 	
 	FakeGameService.prototype.rejectNextName = function () {
@@ -94,8 +95,12 @@
 		callback(true);
 	};
 	
-	FakeGameService.prototype.submitChoice = function (choiceIndex) {
+	FakeGameService.prototype.submitChoice = function (choice) {
 		// Do nothing.
+	};
+	
+	FakeGameService.prototype.rageQuit = function (playerName) {
+		this._playerQuit.onNext(playerName);
 	};
 	
 	FakeGameService.prototype.players = function () {
@@ -120,5 +125,9 @@
 	
 	FakeGameService.prototype.scores = function () {
 		return this._scores.asObservable();
+	};
+	
+	FakeGameService.prototype.playerQuit = function () {
+		return this._playerQuit.asObservable();
 	};
 }());
