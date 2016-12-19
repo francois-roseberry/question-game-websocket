@@ -271,6 +271,12 @@
 					
 				$(txtAnswer[0]).focus();
 			}
+			
+			if (isObserver && ('speechSynthesis' in window)) {
+				var msg = new SpeechSynthesisUtterance(question);
+				msg.rate = 0.8;
+				window.speechSynthesis.speak(msg);
+			}
 		};
 	}
 	

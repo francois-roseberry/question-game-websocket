@@ -37,6 +37,7 @@
         "L": true,
         "ko":true,
         "d3":true,
-		"io":true
+		"io":true,
+		"SpeechSynthesisUtterance": true
     }
 }
