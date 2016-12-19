@@ -6,12 +6,16 @@ var program = require('commander');
 var _ = require('underscore');
 var fs = require('fs');
 
-var port = 3000;
-var countdownObject = {};
+var PORT = 3000;
 
 var POINTS_FOR_TRUTH = 1000;
 var POINTS_FOR_LIE = 500;
 
+var TIME_BETWEEN_RESULTS = 5000;
+var TIME_AFTER_SCORES = 5000;
+var SECONDS_BEFORE_START = 5;
+
+var countdownObject = {};
 var players = {};
 var questionIndex = 0;
 var gameStarted = false;
@@ -80,7 +84,7 @@ function onStart(socket, questions) {
 		}
 		
 		console.log('Game started by [' + players[socket.id].name + ']');
-		countdown(countdownObject, 5, function () {
+		countdown(countdownObject, SECONDS_BEFORE_START, function () {
 			gameStarted = true;
 			console.log('Game start, sending first question');
 			io.emit('question', questions[0].question, 1, questions.length);
@@ -182,7 +186,7 @@ function onChoice(socket, questions) {
 					} else {
 						console.log('Game finished, no more questions');
 					}
-				}, 5000);
+				}, TIME_AFTER_SCORES);
 			});
 		}
 	};
@@ -200,7 +204,7 @@ function sendResultsOneByOne(index, results, callback) {
 	
 	setTimeout(function () {
 		sendResultsOneByOne(index + 1, results, callback);
-	}, 3000);
+	}, TIME_BETWEEN_RESULTS);
 }
 
 function placeResultsIntoArray(resultsMap, truth) {
@@ -302,6 +306,6 @@ function countdown(countdownObject, seconds, callback) {
 	}, 1000);
 }
 
-http.listen(port, function () {
-	console.log('Question game server listening on port ' + port);
+http.listen(PORT, function () {
+	console.log('Question game server listening on port ' + PORT);
 });
