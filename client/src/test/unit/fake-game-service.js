@@ -60,7 +60,10 @@
 	};
 	
 	FakeGameService.prototype.sendScores = function (scores) {
-		this._scores.onNext(scores);
+		this._scores.onNext({
+			scores: scores,
+			isFinal: true
+		});
 	};
 	
 	FakeGameService.prototype.sendResult = function (result) {

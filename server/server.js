@@ -176,9 +176,11 @@ function onChoice(socket, questions) {
 			
 			sendResultsOneByOne(0, results, function () {
 				console.log(scoresArray());
-				io.emit('scores', scoresArray());
+				questionIndex++;
+				var isFinal = (questionIndex === questions.length);
+				io.emit('scores', scoresArray(), isFinal);
+				
 				setTimeout(function () {
-					questionIndex++;
 					if (questionIndex < questions.length) {
 						console.log('Sending next question');
 						resetAnswers();

@@ -53,7 +53,7 @@
 		
 		gameService.scores().subscribe(function (scores) {
 			if (task._isObserver) {
-				task._status.onNext(scoresStatus(scores));
+				task._status.onNext(scoresStatus(scores.scores, scores.isFinal));
 			}
 		});
 		
@@ -196,11 +196,11 @@
 		};
 	}
 	
-	function scoresStatus(scores) {
+	function scoresStatus(scores, isFinal) {
 		return {
 			name: 'scores',
 			match: function (visitor) {
-				return visitor.scores(scores);
+				return visitor.scores(scores, isFinal);
 			}
 		};
 	}

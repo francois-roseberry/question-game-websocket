@@ -20,4 +20,6 @@
 	exports.RESULT_CHOICE_TRUTH = "TRUTH";
 	exports.RESULT_CHOICE_LIE = "{author}'s lie";
 	exports.RESULT_CHOOSED_BY = "Choosed by {chooser}";
+	exports.FINAL_SCORES = "Final scores";
+	exports.INTERMEDIATE_SCORES = "Scores";
 }());

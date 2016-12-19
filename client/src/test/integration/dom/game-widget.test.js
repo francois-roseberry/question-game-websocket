@@ -144,6 +144,10 @@
 					gameService.sendScores(scores);
 				});
 				
+				it('renders a score header', function () {
+					domContext.assertOneOf('.scores-header');
+				});
+				
 				it('renders a scores list', function () {
 					domContext.assertOneOf('.scores');
 				});

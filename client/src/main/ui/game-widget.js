@@ -119,7 +119,7 @@
 	function showConnectedPlayers(container) {
 		return function (players) {
 			if (players.length === 0) {
-				container.append('span')
+				container.append('div')
 					.classed({
 						'text-center': true,
 						'no-player': true
@@ -370,7 +370,11 @@
 	}
 	
 	function showScores(container) {
-		return function (scores) {
+		return function (scores, isFinal) {
+			container.append('div')
+				.classed('scores-header', true)
+				.text(isFinal ? i18n.FINAL_SCORES : i18n.INTERMEDIATE_SCORES);
+			
 			var scoreElements = container.append('div')
 				.classed('scores', true)
 				.selectAll('.score')

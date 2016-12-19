@@ -48,8 +48,11 @@
 			results.onNext(result);
 		});
 		
-		this._socket.on('scores', function (scoresArray) {
-			scores.onNext(scoresArray);
+		this._socket.on('scores', function (scoresArray, isFinal) {
+			scores.onNext({
+				scores: scoresArray,
+				isFinal: isFinal
+			});
 		});
 	}
 	
