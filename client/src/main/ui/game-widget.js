@@ -312,7 +312,8 @@
 					'btn-md': !isObserver,
 					'btn-choice': true,
 					'observer': isObserver,
-					'col-md-4': isObserver
+					'col-md-4': isObserver,
+					'col-centered': isObserver
 				})
 				.attr('data-index', function (choice, index) {
 					return index;
