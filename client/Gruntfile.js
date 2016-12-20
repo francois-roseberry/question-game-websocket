@@ -22,7 +22,7 @@ module.exports = function(grunt) {
 	
 	// Packaging
 	grunt.registerTask('prepare', ['copy:html', 'copy:flattenSourceAndTest', 'copy:flattenSmokeTest']);
-	grunt.registerTask('copySource', ['copy:lib', 'copy:images', 'copy:fonts', 'copy:data']);
+	grunt.registerTask('copySource', ['copy:lib', 'copy:images', 'copy:sounds', 'copy:fonts', 'copy:data']);
 	grunt.registerTask('minify', ['cssmin']);
 	grunt.registerTask('package', ['prepare', 'browserify', 'concat', 'copySource', 'minify']);
 	
@@ -147,6 +147,17 @@ module.exports = function(grunt) {
 					'bootstrap/dist/fonts/*.*'
 				],
 				dest: 'target/dist/fonts',
+				filter: 'isFile',
+				flatten: true
+			},
+			
+			sounds: {
+				expand: true,
+				cwd: 'src/sounds',
+				src: [
+					'**/*'
+				],
+				dest: 'target/dist/sounds',
 				filter: 'isFile',
 				flatten: true
 			},

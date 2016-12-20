@@ -21,8 +21,8 @@
     "browser": true,
     "sub": true,
     "globals": {
-        "require":false,
-        "module":false,
+        "require": false,
+        "module": false,
         "describe": true,
         "it": true,
         "before": true,
@@ -33,11 +33,12 @@
         "_": true,
         "dump": true,
         "expect": true,
-        "Rx":true,
+        "Rx": true,
         "L": true,
-        "ko":true,
-        "d3":true,
-		"io":true,
-		"SpeechSynthesisUtterance": true
+        "ko": true,
+        "d3": true,
+		"io": true,
+		"SpeechSynthesisUtterance": true,
+		"Audio": true
     }
 }
