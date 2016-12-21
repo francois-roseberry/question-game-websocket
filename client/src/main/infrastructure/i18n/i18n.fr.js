@@ -22,5 +22,5 @@
 	exports.RESULT_CHOOSED_BY = "Choisi par {chooser}";
 	exports.FINAL_SCORES = "Scores finaux";
 	exports.INTERMEDIATE_SCORES = "Scores";
-	exports.PLAYER_QUIT = "La partie s'est terminée abruptement car {player} a quitté la partie";
+	exports.PLAYER_QUIT = "La partie est terminée car {player} a quitté la partie";
 }());

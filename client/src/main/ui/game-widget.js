@@ -174,7 +174,7 @@
 				})
 				.text(i18n.STARTING_SOON.replace('{seconds}', secondsRemaining));
 				
-			if (isObserver && secondsRemaining > 0) {
+			if (window['Audio'] && isObserver && secondsRemaining > 0) {
 				var snd = new Audio("sounds/A_tone.mp3");
 				snd.play();
 			}
