@@ -37,6 +37,8 @@ describe('A full game', function () {
 						});
 						player3.once('question', function () {
 							player3.emit('answer', 'lie3');
+							
+							// TODO have two players pick the same lie, chosen by the other, to see if both authors get +500
 							done();
 						});
 					});
