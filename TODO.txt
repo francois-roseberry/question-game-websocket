@@ -1,6 +1,0 @@
-- randomize choices
-- send a players event after cancel so the observer shows the room - DONE
-- allow for a new game after one is over (eliminate transient state)
-- authors of choices are wrong (they are the same as the choosers, they should be different) - DONE
-- increase the delay for showing scores and results (make them configurable)
-- visually distinct the choices in the observer (like, show them in boxes, etc.)
