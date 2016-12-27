@@ -6,7 +6,7 @@
     "url": "git+https://gitlab.com/froseberry/question-game-websocket.git"
   },
   "scripts": {
-    "test": "sh ./node_modules/mocha/bin/mocha"
+    "test": "mocha"
   },
   "author": "froseberry",
   "license": "WTFPL",

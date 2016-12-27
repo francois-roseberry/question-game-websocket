@@ -20,6 +20,9 @@ var resultCooldownTimer = null;
 var scoreCooldownTimer = null;
 var players = {};
 var questionIndex = 0;
+
+// TODO : replace these variables with a state variable
+// BEFORE, STARTING, STARTED, ENDED, and eventually PAUSED, but for now quitting stops the game and doesn't pause
 var gameStarted = false;
 var gameEnded = false;
 
@@ -106,7 +109,11 @@ function onCancel(socket) {
 			console.log('Game start cancelled by [' + players[socket.id].name + ']');
 			clearTimeout(countdownObject.timer);
 			countdownObject.timer = null;
-			io.emit('cancelled');
+			
+			var names = _.map(players, function (player) {
+				return player.name;
+			});
+			io.emit('players', names);
 		}
 	};
 }
@@ -127,6 +134,7 @@ function onAnswer(socket, questions) {
 			socket.emit('answer response', true);
 			if (hasEveryPlayerAnswered()) {
 				var choices = computeChoices(truth);
+				// TODO : randomize the choices
 				console.log('Everybody has answered, sending choices : ' + JSON.stringify(choices));
 				io.emit('choices', choices);
 			}
@@ -151,7 +159,7 @@ function onChoice(socket, questions) {
 			resultsMap[truth] = { authors: ['TRUTH'], choosedBy: []};
 			
 			_.each(players, function (player) {
-				resultsMap[player.lastChoice] = getResult(resultsMap, player);
+				resultsMap[player.lastAnswer] = getResult(resultsMap, player);
 			});
 			
 			_.each(players, function (player) {
@@ -244,8 +252,8 @@ function removeUnpickedChoices(resultsMap, truth) {
 }
 
 function getResult(resultsMap, player) {
-	if (resultsMap[player.lastChoice]) {
-		var result = resultsMap[player.lastChoice];
+	if (resultsMap[player.lastAnswer]) {
+		var result = resultsMap[player.lastAnswer];
 		result.authors.push(player.name);
 		return result;
 	}
