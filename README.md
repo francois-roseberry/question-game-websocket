@@ -16,7 +16,7 @@ Nodejs will need to be installed
 
 Grunt and Bower will need to be installed globally ``npm install -g grunt && npm install -g bower``
 
-Other dependencies will need to be installed. For this go in the server directory and do ``npm install``, thewn go in the client directory and do ``npm install && bower install``
+Other dependencies will need to be installed. For this go in the server directory and do ``npm install``, then go in the client directory and do ``npm install && bower install``
 
 In that same directory, it should now be possible to do ``grunt check``to build the client
 
