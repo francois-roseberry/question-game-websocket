@@ -20,4 +20,4 @@ Other dependencies will need to be installed. For this go in the server director
 
 In that same directory, it should now be possible to do ``grunt package``to build the client. Do ``grunt background``to launch the development server. In another terminal, do ``grunt check``to run the client tests.
 
-In the server directory, run the server tests with ``npm test`
+In the server directory, run the server tests with ``npm test``
