@@ -9,3 +9,15 @@ The questions (and their answers) are stored in a json file which you pass at st
 See the example files [questions.json](./questions.json) for the format, pretty straightforward
 
 Connect clients at the address and port of the server. Those users now have the choice to be observers, or players. Observers will have a read-only screen showing server state and will know what happens in the game (like, who is connected, results, score, etc.). Players can play the game (duh! - answer questions, etc.) Observers are best displayed on large screens (desktops, TVs), while players are best displayed on mobile (Android, Iphone)
+
+# Setup
+
+Nodejs will need to be installed
+
+Grunt and Bower will need to be installed globally ``npm install -g grunt && npm install -g bower``
+
+Other dependencies will need to be installed. For this go in the server directory and do ``npm install``, thewn go in the client directory and do ``npm install && bower install``
+
+In that same directory, it should now be possible to do ``grunt check``to build the client
+
+Launch the server by running the run.sh in the root directory
