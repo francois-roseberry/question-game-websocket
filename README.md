@@ -2,6 +2,8 @@
 
 A bluffing game inspired by Fibbage
 
+Original use case : I wanted to play Fibbage at a family party but a portion is french unilingual. Since I did want to include everyone, and Fibbage does not allow providing your own questions, I create this game with basically the same workflow (albeit simplified and visually ugly). So I welcome any web designer's help !
+
 Game server runs by using the run.sh provided
 
 The questions (and their answers) are stored in a json file which you pass at start :  
