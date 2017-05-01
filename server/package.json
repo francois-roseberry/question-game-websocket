@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/froseberry/question-game-websocket.git"
+    "url": "git+https://github.com/froseberry/question-game-websocket.git"
   },
   "scripts": {
     "test": "mocha"
