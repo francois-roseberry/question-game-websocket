@@ -2,7 +2,7 @@
 
 A bluffing game inspired by Fibbage
 
-Original use case : I wanted to play Fibbage at a family party but a portion is french unilingual. Since I did want to include everyone, and Fibbage does not allow providing your own questions, I create this game with basically the same workflow (albeit simplified and visually ugly). So I welcome any web designer's help !
+Original use case : I wanted to play Fibbage at a family party but a portion is unilingual francophone. Since I did want to include everyone, and Fibbage does not allow providing your own questions, I create this game with basically the same workflow (albeit simplified and visually ugly). So I welcome any web designer's help !
 
 Game server runs by using the run.sh provided
 
@@ -10,7 +10,9 @@ The questions (and their answers) are stored in a json file which you pass at st
 ``node server/server.js -w client/target -q questionfile.json``  
 See the example files [questions.json](./questions.json) for the format, pretty straightforward
 
-Connect clients at the address and port of the server. Those users now have the choice to be observers, or players. Observers will have a read-only screen showing server state and will know what happens in the game (like, who is connected, results, score, etc.). Players can play the game (duh! - answer questions, etc.) Observers are best displayed on large screens (desktops, TVs), while players are best displayed on mobile (Android, Iphone)
+Connect clients at the address and port of the server. Those users now have the choice to be observers, or players. Observers will have a read-only screen showing server state, what happens in the game (like, who is connected, results, score, etc.) and read questions aloud (using Speech Synthesis API instead of professional actors like Fibbage). Players can play the game (duh! - answer questions, pick choices, etc.) Observers are best displayed on large screens (desktops, TVs), while players are best displayed on mobile (Android, Iphone)
+
+For those who know Fibbage, the pattern here is the same except there can be many observers instead of just one.
 
 ## Setup
 
