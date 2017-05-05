@@ -4,6 +4,7 @@ bower_components/
 target/
 
 # Other stuff
+.project
 npm-debug.log
 **/phantomjs.log
 npp-workspace

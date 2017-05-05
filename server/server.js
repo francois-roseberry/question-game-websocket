@@ -56,6 +56,7 @@ function onConnect(questions) {
 function onPlayerName(socket) {
 	return function (name) {
 		if (gameStarted) {
+			console.log('A user cannot join because game is aleady started');
 			socket.emit('name response', false, 'ALREADY_STARTED');
 			return;
 		}
@@ -64,6 +65,7 @@ function onPlayerName(socket) {
 			return player.name;
 		});
 		if (_.contains(names, name)) {
+			console.log('A user cannot join because name (' + name + ') already exists');
 			socket.emit('name response', false, 'EXISTING');
 		} else {
 			console.log('A user identified as [' + name + "]");
@@ -288,7 +290,8 @@ function onDisconnect(socket) {
 	return function () {
 		if (players[socket.id]) {
 			console.log('Player [' + players[socket.id].name + '] has left');
-			if ((countdownObject.timer || gameStarted) && !gameEnded) {
+			gameStarted = false;
+			if (countdownObject.timer && !gameEnded) {
 				clearGameTimers();
 				gameEnded = true;
 				io.emit('quit', players[socket.id].name);
