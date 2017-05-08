@@ -1,8 +1,5 @@
 general:
   build_dir: server
 test:
-  pre:
-    - ./run-for-tests.sh :
-      background: true
   override:
-    - npm test
+    - ./run-for-tests.sh &> /dev/null & npm test && pkill node
