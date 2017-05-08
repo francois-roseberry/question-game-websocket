@@ -1,5 +1,7 @@
 # Trump yourself
 
+[![CircleCI](https://circleci.com/gh/francois-roseberry/question-game-websocket.svg?style=shield&circle-token=127f68bf0984493ffae0e9b1a80da8438d75d47c)](https://circleci.com/gh/francois-roseberry/question-game-websocket)
+
 A bluffing game inspired by Fibbage
 
 Original use case : I wanted to play Fibbage at a family party but a portion is unilingual francophone. Since I did want to include everyone, and Fibbage does not allow providing your own questions, I create this game with basically the same workflow (albeit simplified and visually ugly). So I welcome any web designer's help !
