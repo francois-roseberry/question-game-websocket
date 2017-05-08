@@ -1,7 +1,7 @@
 general:
   build_dir: server
 test:
-  Pre:
+  pre:
     - ./run-for-tests.sh :
       background: true
   override:
