@@ -1,4 +1,5 @@
 general:
   build_dir: server
 test:
-  pre: ./run-for-tests.sh
+  pre:
+    - ./run-for-tests.sh
