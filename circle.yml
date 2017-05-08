@@ -1,5 +1,6 @@
-general:
-  build_dir: server
+dependencies:
+  override:
+    - npm -—prefix ./server install ./server
 test:
   override:
-    - ./run-for-tests.sh &> /dev/null & npm test && pkill node
+    - ./run.sh &> /dev/null & npm —-prefix ./server test && pkill node
