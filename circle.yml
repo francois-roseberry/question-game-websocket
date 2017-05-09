@@ -1,5 +1,11 @@
-general:
-  build_dir: server
-test:
-  override:
-    - ./run-for-tests.sh &> /dev/null & npm test && pkill node
+version: 2
+jobs:
+  build:
+    docker:
+      - image: node:7.10
+    working_directory: ~/server
+    steps:
+      - checkout
+      - run: npm install
+      - run: ./run-for-tests.sh &> /dev/null & npm test
+      - run: pkill node
