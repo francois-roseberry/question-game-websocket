@@ -3,9 +3,8 @@ jobs:
   build:
     docker:
       - image: node:7.10
-    working_directory: ~/root/server
+    working_directory: ~/question-game-websocket/server
     steps:
-      - run: ls
       - checkout
       - run: npm install
       - run: ./run-for-tests.sh &> /dev/null & npm test
