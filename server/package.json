@@ -13,6 +13,7 @@
   "license": "WTFPL",
   "dependencies": {
     "commander": "^2.9.0",
+    "debug": "^2.6.6",
     "express": "^4.10.2",
     "socket.io": "^1.5.1",
     "underscore": "^1.8.3"
