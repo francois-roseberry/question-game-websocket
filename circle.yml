@@ -1,11 +1,5 @@
-version: 2
-jobs:
-  build:
-    docker:
-      - image: node:7.10
-    steps:
-      - checkout
-      - run: mkdir ./server/node_modules
-      - run: npm --prefix /server install /server
-      - run: ./run.sh &> /dev/null & npm --prefix ./server test
-      - run: pkill node
+general:
+  build_dir: server
+test:
+  override:
+    - ./run-for-tests.sh &> /dev/null & npm test && pkill node
