@@ -3,8 +3,9 @@ jobs:
   build:
     docker:
       - image: node:7.10
-    working_directory: /server
+    working_directory: ~/root/server
     steps:
+      - run: ls
       - checkout
       - run: npm install
       - run: ./run-for-tests.sh &> /dev/null & npm test
