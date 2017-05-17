@@ -1,5 +1,32 @@
-general:
-  build_dir: server
-test:
-  override:
-    - ./run-for-tests.sh &> /dev/null & npm test && pkill node
+version: 2
+jobs:
+  build:
+    working_directory: ~/question-game-websocket
+    docker:
+      - image: node:7.10
+    steps:
+      - checkout
+      - run:
+          name: Installing client dependencies (NPM packages)
+          command: npm install --prefix ./client ./client
+      - run:
+          name: Installing client dependencies (Grunt)
+          command: npm install -g grunt
+      - run:
+          name: Installing client dependencies (Bower)
+          command: npm install -g bower
+      - run:
+          name: Installing client dependencies (Bower packages)
+          command: (cd client/ && bower install --allow-root)
+      - run:
+          name: Installing server dependencies
+          command: npm install --prefix ./server ./server
+      - run:
+          name: Building client app
+          command: (cd client/ && grunt package)
+      - run:
+          name: Running client test (with karma and phantomjs)
+          command: npm --prefix ./client test
+      - run:
+          name: Running server tests
+          command: ./run.sh &> /dev/null & npm --prefix ./server test && pkill node
