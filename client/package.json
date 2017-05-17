@@ -6,6 +6,9 @@
     "type": "git",
     "url": "https://gitlab.com/francois-roseberry/question-game-websocket.git"
   },
+  "scripts": {
+    "test": "karma start build/karma.conf.js --single-run"
+  },
   "devDependencies": {
     "expect.js": "^0.3.1",
     "grunt": "~0.4.5",
@@ -17,14 +20,14 @@
     "grunt-contrib-cssmin": "^0.12.3",
     "grunt-contrib-jshint": "^0.11.2",
     "grunt-mocha-test": "^0.12.7",
-    "karma": "^0.12.31",
+    "karma": "^0.13.22",
     "karma-commonjs": "0.0.13",
     "karma-mocha": "^0.2.0",
-    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-spec-reporter": "0.0.31",
     "mocha": "^2.2.5",
-    "phantomjs": "^1.9.7-15",
+    "phantomjs": "^2.1.7",
     "selenium-webdriver": "^2.44.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
