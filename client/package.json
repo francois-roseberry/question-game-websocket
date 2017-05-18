@@ -7,7 +7,7 @@
     "url": "https://gitlab.com/francois-roseberry/question-game-websocket.git"
   },
   "scripts": {
-    "test": "karma start build/karma.conf.js --single-run"
+    "test": "karma start build/karma.conf.js --single-run --reporters=spec,junit"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
@@ -22,6 +22,7 @@
     "grunt-mocha-test": "^0.12.7",
     "karma": "^0.13.22",
     "karma-commonjs": "0.0.13",
+    "karma-junit-reporter": "^1.2.0",
     "karma-mocha": "^0.2.0",
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-spec-reporter": "0.0.31",
