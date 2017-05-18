@@ -28,7 +28,7 @@ jobs:
           name: Running client test (with karma and phantomjs)
           command: npm --prefix ./client test
       - store_test_results:
-          path: test-results/
+          path: client/test-results/
       - run:
           name: Running server tests
           command: ./run.sh &> /dev/null & npm --prefix ./server test && pkill node
