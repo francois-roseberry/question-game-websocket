@@ -1,5 +1,6 @@
 {
   "name": "question-game-client",
+  "description": "Client app of the question/bluffing game inspired by Fibbage",
   "version": "0.1.0",
   "license": "WTFPL",
   "repository": {
