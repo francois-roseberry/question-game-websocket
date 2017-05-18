@@ -9,7 +9,7 @@
 	exports.startPhantomJsWebdriver = function (taskDoneCallback) {
         var webdriverPhantomJS = {
             name: "PhantomJS Webdriver process",
-            executable: phantomjsPath,
+            command: phantomjsPath,
             arguments: [
                 '--webdriver=8185',
                 '--webdriver-logfile=build/phantomjs.log'
@@ -25,7 +25,7 @@
 
 		var server = {
 			name: 'Question game server',
-			executable: 'node',
+			command: 'node',
 			arguments: [
 				serverFiles.script,
 				'-w', serverFiles.clientDirectory,
@@ -48,7 +48,7 @@
 	}
 
 	exports.startKarmaServer = function (done) {
-		var executable = 'karma/bin/karma';
+		var executable = './node_modules/karma/bin/karma';
 		var args = ['start', 'build/karma.conf.js'];
 		if (os.platform() === 'win32') {
 			executable = 'sh';
@@ -57,7 +57,7 @@
 
 		var karmaServer = {
             name: "Karma Server",
-            executable: executable,
+            command: executable,
             arguments: args,
             env: {
                 "PHANTOMJS_BIN": phantomjsPath

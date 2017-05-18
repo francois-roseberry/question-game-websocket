@@ -21,7 +21,7 @@
 
 	function launchProcess(configuration) {
 		return childProcess.spawn(
-            configuration.executable,
+            configuration.command,
             configuration.arguments,
             {
                 env: configuration.env
