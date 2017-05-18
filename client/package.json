@@ -8,7 +8,7 @@
     "url": "https://gitlab.com/francois-roseberry/question-game-websocket.git"
   },
   "scripts": {
-    "test": "karma start build/karma.conf.js --single-run --reporters=spec,junit"
+    "test": "karma start build/karma-ci.conf.js"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",

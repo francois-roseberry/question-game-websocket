@@ -5,7 +5,7 @@ target/
 
 # Other stuff
 test-results.xml
-TESTS-*.xml
+test-results/
 .DS_Store
 .project
 npm-debug.log
