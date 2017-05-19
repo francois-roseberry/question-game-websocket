@@ -10,7 +10,7 @@ module.exports = function (config) {
         reporters: ['spec', 'junit'],
         junitReporter: {
           outputDir: 'test-results',
-          useBrowserName: fssle
+          useBrowserName: false
         },
         singleRun: true
     });
