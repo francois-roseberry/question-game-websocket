@@ -9,7 +9,8 @@ module.exports = function (config) {
     config.set({
         reporters: ['spec', 'junit'],
         junitReporter: {
-          outputDir: 'test-results'
+          outputDir: 'test-results',
+          useBrowserName: fssle
         },
         singleRun: true
     });

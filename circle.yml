@@ -33,6 +33,8 @@ jobs:
       - run:
           name: Running client test (with karma and phantomjs)
           command: npm --prefix ./client test
+      - store_artifacts:
+          path: client/test-results/
       - store_test_results:
           path: client/test-results/
       - run:
