@@ -7,7 +7,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: client_dependencies-{{ .Branch }}-{{ checksum "client/package.json" }}
+          key: client_deps-{{ .Branch }}-{{ checksum "client/package.json" }}-{{ checksum "client/bower.json"}}
       - run:
           name: Installing client dependencies (NPM packages)
           command: npm install --prefix ./client ./client
@@ -21,9 +21,10 @@ jobs:
           name: Installing client dependencies (Bower packages)
           command: (cd client/ && bower install --allow-root)
       - save_cache:
-          key: client_dependencies-{{ .Branch }}-{{ checksum "client/package.json"}}
+          key: client_deps-{{ .Branch }}-{{ checksum "client/package.json"}}-{{ checksum "client/bower.json"}}
           paths:
             - "client/node_modules"
+            - "client/bower_components"
       - run:
           name: Installing server dependencies
           command: npm install --prefix ./server ./server
