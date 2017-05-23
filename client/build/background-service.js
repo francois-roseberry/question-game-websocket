@@ -44,7 +44,10 @@
                 console.log("Process " + serviceName + " exited");
             } else {
                 serviceReady = true;
-                serviceReadyCallback(new Error("Process " + serviceName + " exited with code " + code + ", killed with " + signal + ".s"));
+                serviceReadyCallback(new Error(
+									"Process " + serviceName + " exited with code " +
+									code + ", killed with " + signal + "."
+								));
             }
         });
 

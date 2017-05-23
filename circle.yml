@@ -30,7 +30,7 @@ jobs:
           command: npm install --prefix ./server ./server
       - run:
           name: Building client app
-          command: (cd client/ && grunt package)
+          command: npm --prefix ./client run package
       - run:
           name: Running client test (with karma and phantomjs)
           command: npm --prefix ./client test
