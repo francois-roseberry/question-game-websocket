@@ -16,7 +16,7 @@
 		});
 
 		registerCleanupOnExit(configuration.name, serviceProcess);
-  	ensureServiceReadyToOperate(serviceProcess, configuration, done);
+		ensureServiceReadyToOperate(serviceProcess, configuration, done);
 	};
 
 	function launchProcess(configuration) {

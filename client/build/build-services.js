@@ -31,6 +31,9 @@
 				'-w', serverFiles.clientDirectory,
 				'-q', serverFiles.questionFile
 			],
+			env: {
+				"DEBUG": "question-game"
+			},
 			readyPattern: /Serving directory/
 		};
 
