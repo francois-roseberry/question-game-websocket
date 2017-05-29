@@ -47,8 +47,8 @@ fs.readFile(program.question, 'utf-8', function (err, data) {
 });
 
 function validCountdown(countdown) {
-	if (countdown > 0) {
-		return countown;
+	if (countdown && countdown > 0) {
+		return countdown;
 	}
 
 	return SECONDS_BEFORE_START;
