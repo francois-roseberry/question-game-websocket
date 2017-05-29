@@ -40,4 +40,4 @@ jobs:
           path: client/test-results/
       - run:
           name: Running server tests
-          command: DEBUG="question-game" ./run.sh & npm --prefix ./server test && pkill node
+          command: ./run-for-tests.sh & npm --prefix ./server test && pkill node

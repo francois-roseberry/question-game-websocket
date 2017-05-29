@@ -31,7 +31,10 @@ program
 	.version('0.1')
 	.option('-w, --webclient <directory>', 'The directory served')
 	.option('-q, --question <file>', 'The question file')
+	.option('-c, --countdown [seconds]', 'Countdown to start in seconds. Must be greater than 0. Default value of 5 if not present')
 	.parse(process.argv);
+
+var secondsBeforeStart = validCountdown(program.countdown);
 
 fs.readFile(program.question, 'utf-8', function (err, data) {
 	if (err) {
@@ -42,6 +45,14 @@ fs.readFile(program.question, 'utf-8', function (err, data) {
 	app.use(express.static(program.webclient));
 	io.on('connection', onConnect(JSON.parse(data)));
 });
+
+function validCountdown(countdown) {
+	if (countdown > 0) {
+		return countown;
+	}
+
+	return SECONDS_BEFORE_START;
+}
 
 function onConnect(questions) {
 	return function (socket) {
@@ -93,7 +104,7 @@ function onStart(socket, questions) {
 		}
 
 		log('Game started by [' + players[socket.id].name + ']');
-		countdown(countdownObject, SECONDS_BEFORE_START, function () {
+		countdown(countdownObject, secondsBeforeStart, function () {
 			gameStarted = true;
 			log('Game start, sending first question');
 			io.emit('question', questions[0].question, 1, questions.length);
