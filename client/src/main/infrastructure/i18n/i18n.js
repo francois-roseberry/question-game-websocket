@@ -1,38 +1,37 @@
-(function () {
-    'use strict';
-    var frenchString = require('./i18n.fr');
-    var englishString = require('./i18n.en');
+'use strict';
 
-    var ENGLISH_INDICATOR = 'en';
-    var FRENCH_INDICATOR = 'fr';
+  var frenchString = require('./i18n.fr');
+  var englishString = require('./i18n.en');
 
-    var navigatorLanguageTag = navigator.language || navigator.userLanguage;
-    setApplicationLanguage(navigatorLanguageTag.toLowerCase());
+  var ENGLISH_INDICATOR = 'en';
+  var FRENCH_INDICATOR = 'fr';
 
-    exports.i18n = function () {
-        var currentLanguage = null;
+  var navigatorLanguageTag = navigator.language || navigator.userLanguage;
+  setApplicationLanguage(navigatorLanguageTag.toLowerCase());
 
-        if (navigatorIsEnglish()) {
-            currentLanguage = englishString;
-        }
-        else if (navigatorIsFrench()) {
-            currentLanguage = frenchString;
-        } else {
-            //Default
-            currentLanguage = englishString;
-        }
-        return currentLanguage;
-    };
+  exports.i18n = () => {
+      var currentLanguage = null;
 
-    function navigatorIsFrench() {
-        return window.applicationLanguage.indexOf(FRENCH_INDICATOR) > -1;
-    }
+      if (navigatorIsEnglish()) {
+          currentLanguage = englishString;
+      }
+      else if (navigatorIsFrench()) {
+          currentLanguage = frenchString;
+      } else {
+          //Default
+          currentLanguage = englishString;
+      }
+      return currentLanguage;
+  };
 
-    function navigatorIsEnglish() {
-        return window.applicationLanguage.indexOf(ENGLISH_INDICATOR) > -1;
-    }
+  function navigatorIsFrench() {
+      return window.applicationLanguage.indexOf(FRENCH_INDICATOR) > -1;
+  }
 
-    function setApplicationLanguage(applicationLanguage){
-        window.applicationLanguage = applicationLanguage;
-    }
-}());
+  function navigatorIsEnglish() {
+      return window.applicationLanguage.indexOf(ENGLISH_INDICATOR) > -1;
+  }
+
+  function setApplicationLanguage(applicationLanguage){
+      window.applicationLanguage = applicationLanguage;
+  }
