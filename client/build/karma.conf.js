@@ -11,7 +11,20 @@ module.exports = function (config) {
 
         preprocessors: {
             // Commonjs preprocessor allow the tests to use the modules system of browserify
-            'target/stagger/**/*.js': ['commonjs']
+            'target/stagger/**/*.js': ['commonjs', 'babel']
+        },
+
+        babelPreprocessor: {
+          options: {
+            presets: ['es2015'],
+            sourceMap: 'inline'
+          },
+          filename: function (file) {
+            return file.originalPath;
+          },
+          sourceFileName: function (file) {
+            return file.originalPath;
+          }
         },
 
         // list of files / patterns to load in the browser
@@ -22,12 +35,12 @@ module.exports = function (config) {
             {pattern: 'target/dist/images/*', included: false, served: true},
 			'target/stagger/src/**/*.js'
         ],
-		
+
 		// list of files to exclude
         exclude: [
             './target/stagger/src/bootstrap.js'
         ],
-		
+
 		// Proxy an application in the karma domain name, to prevent CORS issues
         proxies: {
             '/question-game-websocket/': 'http://localhost:3000/',
