@@ -36,7 +36,7 @@ program
 
 var secondsBeforeStart = validCountdown(program.countdown);
 
-fs.readFile(program.question, 'utf-8', function (err, data) {
+fs.readFile(program.question, 'utf-8', (err, data) => {
 	if (err) {
 		log('Could not read question file');
 		return;
@@ -55,7 +55,7 @@ function validCountdown(countdown) {
 }
 
 function onConnect(questions) {
-	return function (socket) {
+	return (socket) => {
 		socket.on('name', onPlayerName(socket));
 		socket.on('start', onStart(socket, questions));
 		socket.on('cancel', onCancel(socket));
@@ -66,14 +66,14 @@ function onConnect(questions) {
 }
 
 function onPlayerName(socket) {
-	return function (name) {
+	return (name) => {
 		if (gameStarted) {
 			log('A user cannot join because game is aleady started');
 			socket.emit('name response', false, 'ALREADY_STARTED');
 			return;
 		}
 
-		var names = _.map(players, function (player) {
+		var names = _.map(players, (player) => {
 			return player.name;
 		});
 		if (_.contains(names, name)) {
@@ -88,7 +88,7 @@ function onPlayerName(socket) {
 				lastChoice: null
 			};
 			socket.emit('name response', true);
-			var names = _.map(players, function (player) {
+			var names = _.map(players, (player) => {
 				return player.name;
 			});
 			io.emit('players', names);
@@ -97,14 +97,14 @@ function onPlayerName(socket) {
 }
 
 function onStart(socket, questions) {
-	return function () {
+	return () => {
 		if (!players[socket.id]) {
 			log('Game cannot be started by a player who is not logged in');
 			return;
 		}
 
 		log('Game started by [' + players[socket.id].name + ']');
-		countdown(countdownObject, secondsBeforeStart, function () {
+		countdown(countdownObject, secondsBeforeStart, () => {
 			gameStarted = true;
 			log('Game start, sending first question');
 			io.emit('question', questions[0].question, 1, questions.length);
@@ -113,7 +113,7 @@ function onStart(socket, questions) {
 }
 
 function onCancel(socket) {
-	return function () {
+	return () => {
 		if (!players[socket.id]) {
 			log('Game cannot be cancelled by a user who is not logged in');
 			return
@@ -124,7 +124,7 @@ function onCancel(socket) {
 			clearTimeout(countdownObject.timer);
 			countdownObject.timer = null;
 
-			var names = _.map(players, function (player) {
+			var names = _.map(players, (player) => {
 				return player.name;
 			});
 			io.emit('players', names);
@@ -133,7 +133,7 @@ function onCancel(socket) {
 }
 
 function onAnswer(socket, questions) {
-	return function (answer) {
+	return (answer) => {
 		if (!players[socket.id]) {
 			log('Question cannot be answered by a user who is not logged in');
 			return;
@@ -157,7 +157,7 @@ function onAnswer(socket, questions) {
 }
 
 function onChoice(socket, questions) {
-	return function (choice) {
+	return (choice) => {
 		if (!players[socket.id]) {
 			log('A choice cannot be made by a player who is not logged in');
 			return;
@@ -172,11 +172,11 @@ function onChoice(socket, questions) {
 			var resultsMap = {};
 			resultsMap[truth] = { authors: ['TRUTH'], choosedBy: []};
 
-			_.each(players, function (player) {
+			_.each(players, (player) => {
 				resultsMap[player.lastAnswer] = getResult(resultsMap, player);
 			});
 
-			_.each(players, function (player) {
+			_.each(players, (player) => {
 				// If choice is the truth, give 1000 points to that player
 				// and add that player in its list of choosers
 				if (player.lastChoice === truth) {
@@ -184,7 +184,7 @@ function onChoice(socket, questions) {
 					resultsMap[truth].choosedBy.push(player.name);
 				} else {
 					// Otherwise, find out who created the choice and give each author 500 points
-					_.each(players, function (potentialAuthor) {
+					_.each(players, (potentialAuthor) => {
 						// Do not give points to a player who picks his own answer
 						if (potentialAuthor.name !== player.name && potentialAuthor.lastAnswer === player.lastChoice) {
 							potentialAuthor.score += POINTS_FOR_LIE;
@@ -198,13 +198,13 @@ function onChoice(socket, questions) {
 			resultsMap = removeUnpickedChoices(resultsMap, truth);
 			var results = placeResultsIntoArray(resultsMap, truth);
 
-			sendResultsOneByOne(0, results, function () {
+			sendResultsOneByOne(0, results, () => {
 				log(scoresArray());
 				questionIndex++;
 				var isFinal = (questionIndex === questions.length);
 				io.emit('scores', scoresArray(), isFinal);
 
-				var scoreCooldownTimer = setTimeout(function () {
+				var scoreCooldownTimer = setTimeout(() => {
 					if (questionIndex < questions.length) {
 						log('Sending next question');
 						resetAnswers();
@@ -243,14 +243,14 @@ function sendResultsOneByOne(index, results, callback) {
 	log('Sending result : ' + JSON.stringify(results[index]));
 	io.emit('result', results[index]);
 
-	resultCooldownTimer = setTimeout(function () {
+	resultCooldownTimer = setTimeout(() => {
 		sendResultsOneByOne(index + 1, results, callback);
 	}, TIME_BETWEEN_RESULTS);
 }
 
 function placeResultsIntoArray(resultsMap, truth) {
 	var results = [];
-	_.each(_.keys(resultsMap), function (choice) {
+	_.each(_.keys(resultsMap), (choice) => {
 		if (resultsMap[choice].authors[0] !== 'TRUTH') {
 			results.push({
 				choice: choice,
@@ -270,7 +270,7 @@ function placeResultsIntoArray(resultsMap, truth) {
 
 function removeUnpickedChoices(resultsMap, truth) {
 	var newResultsMap = {};
-	_.each(_.keys(resultsMap), function (choice) {
+	_.each(_.keys(resultsMap), (choice) => {
 		if (choice === truth || (choice !== truth && resultsMap[choice].choosedBy.length > 0)) {
 			newResultsMap[choice] = resultsMap[choice];
 		}
@@ -289,7 +289,7 @@ function getResult(resultsMap, player) {
 }
 
 function scoresArray() {
-	return _.map(players, function (player) {
+	return _.map(players, (player) => {
 		return {
 			name: player.name,
 			score: player.score
@@ -298,7 +298,7 @@ function scoresArray() {
 }
 
 function onDisconnect(socket) {
-	return function () {
+	return () => {
 		if (players[socket.id]) {
 			log('Player [' + players[socket.id].name + '] has left');
 			gameStarted = false;
@@ -311,7 +311,7 @@ function onDisconnect(socket) {
 			delete players[socket.id];
 
 			if (!gameStarted && !gameEnded) {
-				var names = _.map(players, function (player) {
+				var names = _.map(players, (player) => {
 					return player.name;
 				});
 				io.emit('players', names);
@@ -337,14 +337,14 @@ function clearGameTimers() {
 }
 
 function resetAnswers() {
-	_.each(players, function (player) {
+	_.each(players, (player) => {
 		player.lastAnswer = null;
 		player.lastChoice = null;
 	});
 }
 
 function computeChoices(truth) {
-	var answers = _.map(players, function (player) {
+	var answers = _.map(players, (player) => {
 		return player.lastAnswer;
 	});
 
@@ -352,13 +352,13 @@ function computeChoices(truth) {
 }
 
 function hasEveryPlayerChosen() {
-	return _.every(players, function (player) {
+	return _.every(players, (player) => {
 		return player.lastChoice != null;
 	});
 }
 
 function hasEveryPlayerAnswered() {
-	return _.every(players, function (player) {
+	return _.every(players, (player) => {
 		return player.lastAnswer != null;
 	});
 }
@@ -372,11 +372,11 @@ function countdown(countdownObject, seconds, callback) {
 		return;
 	}
 
-	countdownObject.timer = setTimeout(function () {
+	countdownObject.timer = setTimeout(() => {
 		countdown(countdownObject, seconds - 1, callback);
 	}, 1000);
 }
 
-http.listen(PORT, function () {
+http.listen(PORT, () => {
 	log('Question game server listening on port ' + PORT);
 });
