@@ -54,6 +54,15 @@ function validCountdown(countdown) {
 	return SECONDS_BEFORE_START;
 }
 
+function newPlayer(name) {
+	return {
+		name: name,
+		score: 0,
+		lastAnswer: null,
+		lastChoice: null
+	};
+}
+
 function onConnect(questions) {
 	return (socket) => {
 		socket.on('name', onPlayerName(socket));
@@ -81,12 +90,7 @@ function onPlayerName(socket) {
 			socket.emit('name response', false, 'EXISTING');
 		} else {
 			log('A user identified as [' + name + "]");
-			players[socket.id] = {
-				name: name,
-				score: 0,
-				lastAnswer: null,
-				lastChoice: null
-			};
+			players[socket.id] = newPlayer(name);
 			socket.emit('name response', true);
 			var names = _.map(players, (player) => {
 				return player.name;
