@@ -1,5 +1,7 @@
 var precondition = require('./contract').precondition;
 
+exports.create = () => new FakeGameService();
+
 export default class FakeGameService {
 	constructor() {
 		this._rejectNextName = false;
