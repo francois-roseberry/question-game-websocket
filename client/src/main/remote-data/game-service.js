@@ -1,10 +1,8 @@
 var precondition = require('./contract').precondition;
 
-exports.create = function () {
-	return new GameService();
-};
+exports.create = () => new GameService();
 
-class GameService{
+class GameService {
 	constructor() {
 		var players = new Rx.Subject();
 		var starting = new Rx.Subject();
