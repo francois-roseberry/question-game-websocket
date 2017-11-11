@@ -2,7 +2,7 @@
 
 var precondition = require('./contract').precondition;
 
-exports.start = (gameService) => {
+exports.start = gameService => {
 	precondition(gameService &&
 		_.isFunction(gameService.setPlayerName) &&
 		_.isFunction(gameService.players) &&
@@ -20,7 +20,7 @@ exports.start = (gameService) => {
 
 	var task = new PlayGameTask(gameService);
 
-	gameService.questions().subscribe((question) => {
+	gameService.questions().subscribe(question => {
 		if (task._playerName || task._isObserver) {
 			task._status.onNext(
 				questionStatus(question.question, question.index, question.total, task._isObserver)
@@ -28,37 +28,37 @@ exports.start = (gameService) => {
 		}
 	});
 
-	gameService.starting().subscribe((remainingSeconds) => {
+	gameService.starting().subscribe(remainingSeconds => {
 		if (task._playerName || task._isObserver) {
 			task._status.onNext(startingStatus(remainingSeconds, task._isObserver));
 		}
 	});
 
-	gameService.players().subscribe((playerArray) => {
+	gameService.players().subscribe(playerArray => {
 		if (task._isObserver) {
 			task._status.onNext(playersStatus(playerArray));
 		}
 	});
 
-	gameService.choices().subscribe((choices) => {
+	gameService.choices().subscribe(choices => {
 		if (task._playerName || task._isObserver) {
 			task._status.onNext(choosingStatus(choices, task._isObserver));
 		}
 	});
 
-	gameService.results().subscribe((results) => {
+	gameService.results().subscribe(results => {
 		if (task._isObserver) {
 			task._status.onNext(resultsStatus(results));
 		}
 	});
 
-	gameService.scores().subscribe((scores) => {
+	gameService.scores().subscribe(scores => {
 		if (task._isObserver) {
 			task._status.onNext(scoresStatus(scores.scores, scores.isFinal));
 		}
 	});
 
-	gameService.playerQuit().subscribe((playerName) => {
+	gameService.playerQuit().subscribe(playerName => {
 		task._status.onNext(quitStatus(playerName));
 	});
 
@@ -113,7 +113,7 @@ class PlayGameTask {
 
 		var status = this._status;
 		var gameService = this._gameService;
-		status.take(1).subscribe((currentStatus) => {
+		status.take(1).subscribe(currentStatus => {
 			currentStatus.match({
 				question: (question, questionIndex, questionCount, isObserver) => {
 					gameService.submitAnswer(answer, (success, error) => {
@@ -143,89 +143,69 @@ class PlayGameTask {
 function initialStatus(error) {
 	return {
 		name: 'initial',
-		match: (visitor) => {
-			return visitor.initial(error);
-		}
+		match: visitor => visitor.initial(error)
 	};
 }
 
 function beforeStatus() {
 	return {
 		name: 'before',
-		match: (visitor) => {
-			return visitor.before();
-		}
+		match: visitor => visitor.before()
 	};
 }
 
 function startingStatus(remainingSeconds, isObserver) {
 	return {
 		name: 'starting',
-		match: (visitor) => {
-			return visitor.starting(remainingSeconds, isObserver);
-		}
+		match: visitor => visitor.starting(remainingSeconds, isObserver)
 	};
 }
 
 function questionStatus(question, questionIndex, questionCount, isObserver, error) {
 	return {
 		name: 'question',
-		match: (visitor) => {
-			return visitor.question(question, questionIndex, questionCount, isObserver, error);
-		}
+		match: visitor => visitor.question(question, questionIndex, questionCount, isObserver, error)
 	};
 }
 
 function waitingStatus() {
 	return {
 		name: 'waiting',
-		match: (visitor) => {
-			return visitor.waiting();
-		}
+		match: visitor => visitor.waiting()
 	};
 }
 
 function choosingStatus(choices, isObserver) {
 	return {
 		name: 'choosing',
-		match: (visitor) => {
-			return visitor.choosing(choices, isObserver);
-		}
+		match: visitor => visitor.choosing(choices, isObserver)
 	};
 }
 
 function resultsStatus(results) {
 	return {
 		name: 'results',
-		match: (visitor) => {
-			return visitor.results(results);
-		}
+		match: visitor => visitor.results(results)
 	};
 }
 
 function scoresStatus(scores, isFinal) {
 	return {
 		name: 'scores',
-		match: (visitor) => {
-			return visitor.scores(scores, isFinal);
-		}
+		match: visitor => visitor.scores(scores, isFinal)
 	};
 }
 
 function playersStatus(playerArray) {
 	return {
 		name: 'players',
-		match: (visitor) => {
-			return visitor.players(playerArray);
-		}
+		match: visitor => visitor.players(playerArray)
 	};
 }
 
 function quitStatus(playerName) {
 	return {
 		name: 'quit',
-		match: (visitor) => {
-			return visitor.quit(playerName);
-		}
+		match: visitor => visitor.quit(playerName)
 	};
 }

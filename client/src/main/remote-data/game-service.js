@@ -25,11 +25,11 @@ class GameService{
 		this._scores = scores;
 		this._playerQuit = playerQuit;
 
-		this._socket.on('players', (playersArray) => {
+		this._socket.on('players', playersArray => {
 			players.onNext(playersArray);
 		});
 
-		this._socket.on('starting', (remainingSeconds) => {
+		this._socket.on('starting', remainingSeconds => {
 			starting.onNext(remainingSeconds);
 		});
 
@@ -41,11 +41,11 @@ class GameService{
 			});
 		});
 
-		this._socket.on('choices', (choicesArray) => {
+		this._socket.on('choices', choicesArray => {
 			choices.onNext(choicesArray);
 		});
 
-		this._socket.on('result', (result) => {
+		this._socket.on('result', result => {
 			console.log('GameService : result received');
 			results.onNext(result);
 		});
@@ -57,7 +57,7 @@ class GameService{
 			});
 		});
 
-		this._socket.on('quit', (playerName) => {
+		this._socket.on('quit', playerName => {
 			playerQuit.onNext(playerName);
 		});
 	}

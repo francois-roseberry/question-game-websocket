@@ -11,7 +11,7 @@ exports.render = (container, task) => {
 
 	var widgetContainer = d3.select(container[0]).append('div');
 
-	task.status().subscribe((status) => {
+	task.status().subscribe(status => {
 		widgetContainer.selectAll('*').remove();
 		status.match({
 			initial: showPlayerLogin(widgetContainer, task),
@@ -29,7 +29,7 @@ exports.render = (container, task) => {
 };
 
 function showPlayerLogin(container, task) {
-	return (error) => {
+	return error => {
 		if (error) {
 			container.append('div')
 				.classed({
@@ -60,8 +60,8 @@ function showPlayerLogin(container, task) {
 				'form-control': true
 			});
 
-		$(txtPlayerName[0]).keypress((e) => {
-			var chr = String.fromCharCode(e.which);
+		$(txtPlayerName[0]).keypress(({ which }) => {
+			var chr = String.fromCharCode(which);
 			if (FORBIDDEN_CHARS.indexOf(chr) > 0) {
 				return false;
 			}
@@ -90,8 +90,8 @@ function showPlayerLogin(container, task) {
 			}
 		});
 
-		$(txtPlayerName[0]).on('keyup', (e) => {
-			if (e.keyCode === 13) {
+		$(txtPlayerName[0]).on('keyup', ({ keyCode }) => {
+			if (keyCode === 13) {
 				$(btnJoin[0]).click();
 			}
 		});
@@ -117,7 +117,7 @@ function showPlayerLogin(container, task) {
 }
 
 function showConnectedPlayers(container) {
-	return (players) => {
+	return players => {
 		if (players.length === 0) {
 			container.append('div')
 				.classed({
@@ -137,12 +137,8 @@ function showConnectedPlayers(container) {
 			.append('li')
 			.classed('player', true)
 			.append('span')
-			.attr('data-player', (player) => {
-				return player;
-			})
-			.text((player) => {
-				return player;
-			});
+			.attr('data-player', player => player)
+			.text(player => player);
 	};
 }
 
@@ -237,8 +233,8 @@ function showQuestion(container, task) {
 					'form-control': true
 				});
 
-			$(txtAnswer[0]).keypress((e) => {
-				var chr = String.fromCharCode(e.which);
+			$(txtAnswer[0]).keypress(({ which }) => {
+				var chr = String.fromCharCode(which);
 				if (FORBIDDEN_CHARS.indexOf(chr) > 0) {
 					return false;
 				}
@@ -267,8 +263,8 @@ function showQuestion(container, task) {
 				}
 			});
 
-			$(txtAnswer[0]).on('keyup', (e) => {
-				if (e.keyCode === 13) {
+			$(txtAnswer[0]).on('keyup', ({ keyCode }) => {
+				if (keyCode === 13) {
 					$(btnSubmit[0]).click();
 				}
 			});
@@ -319,20 +315,16 @@ function showChoices(container, task) {
 				'col-md-4': isObserver,
 				'col-centered': isObserver
 			})
-			.attr('data-index', (choice, index) => {
-				return index;
-			})
-			.text((choice) => {
-				return choice;
-			})
-			.on('click', (choice) => {
+			.attr('data-index', (choice, index) => index)
+			.text(choice => choice)
+			.on('click', choice => {
 				task.submitChoice(choice);
 			});
 	};
 }
 
 function showResults(container) {
-	return (result) => {
+	return result => {
 		container.append('div')
 			.classed('result-choice', true)
 			.text(i18n.RESULT_CHOICE.replace('{choice}', result.choice));
@@ -345,17 +337,11 @@ function showResults(container) {
 			.append('li')
 			.classed({
 				'result-author': true,
-				'result-truth': (author) => {
-					return author === 'TRUTH';
-				},
-				'result-lie': (author) => {
-					return author !== 'TRUTH';
-				}
+				'result-truth': author => author === 'TRUTH',
+				'result-lie': author => author !== 'TRUTH'
 			})
-			.attr('data-author', (author) => {
-				return author;
-			})
-			.text((author) => {
+			.attr('data-author', author => author)
+			.text(author => {
 				if (author === 'TRUTH') {
 					return i18n.RESULT_CHOICE_TRUTH;
 				}
@@ -371,13 +357,9 @@ function showResults(container) {
 			.enter()
 			.append('div')
 			.classed('result-chooser', true)
-			.attr('data-chooser', (chooser) => {
-				return chooser;
-			})
-			.text((chooser) => {
-				return i18n.RESULT_CHOOSED_BY
-					.replace('{chooser}', chooser);
-			});
+			.attr('data-chooser', chooser => chooser)
+			.text(chooser => i18n.RESULT_CHOOSED_BY
+					.replace('{chooser}', chooser));
 	};
 }
 
@@ -394,32 +376,26 @@ function showScores(container) {
 			.enter()
 			.append('div')
 			.classed('score', true)
-			.attr('data-player', (score) => {
-				return score.name;
-			});
+			.attr('data-player', score => score.name);
 
 		scoreElements.append('span')
 			.classed({
 				'score-name': true,
 				'pull-left': true
 			})
-			.text((score) => {
-				return score.name;
-			});
+			.text(score => score.name);
 
 		scoreElements.append('span')
 			.classed({
 				'score-value': true,
 				'pull-right': true
 			})
-			.text((score) => {
-				return score.score;
-			});
+			.text(score => score.score);
 	};
 }
 
 function showQuitMessage(container) {
-	return (playerName) => {
+	return playerName => {
 		container.append('p')
 			.classed('player-quit', true)
 			.text(i18n.PLAYER_QUIT.replace('{player}', playerName));
