@@ -10,7 +10,7 @@ exports.crashOnResourceLoadingError = () => {
     var useCapturingEvent = true;
 
     // Fail-fast if an external resource fail to load
-    document.addEventListener('error', (event) => {
+    document.addEventListener('error', event => {
         var failedUrl = event.srcElement.src;
         var context = event.srcElement.parentNode.outerHTML;
 
