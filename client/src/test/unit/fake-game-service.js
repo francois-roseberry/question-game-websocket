@@ -1,8 +1,6 @@
 var precondition = require('./contract').precondition;
 
-exports.create = () => new FakeGameService();
-
-class FakeGameService {
+export default class FakeGameService {
 	constructor() {
 		this._rejectNextName = false;
 		this._rejectNextAnswer = false;
@@ -13,6 +11,10 @@ class FakeGameService {
 		this._results = new Rx.Subject();
 		this._scores = new Rx.Subject();
 		this._playerQuit = new Rx.Subject();
+	}
+
+	static create() {
+		return new GameService();
 	}
 
 	rejectNextName() {
