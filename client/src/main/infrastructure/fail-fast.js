@@ -1,5 +1,3 @@
-'use strict';
-
 exports.crashOnUnhandledException = () => {
     // Fail-fast if an unhandled exception occur
     window.onerror = (message, file, line, column, error) => {

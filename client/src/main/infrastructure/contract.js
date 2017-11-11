@@ -1,5 +1,3 @@
-"use strict";
-
 exports.precondition = (check, message) => {
     if (check) {
         return;

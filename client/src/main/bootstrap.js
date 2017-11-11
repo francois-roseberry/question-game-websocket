@@ -1,5 +1,3 @@
-"use strict";
-
 var GameService = require('./game-service');
 var PlayGameTask = require('./play-game-task');
 var GameWidget = require('./game-widget');

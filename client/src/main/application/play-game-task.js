@@ -1,5 +1,3 @@
-"use strict";
-
 var precondition = require('./contract').precondition;
 
 exports.start = gameService => {
