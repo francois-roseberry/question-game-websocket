@@ -1,12 +1,12 @@
 var precondition = require('./contract').precondition;
 
-exports.addAssertions = function (context) {
-    _.extend(context, assertionsOn(function () {
+exports.addAssertions = context => {
+    _.extend(context, assertionsOn(() => {
         // The rootElement will be reset between each run
         return context.rootElement;
     }));
 
-    _.extend(context.body, assertionsOn(function () {
+    _.extend(context.body, assertionsOn(() => {
         return $(document.body);
     }));
 };
@@ -23,7 +23,7 @@ function assertionsOn(rootElement) {
     }
 
     return {
-        clickOn: function (selector, allowMany) {
+        clickOn: (selector, allowMany) => {
             checkIsSelector(selector);
 
             var element = rootElement().find(selector);
@@ -41,7 +41,7 @@ function assertionsOn(rootElement) {
             element.click();
         },
 
-	enterTextIn: function (selector, text) {
+	enterTextIn: (selector, text) => {
 		checkIsSelector(selector);
 
 		var element = rootElement().find(selector);
@@ -62,7 +62,7 @@ function assertionsOn(rootElement) {
 
         d3: d3Actions(),
 
-        assertOneOf: function (selector) {
+        assertOneOf: selector => {
             checkIsSelector(selector);
 
             var elementCount = rootElement().find(selector).length;
@@ -79,7 +79,7 @@ function assertionsOn(rootElement) {
             }
         },
 
-        assertNothingOf: function (selector) {
+        assertNothingOf: selector => {
             checkIsSelector(selector);
 
             var elementCount = rootElement().find(selector).length;
@@ -90,7 +90,7 @@ function assertionsOn(rootElement) {
             }
         },
 
-        assertElementCount: function (selector, expectedCount) {
+        assertElementCount: (selector, expectedCount) => {
             checkIsSelector(selector);
 
             var elementCount = rootElement().find(selector).length;
@@ -101,7 +101,7 @@ function assertionsOn(rootElement) {
             }
         },
 
-        assertVisible: function (selector) {
+        assertVisible: (selector) => {
             checkIsSelector(selector);
 
             if (!isVisible(rootElement(), selector)) {
@@ -109,7 +109,7 @@ function assertionsOn(rootElement) {
             }
         },
 
-        assertHidden: function (selector) {
+        assertHidden: selector => {
             checkIsSelector(selector);
 
             if (isVisible(rootElement(), selector)) {
@@ -117,7 +117,7 @@ function assertionsOn(rootElement) {
             }
         },
 
-        assertText: function (selector, textContent) {
+        assertText: (selector, textContent) => {
             checkIsSelector(selector);
 
             var actualText = rootElement().find(selector).text();
@@ -128,7 +128,7 @@ function assertionsOn(rootElement) {
             }
         },
 
-        assertTextIsPresent: function (selector, textContent) {
+        assertTextIsPresent: (selector, textContent) => {
             checkIsSelector(selector);
 
             var actualText = rootElement().find(selector).html();
@@ -139,7 +139,7 @@ function assertionsOn(rootElement) {
             }
         },
 
-        assertCssClass: function (selector, cssClass) {
+        assertCssClass: (selector, cssClass) => {
             checkIsSelector(selector);
 
             var element = rootElement().find(selector);
@@ -150,7 +150,7 @@ function assertionsOn(rootElement) {
             }
         },
 
-        assertAbsentCssClass: function (selector, cssClass) {
+        assertAbsentCssClass: (selector, cssClass) => {
             checkIsSelector(selector);
 
             var element = rootElement().find(selector);
@@ -161,14 +161,12 @@ function assertionsOn(rootElement) {
             }
         },
 
-        assertSelectionContainsAttributeValues: function (selector, attribute, expectedValues) {
+        assertSelectionContainsAttributeValues: (selector, attribute, expectedValues) => {
             checkIsSelector(selector);
 
-            var foundValues = _.map(rootElement().find(selector), function (item) {
-                return $(item).attr(attribute);
-            });
+            var foundValues = _.map(rootElement().find(selector), item => $(item).attr(attribute));
 
-            expectedValues.forEach(function (value) {
+            expectedValues.forEach(value => {
                 if (!_.contains(foundValues, value)) {
                     throw new Error("No element with selector " + selector +
                         " has attribute " + attribute + "=" + value +
@@ -177,19 +175,17 @@ function assertionsOn(rootElement) {
             });
         },
 
-        assertSelectionHasTextValuesInOrder: function (selector, expectedValues) {
+        assertSelectionHasTextValuesInOrder: (selector, expectedValues) => {
             checkIsSelector(selector);
 
-            var foundValues = _.map(rootElement().find(selector), function (item) {
-                return $(item).text();
-            });
+            var foundValues = _.map(rootElement().find(selector), item => $(item).text());
 
             if (foundValues.length !== expectedValues.length) {
                 throw new Error("Not enough elements with selector " + selector +
                     ", found " + foundValues.length + ", expected " + expectedValues.length);
             }
 
-            _.each(expectedValues, function (value, index) {
+            _.each(expectedValues, (value, index) => {
                 if (value !== foundValues[index]) {
                     throw new Error("Element [" + index + "] with selector " + selector +
                         " was expected to have its text attribute with value " + value +
@@ -198,7 +194,7 @@ function assertionsOn(rootElement) {
             });
         },
 
-        assertDisabled: function (selector) {
+        assertDisabled: selector => {
             checkIsSelector(selector);
 
             if (!isDisabled(rootElement(), selector)) {
@@ -206,7 +202,7 @@ function assertionsOn(rootElement) {
             }
         },
 
-        assertEnabled: function (selector) {
+        assertEnabled: selector => {
             checkIsSelector(selector);
 
             if (isDisabled(rootElement(), selector)) {
@@ -230,15 +226,15 @@ function isVisible(element, selector) {
 
 function d3Actions() {
     return {
-        clickOn: function (selector) {
+        clickOn: selector => {
             d3Trigger(selector, "click");
         },
 
-        hoverOn: function (selector) {
+        hoverOn: selector => {
             d3Trigger(selector, "mouseover");
         },
 
-        hoverOff: function (selector) {
+        hoverOff: selector => {
             d3Trigger(selector, "mouseout");
         }
     };
@@ -250,7 +246,7 @@ function d3Trigger(selector, eventName) {
     var elements = d3.selectAll(selector)[0];
     var event = document.createEvent("MouseEvent");
     event.initMouseEvent(eventName, true, true);
-    _.each(elements, function (element) {
+    _.each(elements, element => {
         element.dispatchEvent(event);
     });
 }

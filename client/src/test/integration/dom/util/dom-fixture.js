@@ -1,38 +1,38 @@
 var addAssertions = require('./dom-assert').addAssertions;
 
-exports.describeInDom = function (message, testSuite) {
-    describe("[DOM Test]", function () {
+exports.describeInDom = (message, testSuite) => {
+    describe("[DOM Test]", () => {
 
         var context = {
             body: {
-                remove: function (selector) {
+                remove: selector => {
                     $(document.body).find(selector).remove();
                 }
             }
         };
 
-        before(function () {
+        before(() => {
             addAssertions(context);
         });
 
-        beforeEach(function () {
+        beforeEach(() => {
             // Simulate a 1024x768 viewport
             context.rootElement = $('<div style="width: 960px; height: 720px; position: relative"></div>');
             $(document.body).append(context.rootElement);
         });
 
-        describe(message, function() {
+        describe(message, () => {
             testSuite(context);
         });
 
-        afterEach(function () {
+        afterEach(() => {
             context.rootElement.remove();
 
             // The root element must not be accessible beyond that point
             delete context.rootElement;
         });
 
-        after(function () {
+        after(() => {
             $(document.body).empty();
         });
     });
