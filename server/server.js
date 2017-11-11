@@ -6,6 +6,7 @@ var program = require('commander');
 var _ = require('underscore');
 var fs = require('fs');
 var log = require('debug')('question-game');
+var shuffle = require('./src/util').shuffle;
 
 var PORT = 3000;
 
@@ -221,20 +222,6 @@ function onChoice(socket, questions) {
 			});
 		}
 	};
-}
-
-/**
- * Shuffles array in place.
- * @param {Array} a items The array containing the items.
- */
-function shuffle(a) {
-    var j, x, i;
-    for (i = a.length; i; i--) {
-        j = Math.floor(Math.random() * i);
-        x = a[i - 1];
-        a[i - 1] = a[j];
-        a[j] = x;
-    }
 }
 
 function sendResultsOneByOne(index, results, callback) {
