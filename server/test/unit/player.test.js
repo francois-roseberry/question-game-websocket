@@ -12,4 +12,9 @@ describe('Creating a player', () => {
     var player = newPlayer('bob');
     expect(player.score).to.eql(0);
   });
+
+  it('has the socketId 0', () => {
+    var player = newPlayer('bob');
+    expect(player.socketId).to.eql(0);
+  });
 });

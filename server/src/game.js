@@ -58,11 +58,13 @@ class Game {
     return this._questionSubject.asObservable();
   }
 
-  answer(answer) {
+  answer(playerSocketId, answer) {
     var truth = this._questions[this._questionIndex].answer;
     if (truth === answer) {
       throw new Error('TRUTH');
     }
+
+    this._players[playerSocketId].lastAnswer = answer;
   }
 }
 

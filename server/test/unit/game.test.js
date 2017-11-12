@@ -58,9 +58,11 @@ describe('A game', () => {
   describe('answering a question', () => {
     it('throws an error if answer is the truth', () => {
       var game = Game.create(QUESTIONS);
+      const player = newPlayer('bob');
+      game.addPlayer(newPlayer('bob'));
       game.start();
       expect(() => {
-        game.answer(QUESTIONS[0].answer);
+        game.answer(player.socketId, QUESTIONS[0].answer);
       }).to.throw(/TRUTH/);
     });
   });
