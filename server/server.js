@@ -6,7 +6,9 @@ var program = require('commander');
 var _ = require('underscore');
 var fs = require('fs');
 var log = require('debug')('question-game');
+
 var shuffle = require('./src/util').shuffle;
+var newPlayer = require('./src/player').newPlayer;
 
 var PORT = 3000;
 
@@ -53,15 +55,6 @@ function validCountdown(countdown) {
 	}
 
 	return SECONDS_BEFORE_START;
-}
-
-function newPlayer(name) {
-	return {
-		name: name,
-		score: 0,
-		lastAnswer: null,
-		lastChoice: null
-	};
 }
 
 function onConnect(questions) {
