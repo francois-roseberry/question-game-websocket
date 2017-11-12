@@ -1,4 +1,5 @@
 var _ = require('underscore');
+var Rx = require('rx');
 
 var newPlayer = require('./player').newPlayer;
 
@@ -10,7 +11,7 @@ const TIME_AFTER_SCORES = 5000;
 const SECONDS_BEFORE_START = 5;
 
 class Game {
-  constructor(secondsBeforeStart) {
+  constructor(questions) {
     this._countdownObject = {};
     this._resultCooldownTimer = null;
     this._scoreCooldownTimer = null;
@@ -22,11 +23,13 @@ class Game {
     this._gameStarted = false;
     this._gameEnded = false;
 
-    this._secondsBeforeStart = secondsBeforeStart;
+    this._questions = questions;
+
+    this._questionSubject = new Rx.Subject();
   }
 
-  static create(secondsBeforeStart) {
-    return new Game(secondsBeforeStart);
+  static create(questions) {
+    return new Game(questions);
   }
 
   addPlayer(player) {
@@ -48,6 +51,11 @@ class Game {
 
   start() {
     this._gameStarted = true;
+    this._questionSubject.onNext(this._questions[0].question);
+  }
+
+  questions() {
+    return this._questionSubject.asObservable();
   }
 }
 
