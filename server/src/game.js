@@ -30,6 +30,10 @@ class Game {
   }
 
   addPlayer(player) {
+    if (this._gameStarted) {
+      throw new Error('ALREADY_STARTED');
+    }
+
     var names = _.map(this._players, player => player.name);
     if (_.contains(names, player.name)) {
       throw new Error('EXISTING');
@@ -40,6 +44,10 @@ class Game {
 
   players() {
     return _.values(this._players);
+  }
+
+  start() {
+    this._gameStarted = true;
   }
 }
 

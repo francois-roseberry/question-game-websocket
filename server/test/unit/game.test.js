@@ -26,5 +26,15 @@ describe('A game', () => {
         game.addPlayer(newPlayer('bob'));
       }).to.throw(/EXISTING/);
     });
+
+    it('throws an error if game is already started', () => {
+      var game = Game.create(1);
+      game.addPlayer(newPlayer('bob'));
+      game.start();
+
+      expect(() => {
+        game.addPlayer(newPlayer('alice'));
+      }).to.throw(/ALREADY_STARTED/);
+    });
   });
 });
