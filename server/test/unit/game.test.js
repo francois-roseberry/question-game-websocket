@@ -54,4 +54,14 @@ describe('A game', () => {
       game.start();
     });
   });
+
+  describe('answering a question', () => {
+    it('throws an error if answer is the truth', () => {
+      var game = Game.create(QUESTIONS);
+      game.start();
+      expect(() => {
+        game.answer(QUESTIONS[0].answer);
+      }).to.throw(/TRUTH/);
+    });
+  });
 });

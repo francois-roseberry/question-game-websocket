@@ -51,11 +51,18 @@ class Game {
 
   start() {
     this._gameStarted = true;
-    this._questionSubject.onNext(this._questions[0].question);
+    this._questionSubject.onNext(this._questions[this._questionIndex].question);
   }
 
   questions() {
     return this._questionSubject.asObservable();
+  }
+
+  answer(answer) {
+    var truth = this._questions[this._questionIndex].answer;
+    if (truth === answer) {
+      throw new Error('TRUTH');
+    }
   }
 }
 
