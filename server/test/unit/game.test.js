@@ -57,13 +57,61 @@ describe('A game', () => {
 
   describe('answering a question', () => {
     it('throws an error if answer is the truth', () => {
-      var game = Game.create(QUESTIONS);
+      const game = Game.create(QUESTIONS);
       const player = newPlayer('bob');
-      game.addPlayer(newPlayer('bob'));
+      game.addPlayer(player);
       game.start();
       expect(() => {
         game.answer(player.socketId, QUESTIONS[0].answer);
       }).to.throw(/TRUTH/);
+    });
+
+    it('does not send choices when everybody has not answered', () => {
+      const game = Game.create(QUESTIONS);
+
+      game.choices().subscribe(choices => {
+        fail();
+      });
+
+      const player1 = newPlayer('bob');
+      game.addPlayer(player1);
+      const player2 = newPlayer('alice');
+      player2.socketId = 2;
+      game.addPlayer(player2);
+      game.start();
+      game.answer(player1.socketId, QUESTIONS[0].answer + '1');
+    })
+
+    describe('when every player has answered, sends a choice array', () => {
+      const game = Game.create(QUESTIONS);
+      const player1 = newPlayer('bob');
+      const player2 = newPlayer('alice');
+      player2.socketId = 2;
+
+      let choicesArray;
+
+      game.choices().subscribe(choices => {
+        choicesArray = choices;
+      });
+
+      game.addPlayer(player1);
+      game.addPlayer(player2);
+      game.start();
+      game.answer(player1.socketId, QUESTIONS[0].answer + '1');
+      game.answer(player2.socketId, QUESTIONS[0].answer + '1');
+
+      it('containing the truth', () => {
+        expect(_.contains(choicesArray, QUESTIONS[0].answer)).to.eql(true);
+      });
+
+      it('containing unique choices', () => {
+        expect(choicesArray.length).to.eql(_.uniq(choicesArray).length);
+      });
+
+      it('containing the answer of each player', () => {
+        expect(_.contains(choicesArray, player1.lastAnswer)).to.eql(true);
+        expect(_.contains(choicesArray, player2.lastAnswer)).to.eql(true);
+      });
     });
   });
 });

@@ -2,6 +2,7 @@ var _ = require('underscore');
 var Rx = require('rx');
 
 var newPlayer = require('./player').newPlayer;
+var shuffle = require('./util').shuffle;
 
 const POINTS_FOR_TRUTH = 1000;
 const POINTS_FOR_LIE = 500;
@@ -26,6 +27,7 @@ class Game {
     this._questions = questions;
 
     this._questionSubject = new Rx.Subject();
+    this._choicesSubject = new Rx.Subject();
   }
 
   static create(questions) {
@@ -58,6 +60,10 @@ class Game {
     return this._questionSubject.asObservable();
   }
 
+  choices() {
+    return this._choicesSubject.asObservable();
+  }
+
   answer(playerSocketId, answer) {
     var truth = this._questions[this._questionIndex].answer;
     if (truth === answer) {
@@ -65,7 +71,23 @@ class Game {
     }
 
     this._players[playerSocketId].lastAnswer = answer;
+
+    if (hasEveryPlayerAnswered(this._players)) {
+      var choices = computeChoices(truth, this._players);
+      shuffle(choices);
+      this._choicesSubject.onNext(choices);
+    }
   }
+}
+
+function hasEveryPlayerAnswered(players) {
+  return _.every(players, player => player.lastAnswer != null);
+}
+
+function computeChoices(truth, players) {
+  var answers = _.map(players, player => player.lastAnswer);
+
+  return _.uniq(answers).concat([truth]);
 }
 
 exports.Game = Game;
