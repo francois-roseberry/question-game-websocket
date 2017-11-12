@@ -22,7 +22,7 @@ module.exports = function(grunt) {
 
 	// Packaging
 	grunt.registerTask('prepare', ['copy:html', 'copy:flattenSourceAndTest', 'copy:flattenSmokeTest']);
-	grunt.registerTask('copySource', ['copy:lib', 'copy:images', 'copy:sounds', 'copy:fonts', 'copy:data']);
+	grunt.registerTask('copySource', ['copy:lib', 'copy:images', 'copy:sounds', 'copy:fonts']);
 	grunt.registerTask('minify', ['cssmin']);
 	grunt.registerTask('package', ['prepare', 'browserify', 'concat', 'copySource', 'minify']);
 
@@ -166,16 +166,6 @@ module.exports = function(grunt) {
 				],
 				dest: 'target/dist/sounds',
 				filter: 'isFile',
-				flatten: true
-			},
-
-			data: {
-				expand: true,
-				src: [
-					'src/**/*.GEOJSON',
-					'src/**/*.xml'
-				],
-				dest: 'target/dist/lib',
 				flatten: true
 			}
 		},
