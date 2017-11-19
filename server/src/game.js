@@ -78,10 +78,29 @@ class Game {
       this._choicesSubject.onNext(choices);
     }
   }
+
+  choose(playerSocketId, choice) {
+    this._players[playerSocketId].lastChoice = choice;
+
+    if (hasEveryPlayerChosen(this._players)) {
+      var truth = this._questions[this._questionIndex].answer;
+
+      _.each(this._players, player => {
+        console.log('for each player');
+        if (player.lastChoice === truth) {
+          player.score += POINTS_FOR_TRUTH;
+        };
+      });
+    }
+  }
 }
 
 function hasEveryPlayerAnswered(players) {
-  return _.every(players, player => player.lastAnswer != null);
+  return _.every(players, player => player.lastAnswer !== null);
+}
+
+function hasEveryPlayerChosen(players) {
+	return _.every(players, player => player.lastChoice !== null);
 }
 
 function computeChoices(truth, players) {
