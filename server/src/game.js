@@ -89,7 +89,13 @@ class Game {
         console.log('for each player');
         if (player.lastChoice === truth) {
           player.score += POINTS_FOR_TRUTH;
-        };
+        } else {
+          _.each(this._players, potentialAuthor => {
+            if (potentialAuthor.lastAnswer === player.lastChoice && potentialAuthor.socketId !== player.socketId) {
+              potentialAuthor.score += POINTS_FOR_LIE;
+            }
+          });
+        }
       });
     }
   }

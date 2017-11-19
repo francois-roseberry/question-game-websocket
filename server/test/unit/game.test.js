@@ -131,10 +131,34 @@ describe('A game', () => {
         game.answer(player1.socketId, QUESTIONS[0].answer + '1');
         game.answer(player2.socketId, QUESTIONS[0].answer + '1');
         game.choose(player1.socketId, QUESTIONS[0].answer);
-        game.choose(player2.socketId, QUESTIONS[0].answer + '1');
+        game.choose(player2.socketId, QUESTIONS[0].answer + '2');
 
         expect(player1.score).to.eql(1000);
         expect(player2.score).to.not.eql(1000);
+      });
+    });
+
+    it('giving 500 points to each player who authored a choice picked by others', () => {
+      twoPlayerGameStarted((game, player1, player2) => {
+        game.answer(player1.socketId, QUESTIONS[0].answer + '1');
+        game.answer(player2.socketId, QUESTIONS[0].answer + '2');
+        game.choose(player1.socketId, QUESTIONS[0].answer + '3');
+        game.choose(player2.socketId, QUESTIONS[0].answer + '1');
+
+        expect(player1.score).to.eql(500);
+        expect(player2.score).to.eql(0);
+      });
+    });
+
+    it('giving 0 points to each player who picked his own choice', () => {
+      twoPlayerGameStarted((game, player1, player2) => {
+        game.answer(player1.socketId, QUESTIONS[0].answer + '1');
+        game.answer(player2.socketId, QUESTIONS[0].answer + '2');
+        game.choose(player1.socketId, QUESTIONS[0].answer + '1');
+        game.choose(player2.socketId, QUESTIONS[0].answer + '2');
+
+        expect(player1.score).to.eql(0);
+        expect(player2.score).to.eql(0);
       });
     });
   });
