@@ -56,7 +56,7 @@ class Game {
     if (this._gameStarted) {
       throw new Error('ALREADY_STARTED');
     }
-    
+
     this._gameStarted = true;
     this._questionSubject.onNext(this._questions[this._questionIndex].question);
   }
@@ -93,41 +93,72 @@ class Game {
 
     if (hasEveryPlayerChosen(this._players)) {
       const truth = this._questions[this._questionIndex].answer;
-      let truthPickers = [];
+      let resultsMap = { [truth]: { authors: 'TRUTH', choosedBy: [] } };
+
+      _.each(this._players, player => {
+        resultsMap[player.lastAnswer] = getResult(resultsMap, player);
+      });
 
       _.each(this._players, player => {
         if (player.lastChoice === truth) {
           player.score += POINTS_FOR_TRUTH;
-          truthPickers.push(player.name);
+          resultsMap[truth].choosedBy.push(player.name);
         } else {
           _.each(this._players, potentialAuthor => {
             if (potentialAuthor.lastAnswer === player.lastChoice && potentialAuthor.socketId !== player.socketId) {
               potentialAuthor.score += POINTS_FOR_LIE;
             }
           });
+
+          resultsMap[player.lastChoice].choosedBy.push(player.name);
         }
       });
 
-      let results = [];
-      results.push({ choice: truth, authors: ['TRUTH'], choosedBy: truthPickers });
+      const results = placeResultsIntoArray(resultsMap, truth);
 
       this._resultsSubject.onNext(results);
     }
   }
 }
 
-function hasEveryPlayerAnswered(players) {
-  return _.every(players, player => player.lastAnswer !== null);
+const getResult = (resultsMap, player) => {
+	if (resultsMap[player.lastAnswer]) {
+		let result = resultsMap[player.lastAnswer];
+		result.authors.push(player.name);
+		return result;
+	}
+
+	return {authors: [player.name], choosedBy:[]};
 }
 
-function hasEveryPlayerChosen(players) {
-	return _.every(players, player => player.lastChoice !== null);
-}
+const placeResultsIntoArray = (resultsMap, truth) =>
+  _.keys(resultsMap).map(toChoice(resultsMap))
+  .filter(everythingButTruth)
+  .filter(pickedByAtLeastSomeone)
+	.concat([truthResult(resultsMap, truth)]);
 
-function computeChoices(truth, players) {
-  const answers = _.map(players, player => player.lastAnswer);
+const toChoice = resultsMap => choice => ({
+  choice: choice,
+  authors: resultsMap[choice].authors,
+  choosedBy: resultsMap[choice].choosedBy
+});
 
-  return _.uniq(answers).concat([truth]);
-}
+const everythingButTruth = result => result.authors[0] !== 'TRUTH';
+
+const pickedByAtLeastSomeone = result => result.choosedBy.length > 0;
+
+const truthResult = (resultsMap, truth) => ({
+  choice: truth,
+  authors: ['TRUTH'],
+  choosedBy: resultsMap[truth].choosedBy
+});
+
+const hasEveryPlayerAnswered = players => _.every(players, player => player.lastAnswer !== null);
+
+const hasEveryPlayerChosen = players => _.every(players, player => player.lastChoice !== null);
+
+const computeChoices = (truth, players) => _.uniq(lastAnswers(players)).concat([truth]);
+
+const lastAnswers = players => _.map(players, player => player.lastAnswer);
 
 exports.Game = Game;
