@@ -6,9 +6,9 @@ var newPlayer = require('../../src/player').newPlayer;
 
 describe('A game', () => {
   const QUESTIONS = [
-    { question: 'A ?', truth: '1'},
-    { question: 'B ?', truth: '2'},
-    { question: 'C ?', truth: '3'}
+    { question: 'A ?', answer: '1'},
+    { question: 'B ?', answer: '2'},
+    { question: 'C ?', answer: '3'}
   ];
   it('can be created', () => {
     Game.create([]);
@@ -77,74 +77,58 @@ describe('A game', () => {
   });
 
   describe('when every player has answered, sends a choice array', () => {
-    it('containing the truth', () => {
+    it('containing the truth', done => {
       twoPlayerGameStarted((game, player1, player2) => {
-        let choicesArray;
-
         game.choices().subscribe(choices => {
-          choicesArray = choices;
+          expect(_.contains(choices, QUESTIONS[0].answer)).to.eql(true);
+          done();
         });
 
         game.answer(player1.socketId, QUESTIONS[0].answer + '1');
         game.answer(player2.socketId, QUESTIONS[0].answer + '1');
-
-        expect(_.contains(choicesArray, QUESTIONS[0].answer)).to.eql(true);
       });
     });
 
-    it('containing unique choices', () => {
+    it('containing unique choices', done => {
       twoPlayerGameStarted((game, player1, player2) => {
-        let choicesArray;
-
         game.choices().subscribe(choices => {
-          choicesArray = choices;
+          expect(choices.length).to.eql(_.uniq(choices).length);
+          done();
         });
-
 
         game.answer(player1.socketId, QUESTIONS[0].answer + '1');
         game.answer(player2.socketId, QUESTIONS[0].answer + '1');
-
-        expect(choicesArray.length).to.eql(_.uniq(choicesArray).length);
       });
     });
 
-    it('containing the answer of each player', () => {
+    it('containing the answer of each player', done => {
       twoPlayerGameStarted((game, player1, player2) => {
-        let choicesArray;
-
         game.choices().subscribe(choices => {
-          choicesArray = choices;
+          expect(_.contains(choices, player1.lastAnswer)).to.eql(true);
+          expect(_.contains(choices, player2.lastAnswer)).to.eql(true);
+          done();
         });
 
         game.answer(player1.socketId, QUESTIONS[0].answer + '1');
         game.answer(player2.socketId, QUESTIONS[0].answer + '1');
-
-        expect(_.contains(choicesArray, player1.lastAnswer)).to.eql(true);
-        expect(_.contains(choicesArray, player2.lastAnswer)).to.eql(true);
       });
     });
   });
 
   describe('when every player has chosen, sends the results', () => {
     it('giving 1000 points to each player who found the truth', () => {
-      twoPlayerGameStarted((game, player1, player2) => {
-        game.answer(player1.socketId, QUESTIONS[0].answer + '1');
-        game.answer(player2.socketId, QUESTIONS[0].answer + '1');
-        game.choose(player1.socketId, QUESTIONS[0].answer);
-        game.choose(player2.socketId, QUESTIONS[0].answer + '2');
-
+      const answers = { player1: QUESTIONS[0].answer + '1', player2: QUESTIONS[0].answer + '1'};
+      const choices = { player1: QUESTIONS[0].answer, player2: QUESTIONS[0].answer + '2'};
+      twoPlayerGameStartedAnsweredChosen(answers, choices, (game, player1, player2) => {
         expect(player1.score).to.eql(1000);
-        expect(player2.score).to.not.eql(1000);
+        expect(player2.score).to.eql(0);
       });
     });
 
     it('giving 500 points to each player who authored a choice picked by others', () => {
-      twoPlayerGameStarted((game, player1, player2) => {
-        game.answer(player1.socketId, QUESTIONS[0].answer + '1');
-        game.answer(player2.socketId, QUESTIONS[0].answer + '2');
-        game.choose(player1.socketId, QUESTIONS[0].answer + '3');
-        game.choose(player2.socketId, QUESTIONS[0].answer + '1');
-
+      const answers = { player1: QUESTIONS[0].answer + '1', player2: QUESTIONS[0].answer + '2'};
+      const choices = { player1: QUESTIONS[0].answer + '3', player2: QUESTIONS[0].answer + '1'};
+      twoPlayerGameStartedAnsweredChosen(answers, choices, (game, player1, player2) => {
         expect(player1.score).to.eql(500);
         expect(player2.score).to.eql(0);
       });
@@ -152,12 +136,10 @@ describe('A game', () => {
 
     it('giving 0 points to each player who picked his own choice', () => {
       const answers = { player1: QUESTIONS[0].answer + '1', player2: QUESTIONS[0].answer + '2'};
-      twoPlayerGameStartedAnswered(answers, (game, player1, player2) => {
-          game.choose(player1.socketId, QUESTIONS[0].answer + '1');
-          game.choose(player2.socketId, QUESTIONS[0].answer + '2');
-
-          expect(player1.score).to.eql(0);
-          expect(player2.score).to.eql(0);
+      const choices = { player1: QUESTIONS[0].answer + '1', player2: QUESTIONS[0].answer + '2'};
+      twoPlayerGameStartedAnsweredChosen(answers, choices, (game, player1, player2) => {
+        expect(player1.score).to.eql(0);
+        expect(player2.score).to.eql(0);
       });
     });
   });
@@ -180,9 +162,17 @@ describe('A game', () => {
   }
 
   function twoPlayerGameStartedAnswered(answers, callback) {
-    twoPlayerGame((game, player1, player2) => {
+    twoPlayerGameStarted((game, player1, player2) => {
       game.answer(player1.socketId, answers.player1);
       game.answer(player2.socketId, answers.player2);
+      callback(game, player1, player2);
+    });
+  }
+
+  function twoPlayerGameStartedAnsweredChosen(answers, choices, callback) {
+    twoPlayerGameStartedAnswered(answers, (game, player1, player2) => {
+      game.choose(player1.socketId, choices.player1);
+      game.choose(player2.socketId, choices.player2);
       callback(game, player1, player2);
     });
   }
