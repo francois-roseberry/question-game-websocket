@@ -53,6 +53,10 @@ class Game {
   }
 
   start() {
+    if (this._gameStarted) {
+      throw new Error('ALREADY_STARTED');
+    }
+    
     this._gameStarted = true;
     this._questionSubject.onNext(this._questions[this._questionIndex].question);
   }
