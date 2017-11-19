@@ -28,6 +28,7 @@ class Game {
 
     this._questionSubject = new Rx.Subject();
     this._choicesSubject = new Rx.Subject();
+    this._resultsSubject = new Rx.Subject();
   }
 
   static create(questions) {
@@ -39,7 +40,7 @@ class Game {
       throw new Error('ALREADY_STARTED');
     }
 
-    var names = _.map(this._players, player => player.name);
+    const names = _.map(this._players, player => player.name);
     if (_.contains(names, player.name)) {
       throw new Error('EXISTING');
     }
@@ -64,8 +65,12 @@ class Game {
     return this._choicesSubject.asObservable();
   }
 
+  results() {
+    return this._resultsSubject.asObservable();
+  }
+
   answer(playerSocketId, answer) {
-    var truth = this._questions[this._questionIndex].answer;
+    const truth = this._questions[this._questionIndex].answer;
     if (truth === answer) {
       throw new Error('TRUTH');
     }
@@ -73,7 +78,7 @@ class Game {
     this._players[playerSocketId].lastAnswer = answer;
 
     if (hasEveryPlayerAnswered(this._players)) {
-      var choices = computeChoices(truth, this._players);
+      let choices = computeChoices(truth, this._players);
       shuffle(choices);
       this._choicesSubject.onNext(choices);
     }
@@ -83,11 +88,13 @@ class Game {
     this._players[playerSocketId].lastChoice = choice;
 
     if (hasEveryPlayerChosen(this._players)) {
-      var truth = this._questions[this._questionIndex].answer;
+      const truth = this._questions[this._questionIndex].answer;
+      let truthPickers = [];
 
       _.each(this._players, player => {
         if (player.lastChoice === truth) {
           player.score += POINTS_FOR_TRUTH;
+          truthPickers.push(player.name);
         } else {
           _.each(this._players, potentialAuthor => {
             if (potentialAuthor.lastAnswer === player.lastChoice && potentialAuthor.socketId !== player.socketId) {
@@ -96,6 +103,11 @@ class Game {
           });
         }
       });
+
+      let results = [];
+      results.push({ choice: truth, authors: ['TRUTH'], choosedBy: truthPickers });
+
+      this._resultsSubject.onNext(results);
     }
   }
 }
@@ -109,7 +121,7 @@ function hasEveryPlayerChosen(players) {
 }
 
 function computeChoices(truth, players) {
-  var answers = _.map(players, player => player.lastAnswer);
+  const answers = _.map(players, player => player.lastAnswer);
 
   return _.uniq(answers).concat([truth]);
 }
