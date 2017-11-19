@@ -182,7 +182,7 @@ describe('A game', () => {
   function twoPlayerGameStartedAnswered(answers, callback) {
     twoPlayerGame((game, player1, player2) => {
       game.answer(player1.socketId, answers.player1);
-      game.started(player2.socketId, answers.player2);
+      game.answer(player2.socketId, answers.player2);
       callback(game, player1, player2);
     });
   }
