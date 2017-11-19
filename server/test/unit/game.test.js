@@ -151,14 +151,13 @@ describe('A game', () => {
     });
 
     it('giving 0 points to each player who picked his own choice', () => {
-      twoPlayerGameStarted((game, player1, player2) => {
-        game.answer(player1.socketId, QUESTIONS[0].answer + '1');
-        game.answer(player2.socketId, QUESTIONS[0].answer + '2');
-        game.choose(player1.socketId, QUESTIONS[0].answer + '1');
-        game.choose(player2.socketId, QUESTIONS[0].answer + '2');
+      const answers = { player1: QUESTIONS[0].answer + '1', player2: QUESTIONS[0].answer + '2'};
+      twoPlayerGameStartedAnswered(answers, (game, player1, player2) => {
+          game.choose(player1.socketId, QUESTIONS[0].answer + '1');
+          game.choose(player2.socketId, QUESTIONS[0].answer + '2');
 
-        expect(player1.score).to.eql(0);
-        expect(player2.score).to.eql(0);
+          expect(player1.score).to.eql(0);
+          expect(player2.score).to.eql(0);
       });
     });
   });
@@ -176,6 +175,14 @@ describe('A game', () => {
   function twoPlayerGameStarted(callback) {
     twoPlayerGame((game, player1, player2) => {
       game.start();
+      callback(game, player1, player2);
+    });
+  }
+
+  function twoPlayerGameStartedAnswered(answers, callback) {
+    twoPlayerGame((game, player1, player2) => {
+      game.answer(player1.socketId, answers.player1);
+      game.started(player2.socketId, answers.player2);
       callback(game, player1, player2);
     });
   }

@@ -86,7 +86,6 @@ class Game {
       var truth = this._questions[this._questionIndex].answer;
 
       _.each(this._players, player => {
-        console.log('for each player');
         if (player.lastChoice === truth) {
           player.score += POINTS_FOR_TRUTH;
         } else {
