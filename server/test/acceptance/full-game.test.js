@@ -5,7 +5,7 @@ describe('A full game', () => {
 	const PLAYER2 = 'alice';
 	const PLAYER3 = 'george';
 
-	it('can be played', done => {
+	it('can be played', function (done) {
 		this.timeout(10000);
 		TestUtils.connectPlayers([PLAYER1, PLAYER2, PLAYER3], ([player1, player2, player3]) => {
 			player3.once('name response', () => {

@@ -2,7 +2,7 @@ var expect = require('chai').expect;
 var TestUtils = require('./test-utils');
 
 describe('A player joining', () => {
-	it('cannot have the same name as an existing player', done => {
+	it('cannot have the same name as an existing player', function (done) {
 		this.timeout(1000);
 
 		const NAME = 'Bob';
