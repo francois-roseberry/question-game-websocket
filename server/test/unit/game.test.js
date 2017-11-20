@@ -179,6 +179,10 @@ describe('A game', () => {
       });
     });
   });
+
+  // TODO test scores
+  // TODO test answers are reset afterEach
+  // TODO test game end if no more question
 });
 
 const assertResultsDoNotContainChoice = (choice, results) => expect(results.filter(result => result.choice == choice).length).to.eql(0);
