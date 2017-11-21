@@ -21,6 +21,8 @@ describe('A full game', () => {
 					player3.emit('answer', 'lie3');
 
 					// TODO have two players pick the same lie, chosen by the other, to see if both authors get +500
+					// Do not do this, this is already unit-tested. Here the test should only make sure a game
+					// can be played from beginning to end
 
 					TestUtils.disconnectPlayers([player1, player2, player3]);
 

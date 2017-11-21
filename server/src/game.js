@@ -117,6 +117,11 @@ class Game {
       const results = placeResultsIntoArray(resultsMap, truth);
 
       this._resultsSubject.onNext(results);
+
+      this._questionIndex++;
+      if (this._questionIndex < this._questions.length) {
+        this._questionSubject.onNext(this._questions[this._questionIndex].question);
+      }
     }
   }
 }
