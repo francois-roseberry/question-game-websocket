@@ -122,7 +122,8 @@ class Game {
       const results = placeResultsIntoArray(resultsMap, truth);
 
       this._resultsSubject.onNext(results);
-      this._scoresSubject.onNext(scoresArray(this._players));
+      const scores = { array: scoresArray(this._players), final: this._questionIndex === this._questions.length };
+      this._scoresSubject.onNext(scores);
 
       this._questionIndex++;
       if (this._questionIndex < this._questions.length) {

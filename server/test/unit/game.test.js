@@ -188,8 +188,9 @@ describe('A game', () => {
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };
       const CHOICES = { player1: TRUTH + '1', player2: TRUTH };
       twoPlayerGameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2, results, scores) => {
-        expect(contains(scores, { name: player1.name, score: 0 })).to.eql(true);
-        expect(contains(scores, { name: player2.name, score: 1500 })).to.eql(true);
+        expect(contains(scores.array, { name: player1.name, score: 0 })).to.eql(true);
+        expect(contains(scores.array, { name: player2.name, score: 1500 })).to.eql(true);
+        expect(scores.final).to.eql(false);
         done();
       });
     });
