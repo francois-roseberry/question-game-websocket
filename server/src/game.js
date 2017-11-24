@@ -120,18 +120,24 @@ class Game {
       });
 
       const results = placeResultsIntoArray(resultsMap, truth);
+      this._questionIndex++;
+      resetAnswers(this._players);
 
       this._resultsSubject.onNext(results);
       const scores = { array: scoresArray(this._players), final: this._questionIndex === this._questions.length };
       this._scoresSubject.onNext(scores);
 
-      this._questionIndex++;
       if (this._questionIndex < this._questions.length) {
         this._questionSubject.onNext(this._questions[this._questionIndex].question);
       }
     }
   }
 }
+
+const resetAnswers = players => _.map(players, player => {
+  player.lastChoice = null;
+  player.lastAnswer = null;
+});
 
 const scoresArray = players => _.map(players, player => ({ name: player.name, score: player.score }));
 

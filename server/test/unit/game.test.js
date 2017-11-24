@@ -7,8 +7,8 @@ var newPlayer = require('../../src/player').newPlayer;
 
 const QUESTIONS = [
   { question: 'A ?', answer: '1'},
-  { question: 'B ?', answer: '2'},
-  { question: 'C ?', answer: '3'}
+  { question: 'B ?', answer: '1'},
+  { question: 'C ?', answer: '1'}
 ];
 
 describe('A game', () => {
@@ -18,15 +18,15 @@ describe('A game', () => {
 
   describe('adding a player', () => {
     it('adds a new player with that name to its list of players', () => {
-      var game = Game.create(QUESTIONS);
+      const game = Game.create(QUESTIONS);
       game.addPlayer(newPlayer('bob'));
 
-      var names = game.players().map(player => player.name);
+      const names = game.players().map(player => player.name);
       expect(_.contains(names, 'bob')).to.eql(true);
     });
 
     it('throws an error if a player already has that name', () => {
-      var game = Game.create(QUESTIONS);
+      const game = Game.create(QUESTIONS);
       game.addPlayer(newPlayer('bob'));
 
       expect(() => {
@@ -35,7 +35,7 @@ describe('A game', () => {
     });
 
     it('throws an error if game is already started', () => {
-      var game = Game.create(QUESTIONS);
+      const game = Game.create(QUESTIONS);
       game.addPlayer(newPlayer('bob'));
       game.start();
 
@@ -182,7 +182,6 @@ describe('A game', () => {
   });
 
   describe('after choosing', () => {
-    // TODO : scores should be sorted
     it('send scores, with an entry for every player', done => {
       const TRUTH = QUESTIONS[0].answer;
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };
@@ -195,7 +194,7 @@ describe('A game', () => {
       });
     });
   });
-  // TODO test answers are reset afterEach
+
   describe('after choosing, when there are still more questions', () => {
     describe('when there are more questions', () => {
       it('sends the next question', done => {
@@ -214,7 +213,15 @@ describe('A game', () => {
     });
 
     describe('when there are no more questions', () => {
-      // TODO test end game
+      it('scores are marked as final', done => {
+        const TRUTH = QUESTIONS[0].answer;
+        const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };
+        const CHOICES = { player1: TRUTH + '1', player2: TRUTH };
+        twoPlayerGameCompleted(ANSWERS, CHOICES, (game, player1, player2, scores) => {
+          expect(scores.final).to.eql(true);
+          done();
+        });
+      });
     });
   })
 });
@@ -256,6 +263,25 @@ const twoPlayerGameStartedAnsweredChosen = (answers, choices, callback) => {
     Rx.Observable.forkJoin(subjects).take(1).subscribe(([results, scores]) => {
       callback(game, player1, player2, results, scores);
     });
+    game.choose(player1.socketId, choices.player1);
+    game.choose(player2.socketId, choices.player2);
+  });
+}
+
+const twoPlayerGameCompleted = (answers, choices, callback) => {
+  twoPlayerGameStartedAnsweredChosen(answers, choices, (game, player1, player2) => {
+    game.answer(player1.socketId, answers.player1);
+    game.answer(player2.socketId, answers.player2);
+    game.choose(player1.socketId, choices.player1);
+    game.choose(player2.socketId, choices.player2);
+
+    game.answer(player1.socketId, answers.player1);
+    game.answer(player2.socketId, answers.player2);
+
+    game.scores().take(1).subscribe(scores => {
+      callback(game, player1, player2, scores);
+    });
+
     game.choose(player1.socketId, choices.player1);
     game.choose(player2.socketId, choices.player2);
   });
