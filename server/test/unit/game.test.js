@@ -1,5 +1,6 @@
 var expect = require('chai').expect;
 var _ = require('underscore');
+var Rx = require('rx');
 
 var Game = require('../../src/game').Game;
 var newPlayer = require('../../src/player').newPlayer;
@@ -180,9 +181,21 @@ describe('A game', () => {
     });
   });
 
-  // TODO test scores
+  describe('after choosing', () => {
+    // TODO : scores should be sorted
+    it('send scores, with an entry for every player', done => {
+      const TRUTH = QUESTIONS[0].answer;
+      const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };
+      const CHOICES = { player1: TRUTH + '1', player2: TRUTH };
+      twoPlayerGameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2, results, scores) => {
+        expect(contains(scores, { name: player1.name, score: 0 })).to.eql(true);
+        expect(contains(scores, { name: player2.name, score: 1500 })).to.eql(true);
+        done();
+      });
+    });
+  });
   // TODO test answers are reset afterEach
-  describe('after answering, when there are still more questions', () => {
+  describe('after choosing, when there are still more questions', () => {
     describe('when there are more questions', () => {
       it('sends the next question', done => {
         const TRUTH = QUESTIONS[0].answer;
@@ -203,8 +216,6 @@ describe('A game', () => {
       // TODO test end game
     });
   })
-
-  // TODO test game end if no more question
 });
 
 const assertResultsDoNotContainChoice = (choice, results) => expect(results.filter(result => result.choice == choice).length).to.eql(0);
@@ -240,8 +251,9 @@ const twoPlayerGameStartedAnswered = (answers, callback) => {
 
 const twoPlayerGameStartedAnsweredChosen = (answers, choices, callback) => {
   twoPlayerGameStartedAnswered(answers, (game, player1, player2) => {
-    game.results().take(1).subscribe(results => {
-      callback(game, player1, player2, results);
+    const subjects = [ game.results().take(1), game.scores().take(1)];
+    Rx.Observable.forkJoin(subjects).take(1).subscribe(([results, scores]) => {
+      callback(game, player1, player2, results, scores);
     });
     game.choose(player1.socketId, choices.player1);
     game.choose(player2.socketId, choices.player2);

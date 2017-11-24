@@ -29,6 +29,7 @@ class Game {
     this._questionSubject = new Rx.Subject();
     this._choicesSubject = new Rx.Subject();
     this._resultsSubject = new Rx.Subject();
+    this._scoresSubject = new Rx.Subject();
   }
 
   static create(questions) {
@@ -71,6 +72,10 @@ class Game {
 
   results() {
     return this._resultsSubject.asObservable();
+  }
+
+  scores() {
+    return this._scoresSubject.asObservable();
   }
 
   answer(playerSocketId, answer) {
@@ -117,6 +122,7 @@ class Game {
       const results = placeResultsIntoArray(resultsMap, truth);
 
       this._resultsSubject.onNext(results);
+      this._scoresSubject.onNext(scoresArray(this._players));
 
       this._questionIndex++;
       if (this._questionIndex < this._questions.length) {
@@ -125,6 +131,8 @@ class Game {
     }
   }
 }
+
+const scoresArray = players => _.map(players, player => ({ name: player.name, score: player.score }));
 
 const getResult = (resultsMap, player) => {
 	if (resultsMap[player.lastAnswer]) {
