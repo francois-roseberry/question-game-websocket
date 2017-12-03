@@ -20,11 +20,13 @@ describe('A DelayedGame', () => {
   });
 
   describe('when starting', () => {
-    it('send one starting event per second to start', done => {
+    it('send one starting event per second to start, then send the first question', done => {
       const game = Game.create(CONFIG);
       game.starting().take(5).toArray().subscribe(seconds => {
         expect(seconds).to.eql([5,4,3,2,1]);
-        done();
+        game.questions().take(1).subscribe(question => {
+          done();
+        });
       });
 
       game.start();

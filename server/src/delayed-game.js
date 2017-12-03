@@ -21,9 +21,13 @@ class DelayedGame {
     return this._starting.asObservable();
   }
 
+  questions() {
+    return this._game.questions();
+  }
+
   start() {
     countdown(this._starting, this._config.millisecondsPerSecond, {}, this._config.secondsBeforeStart, () => {
-
+      this._game.start();
     });
   }
 }
