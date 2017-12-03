@@ -26,6 +26,21 @@ class DelayedGame {
     return this._game.questions();
   }
 
+  choices() {
+    return this._game.choices();
+  }
+
+  results() {
+    // TODO I'm not sure this will really work outside of unit tests
+    return this._game.results().flatMap(results => {
+      const resultsSubject = new Rx.ReplaySubject(results.length);
+      results.forEach(result => {
+        resultsSubject.onNext(result);
+      });
+      return resultsSubject.asObservable();
+    });
+  }
+
   start() {
     countdown(this._starting, this._config.millisecondsPerSecond, this._countdownObject, this._config.secondsBeforeStart, () => {
       this._game.start();
@@ -37,6 +52,14 @@ class DelayedGame {
       clearTimeout(this._countdownObject.timer);
       this._countdownObject.timer = null;
     }
+  }
+
+  answer(playerSocketId, answer) {
+    this._game.answer(playerSocketId, answer);
+  }
+
+  choose(playerSocketId, choice) {
+    this._game.choose(playerSocketId, choice);
   }
 }
 

@@ -1,12 +1,10 @@
 const expect = require('chai').expect;
+const _ = require('underscore');
 
 const Game = require('../../src/delayed-game').Game;
-
-const QUESTIONS = [
-  { question: 'A ?', answer: '1'},
-  { question: 'B ?', answer: '1'},
-  { question: 'C ?', answer: '1'}
-];
+const gameStartedAnsweredChosenWithResultsOneByOne = require('./unit-test-utils').gameStartedAnsweredChosenWithResultsOneByOne;
+const GameCreator = require('./unit-test-utils').GameCreator;
+const QUESTIONS = require('./unit-test-utils').QUESTIONS;
 
 const CONFIG = {
   questions: QUESTIONS,
@@ -44,7 +42,27 @@ describe('A DelayedGame', () => {
     });
   });
 
-  it('should send results one by one', () => {
+  describe('', () => {
+    let originalCreate;
 
+    beforeEach(() => {
+      originalCreate = GameCreator.create;
+      GameCreator.create = questions => Game.create(CONFIG);
+    });
+
+    it('should send results one by one', done => {
+      const TRUTH = QUESTIONS[0].answer;
+      const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '2' };
+      const CHOICES = { player1: TRUTH + '2', player2: TRUTH + '1' };
+      gameStartedAnsweredChosenWithResultsOneByOne(ANSWERS, CHOICES, (game, player1, player2, results) => {
+        expect(_.isEqual(results[0], { choice: CHOICES.player2, authors: [player1.name], choosedBy: [player2.name] })).to.eql(true);
+        expect(_.isEqual(results[1], { choice: CHOICES.player1, authors: [player2.name], choosedBy: [player1.name] })).to.eql(true);
+        done();
+      });
+    });
+
+    afterEach(() => {
+      GameCreator.create = originalCreate;
+    });
   });
 });

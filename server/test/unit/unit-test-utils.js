@@ -13,8 +13,12 @@ exports.QUESTIONS = [
 
 exports.assertResultsDoNotContainChoice = (choice, results) => expect(results.filter(result => result.choice == choice).length).to.eql(0);
 
-const game = (callback) => {
-  const game = Game.create(exports.QUESTIONS);
+exports.GameCreator = {
+  create: () => Game.create(exports.QUESTIONS)
+}
+
+const game = callback => {
+  const game = exports.GameCreator.create();
   const player1 = newPlayer('bob');
   const player2 = newPlayer('alice');
   player2.socketId = 2;
@@ -23,7 +27,7 @@ const game = (callback) => {
   callback(game, player1, player2);
 }
 
-exports.gameStarted = (callback) => {
+exports.gameStarted = callback => {
   game((game, player1, player2) => {
     game.questions().take(1).subscribe(question => {
       callback(game, player1, player2, question);
@@ -48,6 +52,17 @@ exports.gameStartedAnsweredChosen = (answers, choices, callback) => {
     Rx.Observable.forkJoin(subjects).take(1).subscribe(([results, scores]) => {
       callback(game, player1, player2, results, scores);
     });
+    game.choose(player1.socketId, choices.player1);
+    game.choose(player2.socketId, choices.player2);
+  });
+}
+
+exports.gameStartedAnsweredChosenWithResultsOneByOne = (answers, choices, callback) => {
+  exports.gameStartedAnswered(answers, (game, player1, player2) => {
+    game.results().take(2).toArray().subscribe(results => {
+      callback(game, player1, player2, results);
+    });
+
     game.choose(player1.socketId, choices.player1);
     game.choose(player2.socketId, choices.player2);
   });
