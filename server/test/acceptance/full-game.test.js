@@ -1,4 +1,4 @@
-var TestUtils = require('./test-utils');
+const TestUtils = require('./test-utils');
 
 describe('A full game', () => {
 	const PLAYER1 = 'bob';

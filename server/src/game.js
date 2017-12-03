@@ -1,8 +1,8 @@
-var _ = require('underscore');
-var Rx = require('rx');
+const _ = require('underscore');
+const Rx = require('rx');
 
-var newPlayer = require('./player').newPlayer;
-var shuffle = require('./util').shuffle;
+const newPlayer = require('./player').newPlayer;
+const shuffle = require('./util').shuffle;
 
 const POINTS_FOR_TRUTH = 1000;
 const POINTS_FOR_LIE = 500;

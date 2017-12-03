@@ -1,5 +1,5 @@
-var expect = require('chai').expect;
-var TestUtils = require('./test-utils');
+const expect = require('chai').expect;
+const TestUtils = require('./test-utils');
 
 describe('A player joining', () => {
 	it('cannot have the same name as an existing player', function (done) {

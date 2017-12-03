@@ -1,6 +1,6 @@
-var Rx = require('rx');
+const Rx = require('rx');
 
-var Game = require('./game').Game;
+const Game = require('./game').Game;
 
 class DelayedGame {
   constructor(config) {

@@ -1,15 +1,15 @@
-var io = require('socket.io-client');
-var url = 'http://localhost:3000';
+const io = require('socket.io-client');
+const url = 'http://localhost:3000';
 
-var options = {
+const options = {
 	transports: ['websocket'],
 	'force new connection': true
 };
 
-exports.connectPlayer = function (name, callback) {
+exports.connectPlayer = (name, callback) => {
 	var player = io.connect(url, options);
 
-	player.on('connect', function () {
+	player.on('connect', () => {
 		player.emit('name', name);
 
 		callback(player);
@@ -26,14 +26,14 @@ function connectPlayers(names, players, callback) {
 		return;
 	}
 
-	exports.connectPlayer(names[0], function (player) {
+	exports.connectPlayer(names[0], player => {
 		players.push(player);
 		connectPlayers(names.slice(1), players, callback);
 	});
 }
 
-exports.disconnectPlayers = function (players) {
-	players.forEach(function (player) {
+exports.disconnectPlayers = players => {
+	players.forEach(player => {
 		player.disconnect();
 	});
 };

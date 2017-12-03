@@ -1,7 +1,7 @@
-var expect = require('chai').expect;
-var _ = require('underscore');
+const expect = require('chai').expect;
+const _ = require('underscore');
 
-var shuffle = require('../../src/util').shuffle;
+const shuffle = require('../../src/util').shuffle;
 
 describe('Shuffling an array', () => {
   it('returns an array of the same length', () => {

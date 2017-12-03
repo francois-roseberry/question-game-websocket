@@ -1,6 +1,6 @@
-var expect = require('chai').expect;
+const expect = require('chai').expect;
 
-var Game = require('../../src/delayed-game').Game;
+const Game = require('../../src/delayed-game').Game;
 
 const QUESTIONS = [
   { question: 'A ?', answer: '1'},
@@ -42,5 +42,9 @@ describe('A DelayedGame', () => {
       game.cancel();
       done();
     });
+  });
+
+  it('should send results one by one', () => {
+
   });
 });

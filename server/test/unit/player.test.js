@@ -1,6 +1,6 @@
-var expect = require('chai').expect;
+const expect = require('chai').expect;
 
-var newPlayer = require('../../src/player').newPlayer;
+const newPlayer = require('../../src/player').newPlayer;
 
 describe('Creating a player', () => {
   it('has the name provided', () => {
