@@ -9,7 +9,6 @@ const POINTS_FOR_LIE = 500;
 
 const TIME_BETWEEN_RESULTS = 5000;
 const TIME_AFTER_SCORES = 5000;
-const SECONDS_BEFORE_START = 5;
 
 class Game {
   constructor(questions) {
