@@ -6,6 +6,7 @@ class DelayedGame {
   constructor(config) {
     this._game = Game.create(config.questions);
     this._config = config;
+    this._countdownObject = {};
     this._starting = new Rx.Subject();
   }
 
@@ -26,9 +27,16 @@ class DelayedGame {
   }
 
   start() {
-    countdown(this._starting, this._config.millisecondsPerSecond, {}, this._config.secondsBeforeStart, () => {
+    countdown(this._starting, this._config.millisecondsPerSecond, this._countdownObject, this._config.secondsBeforeStart, () => {
       this._game.start();
     });
+  }
+
+  cancel() {
+    if (this._countdownObject.timer) {
+      clearTimeout(this._countdownObject.timer);
+      this._countdownObject.timer = null;
+    }
   }
 }
 
