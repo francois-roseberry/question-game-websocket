@@ -4,11 +4,10 @@ const Rx = require('rx');
 
 const Game = require('../../src/game').Game;
 const newPlayer = require('../../src/player').newPlayer;
-const twoPlayerGame = require('./unit-test-utils').twoPlayerGame;
-const twoPlayerGameStarted = require('./unit-test-utils').twoPlayerGameStarted;
-const twoPlayerGameStartedAnswered = require('./unit-test-utils').twoPlayerGameStartedAnswered;
-const twoPlayerGameStartedAnsweredChosen = require('./unit-test-utils').twoPlayerGameStartedAnsweredChosen;
-const twoPlayerGameCompleted = require('./unit-test-utils').twoPlayerGameCompleted;
+const gameStarted = require('./unit-test-utils').gameStarted;
+const gameStartedAnswered = require('./unit-test-utils').gameStartedAnswered;
+const gameStartedAnsweredChosen = require('./unit-test-utils').gameStartedAnsweredChosen;
+const gameCompleted = require('./unit-test-utils').gameCompleted;
 const contains = require('./unit-test-utils').contains;
 const assertResultsDoNotContainChoice = require('./unit-test-utils').assertResultsDoNotContainChoice;
 const QUESTIONS = require('./unit-test-utils').QUESTIONS;
@@ -49,7 +48,7 @@ describe('A game', () => {
 
   describe('starting a game', () => {
     it('throws an error if game is already started', done => {
-      twoPlayerGameStarted(game => {
+      gameStarted(game => {
         expect(() => {
           game.start();
         }).to.throw(/ALREADY_STARTED/);
@@ -58,7 +57,7 @@ describe('A game', () => {
     });
 
     it('sends the first question', done => {
-      twoPlayerGameStarted((game, player1, player2, question) => {
+      gameStarted((game, player1, player2, question) => {
         expect(question).to.eql(QUESTIONS[0].question);
         done();
       });
@@ -67,7 +66,7 @@ describe('A game', () => {
 
   describe('answering a question', () => {
     it('throws an error if answer is the truth', () => {
-      twoPlayerGameStarted((game, player1, player2) => {
+      gameStarted((game, player1, player2) => {
         expect(() => {
           game.answer(player1.socketId, QUESTIONS[0].answer);
         }).to.throw(/TRUTH/);
@@ -75,7 +74,7 @@ describe('A game', () => {
     });
 
     it('does not send choices when everybody has not answered', () => {
-      twoPlayerGameStarted((game, player1, player2) => {
+      gameStarted((game, player1, player2) => {
         game.choices().subscribe(choices => {
           fail();
         });
@@ -90,21 +89,21 @@ describe('A game', () => {
     const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };
 
     it('containing the truth', done => {
-      twoPlayerGameStartedAnswered(ANSWERS, (game, player1, player2, choices) => {
+      gameStartedAnswered(ANSWERS, (game, player1, player2, choices) => {
         expect(choices).to.contain(TRUTH);
         done();
       });
     });
 
     it('containing unique choices', done => {
-      twoPlayerGameStartedAnswered(ANSWERS, (game, player1, player2, choices) => {
+      gameStartedAnswered(ANSWERS, (game, player1, player2, choices) => {
         expect(choices.length).to.eql(_.uniq(choices).length);
         done();
       });
     });
 
     it('containing the answer of each player', done => {
-      twoPlayerGameStartedAnswered(ANSWERS, (game, player1, player2, choices) => {
+      gameStartedAnswered(ANSWERS, (game, player1, player2, choices) => {
         expect(choices).to.contain(player1.lastAnswer);
         expect(choices).to.contain(player2.lastAnswer);
         done();
@@ -118,7 +117,7 @@ describe('A game', () => {
     it('giving 1000 points to each player who found the truth', done => {
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '2' };
       const CHOICES = { player1: TRUTH, player2: TRUTH + '2' };
-      twoPlayerGameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2) => {
+      gameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2) => {
         expect(player1.score).to.eql(1000);
         expect(player2.score).to.eql(0);
         done();
@@ -128,7 +127,7 @@ describe('A game', () => {
     it('giving 500 points to each player who authored a choice picked by others', done => {
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '2' };
       const CHOICES = { player1: TRUTH + '1', player2: TRUTH + '1' };
-      twoPlayerGameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2) => {
+      gameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2) => {
         expect(player1.score).to.eql(500);
         expect(player2.score).to.eql(0);
         done();
@@ -138,7 +137,7 @@ describe('A game', () => {
     it('giving 0 points to each player who picked his own choice', done => {
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '2' };
       const CHOICES = { player1: TRUTH + '1', player2: TRUTH + '2' };
-      twoPlayerGameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2) => {
+      gameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2) => {
         expect(player1.score).to.eql(0);
         expect(player2.score).to.eql(0);
         done();
@@ -148,7 +147,7 @@ describe('A game', () => {
     it('containing a result for the truth and who chose it', done => {
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '2' };
       const CHOICES = { player1: TRUTH, player2: TRUTH };
-      twoPlayerGameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2, results) => {
+      gameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2, results) => {
         expect(contains(results, { choice: TRUTH, authors: ['TRUTH'], choosedBy: [player1.name, player2.name] })).to.eql(true);
         done();
       });
@@ -157,7 +156,7 @@ describe('A game', () => {
     it('containing a result for each player answer chosen by at least one person', done => {
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '2' };
       const CHOICES = { player1: TRUTH + '2', player2: TRUTH + '1' };
-      twoPlayerGameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2, results) => {
+      gameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2, results) => {
         expect(contains(results, { choice: CHOICES.player2, authors: [player1.name], choosedBy: [player2.name] })).to.eql(true);
         expect(contains(results, { choice: CHOICES.player1, authors: [player2.name], choosedBy: [player1.name] })).to.eql(true);
         done();
@@ -167,7 +166,7 @@ describe('A game', () => {
     it('not containing a result for player answers chosen by nobody', done => {
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '2' };
       const CHOICES = { player1: TRUTH + '2', player2: TRUTH + '2' };
-      twoPlayerGameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2, results) => {
+      gameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2, results) => {
         assertResultsDoNotContainChoice(ANSWERS.player1, results);
         done();
       });
@@ -176,7 +175,7 @@ describe('A game', () => {
     it('containing result with multiple authors if answer was authored by more than one player', done => {
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };
       const CHOICES = { player1: TRUTH + '1', player2: TRUTH };
-      twoPlayerGameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2, results) => {
+      gameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2, results) => {
         expect(contains(results, { choice: CHOICES.player1, authors: [player1.name, player2.name], choosedBy: [player1.name] })).to.eql(true);
         done();
       });
@@ -188,7 +187,7 @@ describe('A game', () => {
       const TRUTH = QUESTIONS[0].answer;
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };
       const CHOICES = { player1: TRUTH + '1', player2: TRUTH };
-      twoPlayerGameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2, results, scores) => {
+      gameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2, results, scores) => {
         expect(contains(scores.array, { name: player1.name, score: 0 })).to.eql(true);
         expect(contains(scores.array, { name: player2.name, score: 1500 })).to.eql(true);
         expect(scores.final).to.eql(false);
@@ -203,7 +202,7 @@ describe('A game', () => {
         const TRUTH = QUESTIONS[0].answer;
         const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };
         const CHOICES = { player1: TRUTH + '1', player2: TRUTH };
-        twoPlayerGameStartedAnswered(ANSWERS, (game, player1, player2) => {
+        gameStartedAnswered(ANSWERS, (game, player1, player2) => {
           game.questions().take(1).subscribe(question => {
             expect(question).to.eql(QUESTIONS[1].question);
             done();
@@ -219,7 +218,7 @@ describe('A game', () => {
         const TRUTH = QUESTIONS[0].answer;
         const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };
         const CHOICES = { player1: TRUTH + '1', player2: TRUTH };
-        twoPlayerGameCompleted(ANSWERS, CHOICES, (game, player1, player2, scores) => {
+        gameCompleted(ANSWERS, CHOICES, (game, player1, player2, scores) => {
           expect(scores.final).to.eql(true);
           done();
         });

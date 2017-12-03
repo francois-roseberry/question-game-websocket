@@ -13,7 +13,7 @@ exports.QUESTIONS = [
 
 exports.assertResultsDoNotContainChoice = (choice, results) => expect(results.filter(result => result.choice == choice).length).to.eql(0);
 
-const twoPlayerGame = (callback) => {
+const game = (callback) => {
   const game = Game.create(exports.QUESTIONS);
   const player1 = newPlayer('bob');
   const player2 = newPlayer('alice');
@@ -23,8 +23,8 @@ const twoPlayerGame = (callback) => {
   callback(game, player1, player2);
 }
 
-exports.twoPlayerGameStarted = (callback) => {
-  twoPlayerGame((game, player1, player2) => {
+exports.gameStarted = (callback) => {
+  game((game, player1, player2) => {
     game.questions().take(1).subscribe(question => {
       callback(game, player1, player2, question);
     });
@@ -32,8 +32,8 @@ exports.twoPlayerGameStarted = (callback) => {
   });
 }
 
-exports.twoPlayerGameStartedAnswered = (answers, callback) => {
-  exports.twoPlayerGameStarted((game, player1, player2) => {
+exports.gameStartedAnswered = (answers, callback) => {
+  exports.gameStarted((game, player1, player2) => {
     game.choices().take(1).subscribe(choices => {
       callback(game, player1, player2, choices);
     });
@@ -42,8 +42,8 @@ exports.twoPlayerGameStartedAnswered = (answers, callback) => {
   });
 }
 
-exports.twoPlayerGameStartedAnsweredChosen = (answers, choices, callback) => {
-  exports.twoPlayerGameStartedAnswered(answers, (game, player1, player2) => {
+exports.gameStartedAnsweredChosen = (answers, choices, callback) => {
+  exports.gameStartedAnswered(answers, (game, player1, player2) => {
     const subjects = [ game.results().take(1), game.scores().take(1)];
     Rx.Observable.forkJoin(subjects).take(1).subscribe(([results, scores]) => {
       callback(game, player1, player2, results, scores);
@@ -53,8 +53,8 @@ exports.twoPlayerGameStartedAnsweredChosen = (answers, choices, callback) => {
   });
 }
 
-exports.twoPlayerGameCompleted = (answers, choices, callback) => {
-  exports.twoPlayerGameStartedAnsweredChosen(answers, choices, (game, player1, player2) => {
+exports.gameCompleted = (answers, choices, callback) => {
+  exports.gameStartedAnsweredChosen(answers, choices, (game, player1, player2) => {
     game.answer(player1.socketId, answers.player1);
     game.answer(player2.socketId, answers.player2);
     game.choose(player1.socketId, choices.player1);
