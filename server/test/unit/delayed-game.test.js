@@ -55,8 +55,8 @@ describe('A DelayedGame', () => {
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '2' };
       const CHOICES = { player1: TRUTH + '2', player2: TRUTH + '1' };
       gameStartedAnsweredChosenWithResultsOneByOne(ANSWERS, CHOICES, (game, player1, player2, results) => {
-        expect(_.isEqual(results[0], { choice: CHOICES.player2, authors: [player1.name], choosedBy: [player2.name] })).to.eql(true);
-        expect(_.isEqual(results[1], { choice: CHOICES.player1, authors: [player2.name], choosedBy: [player1.name] })).to.eql(true);
+        expect(_.isEqual(results[0], { choice: ANSWERS.player1, authors: [player1.name], choosedBy: [player2.name] })).to.eql(true);
+        expect(_.isEqual(results[1], { choice: ANSWERS.player2, authors: [player2.name], choosedBy: [player1.name] })).to.eql(true);
         done();
       });
     });

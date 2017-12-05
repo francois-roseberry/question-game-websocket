@@ -157,9 +157,8 @@ describe('A game', () => {
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '2' };
       const CHOICES = { player1: TRUTH + '2', player2: TRUTH + '1' };
       gameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2, results) => {
-        // TODO hum results are inverted
-        expect(contains(results, { choice: CHOICES.player2, authors: [player1.name], choosedBy: [player2.name] })).to.eql(true);
-        expect(contains(results, { choice: CHOICES.player1, authors: [player2.name], choosedBy: [player1.name] })).to.eql(true);
+        expect(contains(results, { choice: ANSWERS.player1, authors: [player1.name], choosedBy: [player2.name] })).to.eql(true);
+        expect(contains(results, { choice: ANSWERS.player2, authors: [player2.name], choosedBy: [player1.name] })).to.eql(true);
         done();
       });
     });
