@@ -16,7 +16,7 @@ exports.CONFIG = {
   secondsBeforeStart: 5,
   secondsAfterScore: 5,
   secondsBetweenResults: 5,
-  millisecondsPerSecond: 0 // we put 0 for testing so we have instant events
+  millisecondsPerSecond: 1 // we put 1 for testing so we have quasi-instant events
 };
 
 exports.assertResultsDoNotContainChoice = (choice, results) => expect(results.filter(result => result.choice == choice).length).to.eql(0);
@@ -67,9 +67,10 @@ exports.gameStartedAnsweredChosen = (answers, choices, callback) => {
 
 exports.gameStartedAnsweredChosenWithResultsOneByOne = (answers, choices, callback) => {
   exports.gameStartedAnswered(answers, (game, player1, player2) => {
-    Rx.Observable
-      .interval(exports.CONFIG.secondsAfterScore * exports.CONFIG.millisecondsPerSeconds)
-      .withLatestFrom(game.results())
+    // Rx.Observable
+    //   .interval(exports.CONFIG.secondsAfterScore * exports.CONFIG.millisecondsPerSeconds)
+    //   .withLatestFrom(game.results())
+    game.results()
       .take(2)
       .toArray()
       .subscribe(results => {

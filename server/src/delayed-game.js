@@ -23,7 +23,12 @@ class DelayedGame {
   }
 
   questions() {
-    return this._game.questions();
+    // TODO find a way to delay question, if scores have just been sent
+    // Do NOT send the question directly, so it does not hide the scores
+    return this._game.questions();/*.delay(question => {
+      console.log('delaying question : ', question);
+      return Rx.Observable.timer(this._config.millisecondsPerSecond * this._config.secondsAfterScore);
+    });*/
   }
 
   choices() {
