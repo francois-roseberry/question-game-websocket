@@ -3,14 +3,10 @@ const _ = require('underscore');
 
 const Game = require('../../src/delayed-game').Game;
 const gameStartedAnsweredChosenWithResultsOneByOne = require('./unit-test-utils').gameStartedAnsweredChosenWithResultsOneByOne;
+const gameStartedAnsweredChosen = require('./unit-test-utils.js').gameStartedAnsweredChosen;
 const GameCreator = require('./unit-test-utils').GameCreator;
 const QUESTIONS = require('./unit-test-utils').QUESTIONS;
-
-const CONFIG = {
-  questions: QUESTIONS,
-  secondsBeforeStart: 5,
-  millisecondsPerSecond: 0 // we put 0 for testing so we have instant events
-};
+const CONFIG = require('./unit-test-utils').CONFIG;
 
 describe('A DelayedGame', () => {
   it('can be created', () => {
@@ -55,9 +51,23 @@ describe('A DelayedGame', () => {
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '2' };
       const CHOICES = { player1: TRUTH + '2', player2: TRUTH + '1' };
       gameStartedAnsweredChosenWithResultsOneByOne(ANSWERS, CHOICES, (game, player1, player2, results) => {
-        expect(_.isEqual(results[0], { choice: ANSWERS.player1, authors: [player1.name], choosedBy: [player2.name] })).to.eql(true);
-        expect(_.isEqual(results[1], { choice: ANSWERS.player2, authors: [player2.name], choosedBy: [player1.name] })).to.eql(true);
+        expect(_.isEqual(results[0], [1, { choice: ANSWERS.player1, authors: [player1.name], choosedBy: [player2.name] }])).to.eql(true);
+        expect(_.isEqual(results[1], [2, { choice: ANSWERS.player2, authors: [player2.name], choosedBy: [player1.name] }])).to.eql(true);
         done();
+      });
+    });
+
+    it.skip('after sending scores, should wait for specified time before sending new question', done => {
+      const TRUTH = QUESTIONS[0].answer;
+      const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };
+      const CHOICES = { player1: TRUTH + '1', player2: TRUTH };
+      gameStartedAnsweredChosen(ANSWERS, CHOICES, game => {
+        setTimeout(() => {
+          game.questions().take(1).subscribe((question) => {
+            console.log(question);
+            done();
+          });
+        }, CONFIG.secondsAfterScore * CONFIG.millisecondsPerSeconds);
       });
     });
 

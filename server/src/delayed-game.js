@@ -31,14 +31,13 @@ class DelayedGame {
   }
 
   results() {
-    // TODO I'm not sure this will really work outside of unit tests
-    return this._game.results().flatMap(results => {
-      const resultsSubject = new Rx.ReplaySubject(results.length);
-      results.forEach(result => {
-        resultsSubject.onNext(result);
-      });
-      return resultsSubject.asObservable();
-    });
+    const delayBetweenResults = this._config.millisecondsPerSecond * this._config.secondsBetweenResults;
+    return this._game.results().flatMap(oneByOne(delayBetweenResults)).asObservable();
+  }
+
+  scores() {
+    return this._game.scores();
+    // TODO must wait for a while after (each event) scores are sent ... but how to do this ?
   }
 
   start() {
@@ -62,6 +61,12 @@ class DelayedGame {
     this._game.choose(playerSocketId, choice);
   }
 }
+
+const oneByOne = delayBetweenElements => elements => Rx.Observable
+    .interval(delayBetweenElements)
+    .take(elements.length)
+    .map(index => elements[index])
+    .asObservable();
 
 const countdown = (starting, millisecondsPerSecond, countdownObject, seconds, callback) => {
 	starting.onNext(seconds);
