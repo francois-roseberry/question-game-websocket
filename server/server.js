@@ -168,7 +168,6 @@ function onCancel(socket, game) {
 		const cancelled = game.cancel();
 		if (cancelled) {
 			log('Game start cancelled by [' + game.playerName(socket.id) + ']');
-			io.emit('players', game.players());
 		}
 
 		/*if (!players[socket.id]) {

@@ -28,16 +28,27 @@ describe('A DelayedGame', () => {
       game.start();
     });
 
-    it('if game is cancelled before countdown reaches zero, stops sending starting events', done => {
-      const game = Game.create(CONFIG);
-      game.starting().take(2).toArray().subscribe(() => {
-        // Only one event is sent, then no more, hence why the take(2)
-        done(new Error('should never be called'));
+    describe('when game is cancelled before countdown reaches zero', () => {
+      it('stops sending starting events', done => {
+        const game = Game.create(CONFIG);
+        game.starting().take(2).toArray().subscribe(() => {
+          // Only one event is sent, then no more, hence why the take(2)
+          done(new Error('should never be called'));
+        });
+        game.start();
+        game.cancel();
+        done();
       });
-      game.start();
-      game.cancel();
-      done();
-    });
+
+      it('sends the player list', done => {
+        const game = Game.create(CONFIG);
+        game.players().take(1).subscribe(players => {
+          done();
+        });
+        game.start();
+        game.cancel();
+      });
+    })
   });
 
   describe('', () => {

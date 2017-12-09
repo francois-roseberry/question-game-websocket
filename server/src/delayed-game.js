@@ -75,6 +75,7 @@ class DelayedGame {
     if (this._countdownObject.timer) {
       clearTimeout(this._countdownObject.timer);
       this._countdownObject.timer = null;
+      this._game.emitPlayers();
       return true;
     }
 

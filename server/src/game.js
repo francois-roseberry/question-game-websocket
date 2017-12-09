@@ -54,6 +54,10 @@ class Game {
     }
   }
 
+  emitPlayers() {
+    this._playersSubject.onNext(this._players);
+  }
+
   playerName(playerSocketId) {
     return this._players[playerSocketId];
   }
