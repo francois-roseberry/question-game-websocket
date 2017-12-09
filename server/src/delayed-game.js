@@ -18,21 +18,38 @@ class DelayedGame {
     this._game.addPlayer(player);
   }
 
+  removePlayer(playerSocketId) {
+    this._game.removePlayer(playerSocketId);
+  }
+
+  playerName(playerSocketId) {
+    return this._game.playerName(playerSocketId);
+  }
+
+  players() {
+    return this._players();
+  }
+
+  playerQuit() {
+    return this._game.playerQuit().do(() => {
+      if (this._countdownObject.timer) {
+        clearTimeout(this._countdownObject.timer);
+        this._countdownObject.timer = null;
+      }
+    });
+  }
+
   starting() {
     return this._starting.asObservable();
   }
 
   questions() {
-    // TODO find a way to delay question, if scores have just been sent
     // Do NOT send the question directly, so it does not hide the scores
     return this._game.questions().flatMap(({index, question}) => {
-      console.log('delaying question : ', question);
       const delayAfterScores = this._config.millisecondsPerSecond * this._config.secondsAfterScore;
       const singleSubject = Rx.Observable.of({index, question});
       return index == 0 ? singleSubject : singleSubject.delay(delayAfterScores);
     });
-      //return Rx.Observable.timer(0/*this._config.millisecondsPerSecond * this._config.secondsAfterScore*/);
-    //});
   }
 
   choices() {
@@ -58,7 +75,10 @@ class DelayedGame {
     if (this._countdownObject.timer) {
       clearTimeout(this._countdownObject.timer);
       this._countdownObject.timer = null;
+      return true;
     }
+
+    return false;
   }
 
   answer(playerSocketId, answer) {

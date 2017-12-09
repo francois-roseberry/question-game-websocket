@@ -9,6 +9,7 @@ var log = require('debug')('question-game');
 
 var shuffle = require('./src/util').shuffle;
 var newPlayer = require('./src/player').newPlayer;
+const Game = require('./src/delayed-game').Game;
 
 var PORT = 3000;
 
@@ -58,19 +59,61 @@ function validCountdown(countdown) {
 }
 
 function onConnect(questions) {
-	return (socket) => {
-		socket.on('name', onPlayerName(socket));
-		socket.on('start', onStart(socket, questions));
-		socket.on('cancel', onCancel(socket));
-		socket.on('answer', onAnswer(socket, questions));
-		socket.on('choice', onChoice(socket, questions));
-		socket.on('disconnect', onDisconnect(socket));
+	const game = Game.create({
+		questions,
+		secondsBeforeStart: 5,
+	  secondsAfterScore: 5,
+	  secondsBetweenResults: 5,
+	  millisecondsPerSecond: 1000
+	});
+
+	game.playerQuit().subscribe(playerName => {
+		log('player [' + playerName + '] has left');
+		io.emit('players', game.players());
+	});
+	game.questions().subscribe(({ index, question }) => {
+		log('sending question : ', question);
+		io.emit('question', question, index + 1, questions.length);
+	});
+	game.starting().subscribe(seconds => {
+		log('starting in ', seconds, ' seconds');
+		io.emit('starting', seconds);
+	});
+	game.choices().subscribe(choices => {
+		log('sending choices : ', choices);
+		io.emit('choices', choices);
+	});
+	game.results().subscribe(result => {
+		log('sending result : ', result);
+		io.emit('result', result);
+	});
+	game.scores().subscribe(scores => {
+		log('sending scores : ', scores);
+		io.emit('scores', scores);
+	});
+
+	return socket => {
+		socket.on('name', onPlayerName(socket, game));
+		socket.on('start', onStart(socket, game, questions));
+		socket.on('cancel', onCancel(socket, game));
+		socket.on('answer', onAnswer(socket, game, questions));
+		socket.on('choice', onChoice(socket, game, questions));
+		socket.on('disconnect', onDisconnect(socket, game));
 	};
 }
 
-function onPlayerName(socket) {
-	return (name) => {
-		if (gameStarted) {
+function onPlayerName(socket, game) {
+	return name => {
+		try {
+			game.addPlayer(newPlayer(name));
+			socket.emit('name response', true);
+			io.emit('players', game.players());
+		} catch (error) {
+			log('User cannot join : ', error);
+			socket.emit('name response', false, error);
+		}
+
+		/*if (gameStarted) {
 			log('A user cannot join because game is aleady started');
 			socket.emit('name response', false, 'ALREADY_STARTED');
 			return;
@@ -90,13 +133,20 @@ function onPlayerName(socket) {
 				return player.name;
 			});
 			io.emit('players', names);
-		}
+		}*/
 	};
 }
 
-function onStart(socket, questions) {
+function onStart(socket, game, questions) {
 	return () => {
-		if (!players[socket.id]) {
+		try {
+			game.start();
+			log('Game started by [' + game.playerName(socket.id) + ']');
+		} catch (error) {
+			log('Could not start game : ', error);
+		}
+
+		/*if (!players[socket.id]) {
 			log('Game cannot be started by a player who is not logged in');
 			return;
 		}
@@ -106,13 +156,19 @@ function onStart(socket, questions) {
 			gameStarted = true;
 			log('Game start, sending first question');
 			io.emit('question', questions[0].question, 1, questions.length);
-		});
+		});*/
 	};
 }
 
-function onCancel(socket) {
+function onCancel(socket, game) {
 	return () => {
-		if (!players[socket.id]) {
+		const cancelled = game.cancel();
+		if (cancelled) {
+			log('Game start cancelled by [' + game.playerName(socket.id) + ']');
+			io.emit('players', game.players());
+		}
+
+		/*if (!players[socket.id]) {
 			log('Game cannot be cancelled by a user who is not logged in');
 			return
 		}
@@ -126,13 +182,20 @@ function onCancel(socket) {
 				return player.name;
 			});
 			io.emit('players', names);
-		}
+		}*/
 	};
 }
 
-function onAnswer(socket, questions) {
-	return (answer) => {
-		if (!players[socket.id]) {
+function onAnswer(socket, game, questions) {
+	return answer => {
+		try {
+			game.answer(socket.id, answer);
+			log('Player [' + game.playerName(socket.id) + '] has answered ' + answer);
+		} catch (error) {
+			log('Could not answer : ', error);
+			socket.emit('answer response', false, error);
+		}
+		/*if (!players[socket.id]) {
 			log('Question cannot be answered by a user who is not logged in');
 			return;
 		}
@@ -150,13 +213,16 @@ function onAnswer(socket, questions) {
 				log('Everybody has answered, sending choices : ' + JSON.stringify(choices));
 				io.emit('choices', choices);
 			}
-		}
+		}*/
 	};
 }
 
-function onChoice(socket, questions) {
-	return (choice) => {
-		if (!players[socket.id]) {
+function onChoice(socket, game, questions) {
+	return choice => {
+		game.choose(socket.id, choice);
+		log('Player [' + game.playerName(socket.id) + '] has choosen ' + choice);
+
+		/*if (!players[socket.id]) {
 			log('A choice cannot be made by a player who is not logged in');
 			return;
 		}
@@ -213,11 +279,11 @@ function onChoice(socket, questions) {
 					}
 				}, TIME_AFTER_SCORES);
 			});
-		}
+		}*/
 	};
 }
 
-function sendResultsOneByOne(index, results, callback) {
+/*function sendResultsOneByOne(index, results, callback) {
 	if (index === results.length) {
 		log('No more results to send');
 		callback();
@@ -279,10 +345,12 @@ function scoresArray() {
 			score: player.score
 		};
 	});
-}
+}*/
 
-function onDisconnect(socket) {
+function onDisconnect(socket, game) {
 	return () => {
+		game.removePlayer(socket.id);
+
 		if (players[socket.id]) {
 			log('Player [' + players[socket.id].name + '] has left');
 			gameStarted = false;
@@ -320,7 +388,7 @@ function clearGameTimers() {
 	}
 }
 
-function resetAnswers() {
+/*function resetAnswers() {
 	_.each(players, (player) => {
 		player.lastAnswer = null;
 		player.lastChoice = null;
@@ -359,7 +427,7 @@ function countdown(countdownObject, seconds, callback) {
 	countdownObject.timer = setTimeout(() => {
 		countdown(countdownObject, seconds - 1, callback);
 	}, 1000);
-}
+}*/
 
 http.listen(PORT, () => {
 	log('Question game server listening on port ' + PORT);

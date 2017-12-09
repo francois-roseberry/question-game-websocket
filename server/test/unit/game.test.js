@@ -46,6 +46,27 @@ describe('A game', () => {
     });
   });
 
+  describe('removing a player', () => {
+    it('removes it from the game', () => {
+      const game = Game.create(QUESTIONS);
+      game.addPlayer(newPlayer('bob'));
+      game.removePlayer(player.socketId);
+      expect(game.players()).to.eql([]);
+    });
+
+    it('sends a player quit event', done => {
+      const game = Game.create(QUESTIONS);
+      const player = newPlayer('bob');
+      game.playerQuit().take(1).subscribe(playerName => {
+        expect(playerName).to.eql(player.name);
+        done();
+      });
+
+      game.addPlayer(player);
+      game.removePlayer(player.socketId);
+    });
+  });
+
   describe('starting a game', () => {
     it('throws an error if game is already started', done => {
       gameStarted(game => {
