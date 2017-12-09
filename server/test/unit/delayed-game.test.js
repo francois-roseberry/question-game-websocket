@@ -8,6 +8,8 @@ const GameCreator = require('./unit-test-utils').GameCreator;
 const QUESTIONS = require('./unit-test-utils').QUESTIONS;
 const CONFIG = require('./unit-test-utils').CONFIG;
 
+const TOLERANCE_MILLIS = 1;
+
 describe('A DelayedGame', () => {
   it('can be created', () => {
     Game.create(CONFIG);
@@ -18,7 +20,7 @@ describe('A DelayedGame', () => {
       const game = Game.create(CONFIG);
       game.starting().take(5).toArray().subscribe(seconds => {
         expect(seconds).to.eql([5,4,3,2,1]);
-        game.questions().take(1).subscribe(question => {
+        game.questions().take(1).timeout(CONFIG.millisecondsPerSecond + TOLERANCE_MILLIS).subscribe(() => {
           done();
         });
       });
@@ -57,7 +59,7 @@ describe('A DelayedGame', () => {
       });
     });
 
-    it.skip('after sending scores, should wait for specified time before sending new question', done => {
+    it('after sending scores, should wait for specified time before sending new question', done => {
       const TRUTH = QUESTIONS[0].answer;
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };
       const CHOICES = { player1: TRUTH + '1', player2: TRUTH };
