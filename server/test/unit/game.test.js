@@ -58,7 +58,7 @@ describe('A game', () => {
 
     it('sends the first question', done => {
       gameStarted((game, player1, player2, question) => {
-        expect(question).to.eql(QUESTIONS[0].question);
+        expect(_.isEqual(question, { index: 0, question: QUESTIONS[0].question})).to.eql(true);
         done();
       });
     });
@@ -204,7 +204,7 @@ describe('A game', () => {
         const CHOICES = { player1: TRUTH + '1', player2: TRUTH };
         gameStartedAnswered(ANSWERS, (game, player1, player2) => {
           game.questions().take(1).subscribe(question => {
-            expect(question).to.eql(QUESTIONS[1].question);
+            expect(_.isEqual(question, { index: 1, question: QUESTIONS[1].question })).to.eql(true);
             done();
           });
           game.choose(player1.socketId, CHOICES.player1);

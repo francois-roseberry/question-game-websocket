@@ -7,14 +7,9 @@ const shuffle = require('./util').shuffle;
 const POINTS_FOR_TRUTH = 1000;
 const POINTS_FOR_LIE = 500;
 
-const TIME_BETWEEN_RESULTS = 5000;
-const TIME_AFTER_SCORES = 5000;
-
 class Game {
   constructor(questions) {
     this._countdownObject = {};
-    this._resultCooldownTimer = null;
-    this._scoreCooldownTimer = null;
     this._players = {};
     this._questionIndex = 0;
 
@@ -58,7 +53,7 @@ class Game {
     }
 
     this._gameStarted = true;
-    this._questionSubject.onNext(this._questions[this._questionIndex].question);
+    this._questionSubject.onNext({ index: this._questionIndex, question: this._questions[this._questionIndex].question });
   }
 
   questions() {
@@ -127,7 +122,7 @@ class Game {
       this._scoresSubject.onNext(scores);
 
       if (this._questionIndex < this._questions.length) {
-        this._questionSubject.onNext(this._questions[this._questionIndex].question);
+        this._questionSubject.onNext({ index: this._questionIndex, question: this._questions[this._questionIndex].question });
       }
     }
   }

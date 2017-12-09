@@ -8,7 +8,7 @@ const GameCreator = require('./unit-test-utils').GameCreator;
 const QUESTIONS = require('./unit-test-utils').QUESTIONS;
 const CONFIG = require('./unit-test-utils').CONFIG;
 
-const TOLERANCE_MILLIS = 1;
+const TOLERANCE_MILLIS = 2;
 
 describe('A DelayedGame', () => {
   it('can be created', () => {
@@ -64,19 +64,12 @@ describe('A DelayedGame', () => {
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };
       const CHOICES = { player1: TRUTH + '1', player2: TRUTH };
       gameStartedAnswered(ANSWERS, (game, player1, player2) => {
-        game.questions().take(1).subscribe(question => {
-          console.log('question received : ', question);
+        game.questions().take(1).subscribe(() => {
           done();
         });
         game.choose(player1.socketId, CHOICES.player1);
         game.choose(player2.socketId, CHOICES.player2);
       });
-
-      //gameStartedAnsweredChosen(ANSWERS, CHOICES, game => {
-        //setTimeout(() => {
-
-        //}, CONFIG.secondsAfterScore * CONFIG.millisecondsPerSeconds);
-      //});
     });
 
     afterEach(() => {
