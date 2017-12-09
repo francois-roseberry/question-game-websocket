@@ -27,7 +27,7 @@ class DelayedGame {
   }
 
   players() {
-    return this._players();
+    return this._game.players();
   }
 
   playerQuit() {

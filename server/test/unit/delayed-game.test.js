@@ -8,7 +8,7 @@ const GameCreator = require('./unit-test-utils').GameCreator;
 const QUESTIONS = require('./unit-test-utils').QUESTIONS;
 const CONFIG = require('./unit-test-utils').CONFIG;
 
-const TOLERANCE_MILLIS = 2;
+const TOLERANCE_MILLIS = 3;
 
 describe('A DelayedGame', () => {
   it('can be created', () => {

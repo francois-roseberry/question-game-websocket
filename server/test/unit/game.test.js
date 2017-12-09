@@ -18,12 +18,13 @@ describe('A game', () => {
   });
 
   describe('adding a player', () => {
-    it('adds a new player with that name to its list of players', () => {
+    it('sends the player list with that player in it', done => {
       const game = Game.create(QUESTIONS);
+      game.players().take(1).subscribe(players => {
+        expect(_.contains(players, 'bob'));
+        done();
+      });
       game.addPlayer(newPlayer('bob'));
-
-      const names = game.players().map(player => player.name);
-      expect(_.contains(names, 'bob')).to.eql(true);
     });
 
     it('throws an error if a player already has that name', () => {
@@ -47,11 +48,15 @@ describe('A game', () => {
   });
 
   describe('removing a player', () => {
-    it('removes it from the game', () => {
+    it('removes it from the game', done => {
       const game = Game.create(QUESTIONS);
-      game.addPlayer(newPlayer('bob'));
+      const player = newPlayer('bob');
+      game.players().skip(1).take(1).subscribe(players => {
+        expect(players).to.eql([]);
+        done();
+      });
+      game.addPlayer(player);
       game.removePlayer(player.socketId);
-      expect(game.players()).to.eql([]);
     });
 
     it('sends a player quit event', done => {

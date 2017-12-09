@@ -25,6 +25,7 @@ class Game {
     this._resultsSubject = new Rx.Subject();
     this._scoresSubject = new Rx.Subject();
     this._quitSubject = new Rx.Subject();
+    this._playersSubject = new Rx.Subject();
   }
 
   static create(questions) {
@@ -42,12 +43,14 @@ class Game {
     }
 
     this._players[player.socketId] = player;
+    this._playersSubject.onNext(this._players);
   }
 
   removePlayer(playerSocketId) {
     if (this._players[playerSocketId]) {
       this._quitSubject.onNext(this._players[playerSocketId].name);
       delete this._players[playerSocketId];
+      this._playersSubject.onNext(this._players);
     }
   }
 
@@ -56,7 +59,10 @@ class Game {
   }
 
   players() {
-    return _.values(this._players);
+    return this._playersSubject
+      .map(players => _.values(players))
+      .map(players => players.map(player => player.name))
+      .asObservable();
   }
 
   start() {

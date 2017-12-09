@@ -67,9 +67,13 @@ function onConnect(questions) {
 	  millisecondsPerSecond: 1000
 	});
 
+  game.players().subscribe(players => {
+		log('sending list of players : ', players);
+		io.emit('players', players);
+	});
 	game.playerQuit().subscribe(playerName => {
 		log('player [' + playerName + '] has left');
-		io.emit('players', game.players());
+		io.emit('quit', playerName);
 	});
 	game.questions().subscribe(({ index, question }) => {
 		log('sending question : ', question);
@@ -107,7 +111,6 @@ function onPlayerName(socket, game) {
 		try {
 			game.addPlayer(newPlayer(name));
 			socket.emit('name response', true);
-			io.emit('players', game.players());
 		} catch (error) {
 			log('User cannot join : ', error);
 			socket.emit('name response', false, error);
