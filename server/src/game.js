@@ -117,29 +117,9 @@ class Game {
     this._players[playerSocketId].lastChoice = choice;
 
     if (hasEveryPlayerChosen(this._players)) {
-      const truth = this._questions[this._questionIndex].answer;
-      let resultsMap = { [truth]: { authors: 'TRUTH', choosedBy: [] } };
-
-      _.each(this._players, player => {
-        resultsMap[player.lastAnswer] = getResult(resultsMap, player);
-      });
-
-      _.each(this._players, player => {
-        if (player.lastChoice === truth) {
-          player.score += POINTS_FOR_TRUTH;
-          resultsMap[truth].choosedBy.push(player.name);
-        } else {
-          _.each(this._players, potentialAuthor => {
-            if (potentialAuthor.lastAnswer === player.lastChoice && potentialAuthor.socketId !== player.socketId) {
-              potentialAuthor.score += POINTS_FOR_LIE;
-            }
-          });
-
-          resultsMap[player.lastChoice].choosedBy.push(player.name);
-        }
-      });
-
-      const results = placeResultsIntoArray(resultsMap, truth);
+      //const truth = this._questions[this._questionIndex].answer;
+      //const resultsMap = computeResultsMap(truth, this._players);
+      const results = computeResults(this._questions, this._questionIndex, this._players);
       this._questionIndex++;
       resetAnswers(this._players);
 
@@ -153,6 +133,37 @@ class Game {
     }
   }
 }
+
+const computeResults = (questions, index, players) => {
+  const truth = questions[index].answer;
+  const resultsMap = computeResultsMap(truth, players);
+  return placeResultsIntoArray(resultsMap, truth);
+};
+
+const computeResultsMap = (truth, players) => {
+  let resultsMap = { [truth]: { authors: 'TRUTH', choosedBy: [] } };
+
+  _.each(players, player => {
+    resultsMap[player.lastAnswer] = getResult(resultsMap, player);
+  });
+
+  _.each(players, player => {
+    if (player.lastChoice === truth) {
+      player.score += POINTS_FOR_TRUTH;
+      resultsMap[truth].choosedBy.push(player.name);
+    } else {
+      _.each(players, potentialAuthor => {
+        if (potentialAuthor.lastAnswer === player.lastChoice && potentialAuthor.socketId !== player.socketId) {
+          potentialAuthor.score += POINTS_FOR_LIE;
+        }
+      });
+
+      resultsMap[player.lastChoice].choosedBy.push(player.name);
+    }
+  });
+
+  return resultsMap;
+};
 
 const resetAnswers = players => _.map(players, player => {
   player.lastChoice = null;
