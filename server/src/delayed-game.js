@@ -63,7 +63,7 @@ class DelayedGame {
   }
 
   choices() {
-    return this._game.choices();
+    return this._game.choices().delay(1);
   }
 
   results() {

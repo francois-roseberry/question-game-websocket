@@ -117,8 +117,6 @@ class Game {
     this._players[playerSocketId].lastChoice = choice;
 
     if (hasEveryPlayerChosen(this._players)) {
-      //const truth = this._questions[this._questionIndex].answer;
-      //const resultsMap = computeResultsMap(truth, this._players);
       const results = computeResults(this._questions, this._questionIndex, this._players);
       this._questionIndex++;
       resetAnswers(this._players);

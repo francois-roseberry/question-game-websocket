@@ -200,6 +200,7 @@ function onAnswer(socket, game, questions) {
 		try {
 			game.answer(socket.id, answer);
 			log('Player [' + game.playerName(socket.id) + '] has answered ' + answer);
+			socket.emit('answer response', true);
 		} catch (error) {
 			log('Could not answer : ', error);
 			socket.emit('answer response', false, error);
