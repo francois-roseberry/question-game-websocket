@@ -40,12 +40,13 @@ class DelayedGame {
   }
 
   playerQuit() {
-    return this._game.playerQuit().do(() => {
-      if (this._countdownObject.timer) {
-        clearTimeout(this._countdownObject.timer);
-        this._countdownObject.timer = null;
+    const cancelIfStarting = () => {
+      if (this._state === GameStates.STARTING) {
+        this.cancel();
       }
-    });
+    };
+
+    return this._game.playerQuit().do(cancelIfStarting);
   }
 
   starting() {
@@ -93,17 +94,11 @@ class DelayedGame {
      .subscribe(seconds => {
        this._starting.onNext(seconds);
      }, _.noop, onCountdownComplete);
-
-    /*countdown(this._starting, this._config.millisecondsPerSecond, this._countdownObject, this._config.secondsBeforeStart, () => {
-      this._game.start();
-    });*/
   }
 
   cancel() {
-    if (this._state === GameStates.STARTING/*this._countdownObject.timer*/) {
+    if (this._state === GameStates.STARTING) {
       this._state = GameStates.CANCELLING;
-      //clearTimeout(this._countdownObject.timer);
-      //this._countdownObject.timer = null;
       return true;
     }
 
