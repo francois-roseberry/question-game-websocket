@@ -42,7 +42,6 @@ class GameService {
 		});
 
 		this._socket.on('result', result => {
-			console.log('GameService : result received');
 			results.onNext(result);
 		});
 
