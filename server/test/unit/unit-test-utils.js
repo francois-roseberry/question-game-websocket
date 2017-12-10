@@ -16,7 +16,7 @@ exports.CONFIG = {
   secondsBeforeStart: 5,
   secondsAfterScore: 5,
   secondsBetweenResults: 5,
-  millisecondsPerSecond: 2 // we put 2 for testing so we have quasi-instant events
+  millisecondsPerSecond: 5 // we put 5 for testing so we have quasi-instant events
 };
 
 exports.assertResultsDoNotContainChoice = (choice, results) => expect(results.filter(result => result.choice == choice).length).to.eql(0);

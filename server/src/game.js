@@ -59,7 +59,7 @@ class Game {
   }
 
   playerName(playerSocketId) {
-    return this._players[playerSocketId];
+    return this._players[playerSocketId].name;
   }
 
   players() {

@@ -11,9 +11,10 @@ var shuffle = require('./src/util').shuffle;
 var newPlayer = require('./src/player').newPlayer;
 const Game = require('./src/delayed-game').Game;
 
-var PORT = 3000;
+const PORT = 3000;
+const SECONDS_BEFORE_START = 5;
 
-var POINTS_FOR_TRUTH = 1000;
+/*var POINTS_FOR_TRUTH = 1000;
 var POINTS_FOR_LIE = 500;
 
 var TIME_BETWEEN_RESULTS = 5000;
@@ -24,12 +25,12 @@ var countdownObject = {};
 var resultCooldownTimer = null;
 var scoreCooldownTimer = null;
 var players = {};
-var questionIndex = 0;
+var questionIndex = 0;*/
 
 // TODO : replace these variables with a state variable
 // BEFORE, STARTING, STARTED, ENDED, and eventually PAUSED, but for now quitting stops the game and doesn't pause
-var gameStarted = false;
-var gameEnded = false;
+/*var gameStarted = false;
+var gameEnded = false;*/
 
 program
 	.version('0.1')
@@ -38,7 +39,7 @@ program
 	.option('-c, --countdown [seconds]', 'Countdown to start in seconds. Must be greater than 0. Default value of 5 if not present')
 	.parse(process.argv);
 
-var secondsBeforeStart = validCountdown(program.countdown);
+//const secondsBeforeStart = validCountdown(program.countdown);
 
 fs.readFile(program.question, 'utf-8', (err, data) => {
 	if (err) {
@@ -46,11 +47,13 @@ fs.readFile(program.question, 'utf-8', (err, data) => {
 		return;
 	}
 
+	const secondsBeforeStart = validCountdown(program.countdown);
+
 	app.use(express.static(program.webclient));
-	io.on('connection', onConnect(JSON.parse(data)));
+	io.on('connection', onConnect(secondsBeforeStart, JSON.parse(data)));
 });
 
-function validCountdown(countdown) {
+const validCountdown = countdown => {
 	if (countdown && countdown > 0) {
 		return countdown;
 	}
@@ -58,10 +61,10 @@ function validCountdown(countdown) {
 	return SECONDS_BEFORE_START;
 }
 
-function onConnect(questions) {
+function onConnect(secondsBeforeStart, questions) {
 	const game = Game.create({
 		questions,
-		secondsBeforeStart: 5,
+		secondsBeforeStart: secondsBeforeStart,
 	  secondsAfterScore: 5,
 	  secondsBetweenResults: 5,
 	  millisecondsPerSecond: 1000
@@ -109,7 +112,10 @@ function onConnect(questions) {
 function onPlayerName(socket, game) {
 	return name => {
 		try {
-			game.addPlayer(newPlayer(name));
+			const player = newPlayer(name);
+			player.socketId = socket.id;
+			game.addPlayer(player);
+			log('A user identified as [' + name + "]");
 			socket.emit('name response', true);
 		} catch (error) {
 			log('User cannot join : ', error);
@@ -353,7 +359,7 @@ function onDisconnect(socket, game) {
 	return () => {
 		game.removePlayer(socket.id);
 
-		if (players[socket.id]) {
+		/*if (players[socket.id]) {
 			log('Player [' + players[socket.id].name + '] has left');
 			gameStarted = false;
 			if (countdownObject.timer && !gameEnded) {
@@ -370,12 +376,12 @@ function onDisconnect(socket, game) {
 				});
 				io.emit('players', names);
 			}
-		}
+		}*/
 	};
 }
 
 
-function clearGameTimers() {
+/*function clearGameTimers() {
 	if (countdownObject.timer) {
 		clearTimeout(countdownObject.timer);
 		countdownObject.timer = null;
@@ -388,7 +394,7 @@ function clearGameTimers() {
 		clearTimeout(scoreCooldownTimer);
 		scoreCooldownTimer = null;
 	}
-}
+}*/
 
 /*function resetAnswers() {
 	_.each(players, (player) => {

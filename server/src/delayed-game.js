@@ -1,6 +1,14 @@
 const Rx = require('rx');
+const _ = require('underscore');
 
 const Game = require('./game').Game;
+
+const GameStates = {
+  NOT_STARTED: 'not_started',
+  STARTING: 'starting',
+  CANCELLING: 'cancelling',
+  STARTED: 'started'
+};
 
 class DelayedGame {
   constructor(config) {
@@ -8,6 +16,7 @@ class DelayedGame {
     this._config = config;
     this._countdownObject = {};
     this._starting = new Rx.Subject();
+    this._state = GameStates.NOT_STARTED;
   }
 
   static create(questions) {
@@ -66,16 +75,35 @@ class DelayedGame {
   }
 
   start() {
-    countdown(this._starting, this._config.millisecondsPerSecond, this._countdownObject, this._config.secondsBeforeStart, () => {
+    this._state = GameStates.STARTING;
+    const onCountdownComplete = () => {
+      if (this._state === GameStates.STARTING) {
+        this._game.start();
+        this._state = GameStates.STARTED;
+      } else {
+        this._game.emitPlayers();
+        this._state = GameStates.NOT_STARTED;
+      }
+    };
+
+    Rx.Observable.interval(this._config.millisecondsPerSecond)
+     .take(this._config.secondsBeforeStart)
+     .takeWhile(() => this._state === GameStates.STARTING)
+     .map(value => this._config.secondsBeforeStart - value)
+     .subscribe(seconds => {
+       this._starting.onNext(seconds);
+     }, _.noop, onCountdownComplete);
+
+    /*countdown(this._starting, this._config.millisecondsPerSecond, this._countdownObject, this._config.secondsBeforeStart, () => {
       this._game.start();
-    });
+    });*/
   }
 
   cancel() {
-    if (this._countdownObject.timer) {
-      clearTimeout(this._countdownObject.timer);
-      this._countdownObject.timer = null;
-      this._game.emitPlayers();
+    if (this._state === GameStates.STARTING/*this._countdownObject.timer*/) {
+      this._state = GameStates.CANCELLING;
+      //clearTimeout(this._countdownObject.timer);
+      //this._countdownObject.timer = null;
       return true;
     }
 
