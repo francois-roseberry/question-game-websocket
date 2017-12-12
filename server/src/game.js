@@ -20,6 +20,7 @@ class Game {
     this._state = GameStates.NOT_STARTED;
     this._config = config;
 
+    this._startingSubject = new Rx.Subject();
     this._questionSubject = new Rx.Subject();
     this._choicesSubject = new Rx.Subject();
     this._resultsSubject = new Rx.Subject();
@@ -62,13 +63,6 @@ class Game {
     return this._players[playerSocketId].name;
   }
 
-  players() {
-    return this._playersSubject
-      .map(players => _.values(players))
-      .map(players => players.map(player => player.name))
-      .asObservable();
-  }
-
   start() {
     if (this._state !== GameStates.NOT_STARTED) {
       throw new Error('ALREADY_STARTED');
@@ -77,6 +71,17 @@ class Game {
     this._state = GameStates.STARTED;
     this._questionSubject.onNext(
       { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
+  }
+
+  players() {
+    return this._playersSubject
+      .map(players => _.values(players))
+      .map(players => players.map(player => player.name))
+      .asObservable();
+  }
+
+  starting() {
+    return this._startingSubject.asObservable();
   }
 
   playerQuit() {
