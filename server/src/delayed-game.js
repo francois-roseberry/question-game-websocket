@@ -39,17 +39,18 @@ class DelayedGame {
   }
 
   playerQuit() {
-    const cancelIfStarting = () => {
-      if (this._state === GameStates.STARTING) {
-        this.cancel();
-      }
-    };
-
-    return this._game.playerQuit().do(cancelIfStarting);
+    // const cancelIfStarting = () => {
+    //   if (this._state === GameStates.STARTING) {
+    //     this.cancel();
+    //   }
+    // };
+    //
+    // return this._game.playerQuit().do(cancelIfStarting);
+    return this._game.playerQuit();
   }
 
   starting() {
-    return this._starting.asObservable();
+    return this._game.starting();
   }
 
   questions() {
@@ -76,33 +77,35 @@ class DelayedGame {
   }
 
   start() {
-    this._state = GameStates.STARTING;
-    const onCountdownComplete = () => {
-      if (this._state === GameStates.STARTING) {
-        this._game.start();
-        this._state = GameStates.STARTED;
-      } else {
-        this._game.emitPlayers();
-        this._state = GameStates.NOT_STARTED;
-      }
-    };
-
-    Rx.Observable.interval(this._config.millisecondsPerSecond)
-     .take(this._config.secondsBeforeStart)
-     .takeWhile(() => this._state === GameStates.STARTING)
-     .map(value => this._config.secondsBeforeStart - value)
-     .subscribe(seconds => {
-       this._starting.onNext(seconds);
-     }, _.noop, onCountdownComplete);
+    // this._state = GameStates.STARTING;
+    // const onCountdownComplete = () => {
+    //   if (this._state === GameStates.STARTING) {
+    //     this._game.start();
+    //     this._state = GameStates.STARTED;
+    //   } else {
+    //     this._game.emitPlayers();
+    //     this._state = GameStates.NOT_STARTED;
+    //   }
+    // };
+    //
+    // Rx.Observable.interval(this._config.millisecondsPerSecond)
+    //  .take(this._config.secondsBeforeStart)
+    //  .takeWhile(() => this._state === GameStates.STARTING)
+    //  .map(value => this._config.secondsBeforeStart - value)
+    //  .subscribe(seconds => {
+    //    this._starting.onNext(seconds);
+    //  }, _.noop, onCountdownComplete);
+    this._game.start();
   }
 
   cancel() {
-    if (this._state === GameStates.STARTING) {
-      this._state = GameStates.CANCELLING;
-      return true;
-    }
-
-    return false;
+    // if (this._state === GameStates.STARTING) {
+    //   this._state = GameStates.CANCELLING;
+    //   return true;
+    // }
+    //
+    // return false;
+    return this._game.cancel();
   }
 
   answer(playerSocketId, answer) {

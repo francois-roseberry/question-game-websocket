@@ -49,6 +49,9 @@ class Game {
 
   removePlayer(playerSocketId) {
     if (this._players[playerSocketId]) {
+      if (this._state === GameStates.STARTING) {
+        this.cancel();
+      }
       this._quitSubject.onNext(this._players[playerSocketId].name);
       delete this._players[playerSocketId];
       this._playersSubject.onNext(this._players);
@@ -68,9 +71,37 @@ class Game {
       throw new Error('ALREADY_STARTED');
     }
 
-    this._state = GameStates.STARTED;
-    this._questionSubject.onNext(
-      { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
+    const onCountdownComplete = () => {
+      if (this._state === GameStates.STARTING) {
+        this._state = GameStates.STARTED;
+        this._questionSubject.onNext(
+          { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
+      } else {
+        this._state = GameStates.NOT_STARTED;
+        this._playersSubject.onNext(this._players);
+      }
+    };
+
+    this._state = GameStates.STARTING;
+    Rx.Observable.interval(this._config.millisecondsPerSecond)
+     .take(this._config.secondsBeforeStart)
+     .takeWhile(() => this._state === GameStates.STARTING)
+     .map(value => this._config.secondsBeforeStart - value)
+     .subscribe(seconds => {
+       this._startingSubject.onNext(seconds);
+     }, _.noop, onCountdownComplete);
+
+     // this._questionSubject.onNext(
+     //   { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
+  }
+
+  cancel() {
+    if (this._state === GameStates.STARTING) {
+      this._state = GameStates.CANCELLING;
+      return true;
+    }
+
+    return false;
   }
 
   players() {
