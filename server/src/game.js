@@ -9,12 +9,12 @@ const POINTS_FOR_LIE = 500;
 
 const GameStates = {
   NOT_STARTED: 'not_started',
+  STARTING: 'starting',
   STARTED: 'started'
 };
 
 class Game {
   constructor(config) {
-    this._countdownObject = {};
     this._players = {};
     this._questionIndex = 0;
     this._state = GameStates.NOT_STARTED;
