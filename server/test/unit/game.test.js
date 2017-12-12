@@ -11,15 +11,16 @@ const gameCompleted = require('./unit-test-utils').gameCompleted;
 const contains = require('./unit-test-utils').contains;
 const assertResultsDoNotContainChoice = require('./unit-test-utils').assertResultsDoNotContainChoice;
 const QUESTIONS = require('./unit-test-utils').QUESTIONS;
+const CONFIG = require('./unit-test-utils').CONFIG;
 
 describe('A game', () => {
   it('can be created', () => {
-    Game.create([]);
+    Game.create(CONFIG);
   });
 
   describe('adding a player', () => {
     it('sends the player list with that player in it', done => {
-      const game = Game.create(QUESTIONS);
+      const game = Game.create(CONFIG);
       game.players().take(1).subscribe(players => {
         expect(_.contains(players, 'bob'));
         done();
@@ -28,7 +29,7 @@ describe('A game', () => {
     });
 
     it('throws an error if a player already has that name', () => {
-      const game = Game.create(QUESTIONS);
+      const game = Game.create(CONFIG);
       game.addPlayer(newPlayer('bob'));
 
       expect(() => {
@@ -37,7 +38,7 @@ describe('A game', () => {
     });
 
     it('throws an error if game is already started', () => {
-      const game = Game.create(QUESTIONS);
+      const game = Game.create(CONFIG);
       game.addPlayer(newPlayer('bob'));
       game.start();
 
@@ -49,7 +50,7 @@ describe('A game', () => {
 
   describe('removing a player', () => {
     it('removes it from the game', done => {
-      const game = Game.create(QUESTIONS);
+      const game = Game.create(CONFIG);
       const player = newPlayer('bob');
       game.players().skip(1).take(1).subscribe(players => {
         expect(players).to.eql([]);
@@ -60,7 +61,7 @@ describe('A game', () => {
     });
 
     it('sends a player quit event', done => {
-      const game = Game.create(QUESTIONS);
+      const game = Game.create(CONFIG);
       const player = newPlayer('bob');
       game.playerQuit().take(1).subscribe(playerName => {
         expect(playerName).to.eql(player.name);

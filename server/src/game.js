@@ -13,12 +13,12 @@ const GameStates = {
 };
 
 class Game {
-  constructor(questions) {
+  constructor(config) {
     this._countdownObject = {};
     this._players = {};
     this._questionIndex = 0;
     this._state = GameStates.NOT_STARTED;
-    this._questions = questions;
+    this._config = config;
 
     this._questionSubject = new Rx.Subject();
     this._choicesSubject = new Rx.Subject();
@@ -75,7 +75,8 @@ class Game {
     }
 
     this._state = GameStates.STARTED;
-    this._questionSubject.onNext({ index: this._questionIndex, question: this._questions[this._questionIndex].question });
+    this._questionSubject.onNext(
+      { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
   }
 
   playerQuit() {
@@ -99,7 +100,7 @@ class Game {
   }
 
   answer(playerSocketId, answer) {
-    const truth = this._questions[this._questionIndex].answer;
+    const truth = this._config.questions[this._questionIndex].answer;
     if (truth === answer) {
       throw new Error('TRUTH');
     }
@@ -117,16 +118,17 @@ class Game {
     this._players[playerSocketId].lastChoice = choice;
 
     if (hasEveryPlayerChosen(this._players)) {
-      const results = computeResults(this._questions, this._questionIndex, this._players);
+      const results = computeResults(this._config.questions, this._questionIndex, this._players);
       this._questionIndex++;
       resetAnswers(this._players);
 
       this._resultsSubject.onNext(results);
-      const scores = { array: scoresArray(this._players), final: this._questionIndex === this._questions.length };
+      const scores = { array: scoresArray(this._players), final: this._questionIndex === this._config.questions.length };
       this._scoresSubject.onNext(scores);
 
-      if (this._questionIndex < this._questions.length) {
-        this._questionSubject.onNext({ index: this._questionIndex, question: this._questions[this._questionIndex].question });
+      if (this._questionIndex < this._config.questions.length) {
+        this._questionSubject.onNext(
+          { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
       }
     }
   }

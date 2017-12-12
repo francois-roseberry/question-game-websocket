@@ -22,7 +22,7 @@ exports.CONFIG = {
 exports.assertResultsDoNotContainChoice = (choice, results) => expect(results.filter(result => result.choice == choice).length).to.eql(0);
 
 exports.GameCreator = {
-  create: () => Game.create(exports.QUESTIONS)
+  create: () => Game.create(exports.CONFIG)
 }
 
 const game = callback => {
