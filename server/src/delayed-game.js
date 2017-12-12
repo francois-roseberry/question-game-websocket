@@ -19,8 +19,8 @@ class DelayedGame {
     this._state = GameStates.NOT_STARTED;
   }
 
-  static create(questions) {
-    return new DelayedGame(questions);
+  static create(config) {
+    return new DelayedGame(config);
   }
 
   addPlayer(player) {
@@ -55,6 +55,7 @@ class DelayedGame {
 
   questions() {
     // Do NOT send the question directly, so it does not hide the scores
+    // TODO : should be sent after results too
     return this._game.questions().flatMap(({index, question}) => {
       const delayAfterScores = this._config.millisecondsPerSecond * this._config.secondsAfterScore;
       const singleSubject = Rx.Observable.of({index, question});

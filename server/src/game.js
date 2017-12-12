@@ -7,17 +7,17 @@ const shuffle = require('./util').shuffle;
 const POINTS_FOR_TRUTH = 1000;
 const POINTS_FOR_LIE = 500;
 
+const GameStates = {
+  NOT_STARTED: 'not_started',
+  STARTED: 'started'
+};
+
 class Game {
   constructor(questions) {
     this._countdownObject = {};
     this._players = {};
     this._questionIndex = 0;
-
-    // TODO : replace these variables with a state variable
-    // BEFORE, STARTING, STARTED, ENDED, and eventually PAUSED, but for now quitting stops the game and doesn't pause
-    this._gameStarted = false;
-    this._gameEnded = false;
-
+    this._state = GameStates.NOT_STARTED;
     this._questions = questions;
 
     this._questionSubject = new Rx.Subject();
@@ -33,7 +33,7 @@ class Game {
   }
 
   addPlayer(player) {
-    if (this._gameStarted) {
+    if (this._state !== GameStates.NOT_STARTED) {
       throw new Error('ALREADY_STARTED');
     }
 
@@ -70,11 +70,11 @@ class Game {
   }
 
   start() {
-    if (this._gameStarted) {
+    if (this._state !== GameStates.NOT_STARTED) {
       throw new Error('ALREADY_STARTED');
     }
 
-    this._gameStarted = true;
+    this._state = GameStates.STARTED;
     this._questionSubject.onNext({ index: this._questionIndex, question: this._questions[this._questionIndex].question });
   }
 
