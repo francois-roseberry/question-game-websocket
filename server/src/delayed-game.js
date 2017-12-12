@@ -14,7 +14,6 @@ class DelayedGame {
   constructor(config) {
     this._game = Game.create(config.questions);
     this._config = config;
-    this._countdownObject = {};
     this._starting = new Rx.Subject();
     this._state = GameStates.NOT_STARTED;
   }
