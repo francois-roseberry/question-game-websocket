@@ -68,8 +68,8 @@ class DelayedGame {
   }
 
   results() {
-    const delayBetweenResults = this._config.millisecondsPerSecond * this._config.secondsBetweenResults;
-    return this._game.results().flatMap(oneByOne(delayBetweenResults)).asObservable();
+    //const delayBetweenResults = this._config.millisecondsPerSecond * this._config.secondsBetweenResults;
+    return this._game.results();//.flatMap(oneByOne(delayBetweenResults)).asObservable();
   }
 
   scores() {
@@ -117,10 +117,10 @@ class DelayedGame {
   }
 }
 
-const oneByOne = delayBetweenElements => elements => Rx.Observable
+/*const oneByOne = delayBetweenElements => elements => Rx.Observable
     .interval(delayBetweenElements)
     .take(elements.length)
     .map(index => elements[index])
-    .asObservable();
+    .asObservable();*/
 
 exports.Game = DelayedGame;

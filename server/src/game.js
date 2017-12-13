@@ -158,7 +158,11 @@ class Game {
       this._questionIndex++;
       resetAnswers(this._players);
 
-      this._resultsSubject.onNext(results);
+      const delayBetweenResults = this._config.millisecondsPerSecond * this._config.secondsBetweenResults;
+      oneByOne(delayBetweenResults, results).subscribe(result => {
+        this._resultsSubject.onNext(result);
+      })
+      //this._resultsSubject.onNext(results);
       const scores = { array: scoresArray(this._players), final: this._questionIndex === this._config.questions.length };
       this._scoresSubject.onNext(scores);
 
@@ -200,6 +204,12 @@ const computeResultsMap = (truth, players) => {
 
   return resultsMap;
 };
+
+const oneByOne = (delayBetweenElements, elements) => Rx.Observable
+    .interval(delayBetweenElements)
+    .take(elements.length)
+    .map(index => elements[index])
+    .asObservable();
 
 const resetAnswers = players => _.map(players, player => {
   player.lastChoice = null;
