@@ -9,7 +9,7 @@ var log = require('debug')('question-game');
 
 var shuffle = require('./src/util').shuffle;
 var newPlayer = require('./src/player').newPlayer;
-const Game = require('./src/delayed-game').Game;
+const Game = require('./src/game').Game;
 
 const PORT = 3000;
 const SECONDS_BEFORE_START = 5;
