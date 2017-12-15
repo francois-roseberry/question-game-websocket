@@ -276,7 +276,7 @@ describe('A game', () => {
     });
   });
 
-  describe('after choosing', () => {
+  describe('after results are sent', () => {
     it('send scores, with an entry for every player', done => {
       const TRUTH = QUESTIONS[0].answer;
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };

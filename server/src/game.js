@@ -161,15 +161,15 @@ class Game {
       const delayBetweenResults = this._config.millisecondsPerSecond * this._config.secondsBetweenResults;
       oneByOne(delayBetweenResults, results).subscribe(result => {
         this._resultsSubject.onNext(result);
-      })
-      //this._resultsSubject.onNext(results);
-      const scores = { array: scoresArray(this._players), final: this._questionIndex === this._config.questions.length };
-      this._scoresSubject.onNext(scores);
+      }, _.noop, () => {
+        const scores = { array: scoresArray(this._players), final: this._questionIndex === this._config.questions.length };
+        this._scoresSubject.onNext(scores);
 
-      if (this._questionIndex < this._config.questions.length) {
-        this._questionSubject.onNext(
-          { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
-      }
+        if (this._questionIndex < this._config.questions.length) {
+          this._questionSubject.onNext(
+            { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
+        }
+      });
     }
   }
 }

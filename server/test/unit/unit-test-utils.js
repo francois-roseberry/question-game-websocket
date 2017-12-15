@@ -56,9 +56,14 @@ exports.gameStartedAnswered = (answers, callback) => {
 
 exports.gameStartedAnsweredChosen = (answers, choices, callback) => {
   exports.gameStartedAnswered(answers, (game, player1, player2) => {
-    const subjects = [ game.results().take(2).toArray(), game.scores().take(1)];
+    /*const subjects = [ game.results().take(2).toArray(), game.scores().take(1)];
     Rx.Observable.forkJoin(subjects).take(1).subscribe(([results, scores]) => {
       callback(game, player1, player2, results, scores);
+    });*/
+    game.results().take(2).toArray().subscribe(results => {
+      game.scores().take(1).subscribe(scores => {
+        callback(game, player1, player2, results, scores);
+      });
     });
     game.choose(player1.socketId, choices.player1);
     game.choose(player2.socketId, choices.player2);
