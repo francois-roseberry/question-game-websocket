@@ -290,17 +290,20 @@ describe('A game', () => {
     });
   });
 
-  describe('after choosing, when there are still more questions', () => {
+  describe('after scores are sent, when there are still more questions', () => {
     describe('when there are more questions', () => {
       it('sends the next question', done => {
         const TRUTH = QUESTIONS[0].answer;
         const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };
         const CHOICES = { player1: TRUTH + '1', player2: TRUTH };
         gameStartedAnswered(ANSWERS, (game, player1, player2) => {
-          game.questions().take(1).subscribe(question => {
-            expect(_.isEqual(question, { index: 1, question: QUESTIONS[1].question })).to.eql(true);
-            done();
+          game.scores().take(1).delay(1).subscribe(() => {
+            game.questions().take(1).subscribe(question => {
+              expect(_.isEqual(question, { index: 1, question: QUESTIONS[1].question })).to.eql(true);
+              done();
+            });
           });
+
           game.choose(player1.socketId, CHOICES.player1);
           game.choose(player2.socketId, CHOICES.player2);
         });

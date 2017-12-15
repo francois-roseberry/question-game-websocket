@@ -164,11 +164,12 @@ class Game {
       }, _.noop, () => {
         const scores = { array: scoresArray(this._players), final: this._questionIndex === this._config.questions.length };
         this._scoresSubject.onNext(scores);
-
-        if (this._questionIndex < this._config.questions.length) {
-          this._questionSubject.onNext(
-            { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
-        }
+        Rx.Observable.timer(this._config.secondsAfterScore * this._config.millisecondsPerSecond).subscribe(() => {
+          if (this._questionIndex < this._config.questions.length) {
+            this._questionSubject.onNext(
+              { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
+          }
+        });
       });
     }
   }
