@@ -46,10 +46,13 @@
 }
 
 .btn-choice.observer {
-	padding: 10px;
+	margin: 2px;
+	padding: 2px;
 	font-size: 6em;
 	font-weight: bold;
 	padding-bottom: 25px;
+	border: 1px dashed black;
+	text-align: center;
 }
 
 .waiting {
