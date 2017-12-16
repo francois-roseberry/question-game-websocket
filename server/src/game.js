@@ -52,6 +52,8 @@ class Game {
     if (this._players[playerSocketId]) {
       if (this._state === GameStates.STARTING) {
         this.cancel();
+      } else {
+        this._state = GameStates.NOT_STARTED;
       }
       this._quitSubject.onNext(this._players[playerSocketId].name);
       delete this._players[playerSocketId];
@@ -92,9 +94,6 @@ class Game {
      .subscribe(seconds => {
        this._startingSubject.onNext(seconds);
      }, _.noop, onCountdownComplete);
-
-     // this._questionSubject.onNext(
-     //   { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
   }
 
   cancel() {
@@ -172,8 +171,6 @@ class Game {
             if (this._questionIndex < this._config.questions.length) {
               this._questionSubject.onNext(
                 { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
-            } else {
-              this._state = GameStates.NOT_STARTED;
             }
           });
       });
