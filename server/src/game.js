@@ -164,14 +164,16 @@ class Game {
       oneByOne(delayBetweenResults, results).subscribe(result => {
         this._resultsSubject.onNext(result);
       }, _.noop, () => {
-        const scores = { array: scoresArray(this._players), final: this._questionIndex === this._config.questions.length };
-        this._scoresSubject.onNext(scores);
-        Rx.Observable.timer(this._config.secondsAfterScore * this._config.millisecondsPerSecond).subscribe(() => {
-          if (this._questionIndex < this._config.questions.length) {
-            this._questionSubject.onNext(
-              { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
-          }
-        });
+        //Rx.Observable.timer(delayBetweenResults).subscribe(() => {
+          const scores = { array: scoresArray(this._players), final: this._questionIndex === this._config.questions.length };
+          this._scoresSubject.onNext(scores);
+          Rx.Observable.timer(this._config.secondsAfterScore * this._config.millisecondsPerSecond).subscribe(() => {
+            if (this._questionIndex < this._config.questions.length) {
+              this._questionSubject.onNext(
+                { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
+            }
+          });
+        //});
       });
     }
   }
@@ -208,11 +210,11 @@ const computeResultsMap = (truth, players) => {
   return resultsMap;
 };
 
-// TODO there should also be a delay after the last element
 const oneByOne = (delayBetweenElements, elements) => Rx.Observable
     .interval(delayBetweenElements)
     .take(elements.length)
     .map(index => elements[index])
+    .concat(Rx.Observable.timer(delayBetweenElements).ignoreElements())
     .asObservable();
 
 const resetAnswers = players => _.map(players, player => {
