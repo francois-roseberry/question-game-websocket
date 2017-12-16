@@ -272,7 +272,7 @@ function showQuestion(container, task) {
 
 		if (isObserver && ('speechSynthesis' in window)) {
 			var msg = new SpeechSynthesisUtterance(question);
-			msg.rate = 0.8;
+			msg.rate = 1;
 			window.speechSynthesis.speak(msg);
 		}
 	};
