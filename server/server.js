@@ -98,7 +98,7 @@ function onConnect(secondsBeforeStart, questions) {
 		log('sending scores : ', scores);
 		io.emit('scores', scores.array, scores.final);
 	});
-	game.answerState().subscribe(answererState => {
+	game.answerState().subscribe(answerState => {
 		log('answer state : ', answerState);
 		io.emit('answerState', answerState);
 	});
