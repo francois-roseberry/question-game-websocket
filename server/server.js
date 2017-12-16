@@ -96,7 +96,7 @@ function onConnect(secondsBeforeStart, questions) {
 	});
 	game.scores().subscribe(scores => {
 		log('sending scores : ', scores);
-		io.emit('scores', scores);
+		io.emit('scores', scores.array, scores.final);
 	});
 
 	return socket => {
@@ -118,8 +118,8 @@ function onPlayerName(socket, game) {
 			log('A user identified as [' + name + "]");
 			socket.emit('name response', true);
 		} catch (error) {
-			log('User cannot join : ', error);
-			socket.emit('name response', false, error);
+			log('User cannot join : ', error.message);
+			socket.emit('name response', false, error.message);
 		}
 
 		/*if (gameStarted) {
@@ -152,7 +152,7 @@ function onStart(socket, game, questions) {
 			game.start();
 			log('Game started by [' + game.playerName(socket.id) + ']');
 		} catch (error) {
-			log('Could not start game : ', error);
+			log('Could not start game : ', error.message);
 		}
 
 		/*if (!players[socket.id]) {
@@ -202,8 +202,8 @@ function onAnswer(socket, game, questions) {
 			log('Player [' + game.playerName(socket.id) + '] has answered ' + answer);
 			socket.emit('answer response', true);
 		} catch (error) {
-			log('Could not answer : ', error);
-			socket.emit('answer response', false, error);
+			log('Could not answer : ', error.message);
+			socket.emit('answer response', false, error.message);
 		}
 		/*if (!players[socket.id]) {
 			log('Question cannot be answered by a user who is not logged in');
