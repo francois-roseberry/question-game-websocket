@@ -146,7 +146,9 @@ class Game {
     if (hasEveryPlayerAnswered(this._players)) {
       let choices = computeChoices(truth, this._players);
       shuffle(choices);
-      this._choicesSubject.onNext(choices);
+      Rx.Observable.timer(1).subscribe(() => {
+        this._choicesSubject.onNext(choices);
+      });
     }
   }
 
@@ -182,7 +184,7 @@ const computeResults = (questions, index, players) => {
 };
 
 const computeResultsMap = (truth, players) => {
-  let resultsMap = { [truth]: { authors: 'TRUTH', choosedBy: [] } };
+  let resultsMap = { [truth]: { authors: ['TRUTH'], choosedBy: [] } };
 
   _.each(players, player => {
     resultsMap[player.lastAnswer] = getResult(resultsMap, player);
@@ -206,6 +208,7 @@ const computeResultsMap = (truth, players) => {
   return resultsMap;
 };
 
+// TODO there should also be a delay after the last element
 const oneByOne = (delayBetweenElements, elements) => Rx.Observable
     .interval(delayBetweenElements)
     .take(elements.length)

@@ -7,6 +7,7 @@ const newPlayer = require('../../src/player').newPlayer;
 const gameStarted = require('./unit-test-utils').gameStarted;
 const gameStartedAnswered = require('./unit-test-utils').gameStartedAnswered;
 const gameStartedAnsweredChosen = require('./unit-test-utils').gameStartedAnsweredChosen;
+const gameStartedAnsweredChosenWithTruthOnly = require('./unit-test-utils').gameStartedAnsweredChosenWithTruthOnly;
 const gameStartedAnsweredChosenWithResultsOneByOne = require('./unit-test-utils').gameStartedAnsweredChosenWithResultsOneByOne;
 const gameCompleted = require('./unit-test-utils').gameCompleted;
 const contains = require('./unit-test-utils').contains;
@@ -241,7 +242,7 @@ describe('A game', () => {
     it('containing a result for the truth and who chose it', done => {
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '2' };
       const CHOICES = { player1: TRUTH, player2: TRUTH };
-      gameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2, results) => {
+      gameStartedAnsweredChosenWithTruthOnly(ANSWERS, CHOICES, (game, player1, player2, results) => {
         expect(contains(results, { choice: TRUTH, authors: ['TRUTH'], choosedBy: [player1.name, player2.name] })).to.eql(true);
         done();
       });

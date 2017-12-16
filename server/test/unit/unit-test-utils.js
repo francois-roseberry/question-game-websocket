@@ -70,11 +70,24 @@ exports.gameStartedAnsweredChosen = (answers, choices, callback) => {
   });
 }
 
+exports.gameStartedAnsweredChosenWithTruthOnly = (answers, choices, callback) => {
+  exports.gameStartedAnswered(answers, (game, player1, player2) => {
+    game.results().take(1).toArray().subscribe(results => {
+      game.scores().take(1).subscribe(scores => {
+        callback(game, player1, player2, results, scores);
+      });
+    });
+    game.choose(player1.socketId, choices.player1);
+    game.choose(player2.socketId, choices.player2);
+  });
+}
+
 exports.gameStartedAnsweredChosenWithResultsOneByOne = (answers, choices, callback) => {
   exports.gameStartedAnswered(answers, (game, player1, player2) => {
     // Rx.Observable
     //   .interval(exports.CONFIG.secondsAfterScore * exports.CONFIG.millisecondsPerSeconds)
     //   .withLatestFrom(game.results())
+    // TODO there are 3 not 2 results. Truth is there too
     game.results()
       .take(2)
       .toArray()
