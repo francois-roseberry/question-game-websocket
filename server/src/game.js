@@ -23,6 +23,7 @@ class Game {
     this._quitSubject = new Rx.Subject();
     this._playersSubject = new Rx.Subject();
     this._answerStateSubject = new Rx.Subject();
+    this._choiceStateSubject = new Rx.Subject();
   }
 
   static create(questions) {
@@ -104,6 +105,10 @@ class Game {
     return this._answerStateSubject.asObservable();
   }
 
+  choiceState() {
+    return this._choiceStateSubject.asObservable();
+  }
+
   players() {
     return this._playersSubject
       .map(players => _.values(players))
@@ -155,6 +160,7 @@ class Game {
 
   choose(playerSocketId, choice) {
     this._players[playerSocketId].lastChoice = choice;
+    this._choiceStateSubject.onNext(choiceState(this._players));
 
     if (hasEveryPlayerChosen(this._players)) {
       const results = computeResults(this._config.questions, this._questionIndex, this._players);
@@ -259,6 +265,11 @@ const truthResult = (resultsMap, truth) => ({
 
 const answerState = players => ({
   count: _.filter(players, player => player.lastAnswer !== null).length,
+  total: _.size(players)
+});
+
+const choiceState = players => ({
+  count: _.filter(players, player => player.lastChoice !== null).length,
   total: _.size(players)
 });
 

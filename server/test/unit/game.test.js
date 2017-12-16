@@ -191,6 +191,19 @@ describe('A game', () => {
         done();
       });
     });
+
+    describe('choosing', () => {
+      it('sends a choice state event with number of choices received and total expected', done => {
+        gameStartedAnswered(ANSWERS, (game, player1, player2) => {
+          game.choiceState().take(1).subscribe(choiceState => {
+            expect(_.isEqual(choiceState, { count: 1, total: 2 })).to.eql(true);
+            done();
+          });
+
+          game.choose(player1.socketId, QUESTIONS[0].answer + '1');
+        });
+      });
+    });
   });
 
   describe('when every player has chosen, sends the results', () => {

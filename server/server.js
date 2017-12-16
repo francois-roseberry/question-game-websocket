@@ -102,6 +102,10 @@ function onConnect(secondsBeforeStart, questions) {
 		log('answer state : ', answerState);
 		io.emit('answerState', answerState);
 	});
+	game.choiceState().subscribe(choiceState => {
+		log('choice state : ', choiceState);
+		io.emit('choiceState', choiceState);
+	});
 
 	return socket => {
 		socket.on('name', onPlayerName(socket, game));
