@@ -1,18 +1,12 @@
 const _ = require('underscore');
 const Rx = require('rx');
 
+const GameStates = require('./states').GameStates;
 const newPlayer = require('./player').newPlayer;
 const shuffle = require('./util').shuffle;
 
 const POINTS_FOR_TRUTH = 1000;
 const POINTS_FOR_LIE = 500;
-
-const GameStates = {
-  NOT_STARTED: 'not_started',
-  STARTING: 'starting',
-  STARTED: 'started',
-  CANCELLING: 'cancelling'
-};
 
 class Game {
   constructor(config) {
@@ -90,7 +84,7 @@ class Game {
      .take(this._config.secondsBeforeStart)
      .takeWhile(() => this._state === GameStates.STARTING)
      .map(value => this._config.secondsBeforeStart - value)
-     .concat(Rx.Observable.timer(this._config.millisecondsPerSecond).ignoreElements())
+     .concat(delay(this._config.millisecondsPerSecond))
      .subscribe(seconds => {
        this._startingSubject.onNext(seconds);
      }, _.noop, onCountdownComplete);
@@ -178,6 +172,8 @@ class Game {
   }
 }
 
+const delay = milliseconds => Rx.Observable.timer(milliseconds).ignoreElements();
+
 const computeResults = (questions, index, players) => {
   const truth = questions[index].answer;
   const resultsMap = computeResultsMap(truth, players);
@@ -213,7 +209,7 @@ const oneByOne = (delayBetweenElements, elements) => Rx.Observable
     .interval(delayBetweenElements)
     .take(elements.length)
     .map(index => elements[index])
-    .concat(Rx.Observable.timer(delayBetweenElements).ignoreElements())
+    .concat(delay(delayBetweenElements))
     .asObservable();
 
 const resetAnswers = players => _.map(players, player => {
