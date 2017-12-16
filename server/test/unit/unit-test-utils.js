@@ -55,46 +55,24 @@ exports.gameStartedAnswered = (answers, callback) => {
 }
 
 exports.gameStartedAnsweredChosen = (answers, choices, callback) => {
-  exports.gameStartedAnswered(answers, (game, player1, player2) => {
-    /*const subjects = [ game.results().take(2).toArray(), game.scores().take(1)];
-    Rx.Observable.forkJoin(subjects).take(1).subscribe(([results, scores]) => {
-      callback(game, player1, player2, results, scores);
-    });*/
-    game.results().take(2).toArray().subscribe(results => {
-      game.scores().take(1).subscribe(scores => {
-        callback(game, player1, player2, results, scores);
-      });
-    });
-    game.choose(player1.socketId, choices.player1);
-    game.choose(player2.socketId, choices.player2);
-  });
+  gameStartedAnsweredChosen(answers, choices, 3, callback);
+}
+
+exports.gameStartedAnsweredChosenWithTwoResults = (answers, choices, callback) => {
+  gameStartedAnsweredChosen(answers, choices, 2, callback);
 }
 
 exports.gameStartedAnsweredChosenWithTruthOnly = (answers, choices, callback) => {
+  gameStartedAnsweredChosen(answers, choices, 1, callback);
+}
+
+const gameStartedAnsweredChosen = (answers, choices, resultsCount, callback) => {
   exports.gameStartedAnswered(answers, (game, player1, player2) => {
-    game.results().take(1).toArray().subscribe(results => {
+    game.results().take(resultsCount).toArray().subscribe(results => {
       game.scores().take(1).subscribe(scores => {
         callback(game, player1, player2, results, scores);
       });
     });
-    game.choose(player1.socketId, choices.player1);
-    game.choose(player2.socketId, choices.player2);
-  });
-}
-
-exports.gameStartedAnsweredChosenWithResultsOneByOne = (answers, choices, callback) => {
-  exports.gameStartedAnswered(answers, (game, player1, player2) => {
-    // Rx.Observable
-    //   .interval(exports.CONFIG.secondsAfterScore * exports.CONFIG.millisecondsPerSeconds)
-    //   .withLatestFrom(game.results())
-    // TODO there are 3 not 2 results. Truth is there too
-    game.results()
-      .take(2)
-      .toArray()
-      .subscribe(results => {
-        callback(game, player1, player2, results);
-      });
-
     game.choose(player1.socketId, choices.player1);
     game.choose(player2.socketId, choices.player2);
   });
