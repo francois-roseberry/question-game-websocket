@@ -153,6 +153,17 @@ describe('A game', () => {
         game.answer(player1.socketId, QUESTIONS[0].answer + '1');
       });
     });
+
+    it('sends an answer state event with number of answers received and total expected', done => {
+      gameStarted((game, player1, player2) => {
+        game.answerState().take(1).subscribe(answerState => {
+          expect(_.isEqual(answerState, { count: 1, total: 2 })).to.eql(true);
+          done();
+        });
+
+        game.answer(player1.socketId, QUESTIONS[0].answer + '1');
+      });
+    });
   });
 
   describe('when every player has answered, sends a choice array', () => {

@@ -98,6 +98,10 @@ function onConnect(secondsBeforeStart, questions) {
 		log('sending scores : ', scores);
 		io.emit('scores', scores.array, scores.final);
 	});
+	game.answerState().subscribe(answererState => {
+		log('answer state : ', answerState);
+		io.emit('answerState', answerState);
+	});
 
 	return socket => {
 		socket.on('name', onPlayerName(socket, game));
