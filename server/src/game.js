@@ -87,6 +87,7 @@ class Game {
      .take(this._config.secondsBeforeStart)
      .takeWhile(() => this._state === GameStates.STARTING)
      .map(value => this._config.secondsBeforeStart - value)
+     .concat(Rx.Oservable.timer(this._config.millisecondsPerSecond).ignoreElements())
      .subscribe(seconds => {
        this._startingSubject.onNext(seconds);
      }, _.noop, onCountdownComplete);
