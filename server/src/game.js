@@ -10,7 +10,8 @@ const POINTS_FOR_LIE = 500;
 const GameStates = {
   NOT_STARTED: 'not_started',
   STARTING: 'starting',
-  STARTED: 'started'
+  STARTED: 'started',
+  CANCELLING: 'cancelling'
 };
 
 class Game {
@@ -165,16 +166,16 @@ class Game {
       oneByOne(delayBetweenResults, results).subscribe(result => {
         this._resultsSubject.onNext(result);
       }, _.noop, () => {
-        //Rx.Observable.timer(delayBetweenResults).subscribe(() => {
           const scores = { array: scoresArray(this._players), final: this._questionIndex === this._config.questions.length };
           this._scoresSubject.onNext(scores);
           Rx.Observable.timer(this._config.secondsAfterScore * this._config.millisecondsPerSecond).subscribe(() => {
             if (this._questionIndex < this._config.questions.length) {
               this._questionSubject.onNext(
                 { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
+            } else {
+              this._state = GameStates.NOT_STARTED;
             }
           });
-        //});
       });
     }
   }
