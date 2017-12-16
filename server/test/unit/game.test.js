@@ -87,12 +87,14 @@ describe('A game', () => {
       });
     });
 
-    it('send one starting event per second to start, then send the first question', done => {
+    it('send one starting event per second to start, then send the first question with the number of players', done => {
       const game = Game.create(CONFIG);
       game.starting().take(5).toArray().subscribe(seconds => {
         expect(seconds).to.eql([5,4,3,2,1]);
-        game.questions().take(1).timeout(CONFIG.millisecondsPerSecond + TOLERANCE_MILLIS).subscribe(question => {
-          expect(_.isEqual(question, { index: 0, question: QUESTIONS[0].question})).to.eql(true);
+        game.questions().take(1).timeout(CONFIG.millisecondsPerSecond + TOLERANCE_MILLIS).subscribe(({index, question, playerCount}) => {
+          expect(index).to.eql(0);
+          expect(question).to.eql(QUESTIONS[0].question);
+          expect(playerCount).to.eql(0);
           done();
         });
       });
@@ -323,8 +325,10 @@ describe('A game', () => {
         const CHOICES = { player1: TRUTH + '1', player2: TRUTH };
         gameStartedAnswered(ANSWERS, (game, player1, player2) => {
           game.scores().take(1).delay(1).subscribe(() => {
-            game.questions().take(1).subscribe(question => {
-              expect(_.isEqual(question, { index: 1, question: QUESTIONS[1].question })).to.eql(true);
+            game.questions().take(1).subscribe(({question, index, playerCount}) => {
+              expect(index).to.eql(1);
+              expect(question).to.eql(QUESTIONS[1].question);
+              expect(playerCount).to.eql(2);
               done();
             });
           });

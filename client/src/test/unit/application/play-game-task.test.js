@@ -117,7 +117,7 @@ describe('A Play game task', () => {
 		});
 	});
 
-	describe('when user if observer', () => {
+	describe('when user is observer', () => {
 		beforeEach(() => {
 			task.setObserver();
 		});

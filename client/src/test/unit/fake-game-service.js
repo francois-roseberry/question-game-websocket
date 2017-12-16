@@ -52,7 +52,8 @@ class FakeGameService {
 		this._questions.onNext({
 			question: question,
 			index: 1,
-			count: 10
+			count: 10,
+			playerCount: 4
 		});
 	}
 

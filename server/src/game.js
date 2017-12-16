@@ -74,7 +74,7 @@ class Game {
       if (this._state === GameStates.STARTING) {
         this._state = GameStates.STARTED;
         this._questionSubject.onNext(
-          { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
+          { index: this._questionIndex, question: this._config.questions[this._questionIndex].question, playerCount: _.size(this._players) });
       } else {
         this._state = GameStates.NOT_STARTED;
         this._playersSubject.onNext(this._players);
@@ -176,7 +176,7 @@ class Game {
           Rx.Observable.timer(this._config.secondsAfterScore * this._config.millisecondsPerSecond).subscribe(() => {
             if (this._questionIndex < this._config.questions.length) {
               this._questionSubject.onNext(
-                { index: this._questionIndex, question: this._config.questions[this._questionIndex].question });
+                { index: this._questionIndex, question: this._config.questions[this._questionIndex].question, playerCount: _.size(this._players) });
             }
           });
       });

@@ -29,11 +29,12 @@ class GameService {
 			starting.onNext(remainingSeconds);
 		});
 
-		this._socket.on('question', (question, questionIndex, questionCount) => {
+		this._socket.on('question', (question, questionIndex, questionCount, playerCount) => {
 			questions.onNext({
 				question: question,
 				index: questionIndex,
-				total: questionCount
+				total: questionCount,
+				playerCount: playeCount
 			});
 		});
 

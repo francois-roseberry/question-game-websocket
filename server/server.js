@@ -78,9 +78,9 @@ function onConnect(secondsBeforeStart, questions) {
 		log('player [' + playerName + '] has left');
 		io.emit('quit', playerName);
 	});
-	game.questions().subscribe(({ index, question }) => {
+	game.questions().subscribe(({ index, question, playerCount }) => {
 		log('sending question : ', question);
-		io.emit('question', question, index + 1, questions.length);
+		io.emit('question', question, index + 1, questions.length, playerCount);
 	});
 	game.starting().subscribe(seconds => {
 		log('starting in ', seconds, ' seconds');

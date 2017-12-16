@@ -191,7 +191,7 @@ function showStartingControls(container, task) {
 }
 
 function showQuestion(container, task) {
-	return (question, questionIndex, questionCount, isObserver, error) => {
+	return (question, questionIndex, questionCount, playerCount, isObserver, error) => {
 		if (error) {
 			container.append('div')
 				.classed({
