@@ -211,7 +211,7 @@ describe('A Play game task', () => {
 				});
 
 				describe('when an answer state is received', () => {
-					it('sends the answer state inside the existing status question', done => {
+					it('sends the answer state inside the existing question status', done => {
 						currentStatus.match({
 							'question': (question, index, total, answerState) => {
 								answerState.take(2).takeLast(1).subscribe(({ count, total }) => {
@@ -241,6 +241,21 @@ describe('A Play game task', () => {
 
 						it('has a status of choosing', () => {
 							expect(currentStatus.name).to.eql('choosing');
+						});
+
+						describe('when a choice state is received', () => {
+							it('sends the choice state inside the existing choice status', done => {
+								currentStatus.match({
+									'choosing': (choices, choiceState) => {
+										choiceState.take(2).takeLast(1).subscribe(({ count, total }) => {
+											expect(count).to.eql(1);
+											expect(total).to.eql(4);
+											done();
+										});
+									}
+								});
+								gameService.sendChoiceState(1);
+							});
 						});
 
 						describe('after choice is submitted', () => {

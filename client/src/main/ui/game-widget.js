@@ -218,7 +218,10 @@ function showQuestion(container, task) {
 			.text(question);
 
 		if (isObserver) {
-			const tokenContainer = container.append('div')
+			const tokenContainer = container
+			  .append('div')
+				.classed('answer-tokens-wrapper', true)
+				.append('div')
 				.classed('answer-tokens', true);
 
 			answerState.subscribe(({count, total}) => {
@@ -320,7 +323,7 @@ function showWaiting(container) {
 }
 
 function showChoices(container, task) {
-	return (choices, isObserver) => {
+	return (choices, choiceState, isObserver) => {
 		container
 			.selectAll('.btn-choice')
 			.data(choices)
@@ -341,6 +344,32 @@ function showChoices(container, task) {
 			.on('click', choice => {
 				task.submitChoice(choice);
 			});
+
+		if (isObserver) {
+			const tokenContainer = container
+			  .append('div')
+				.classed('choice-tokens-wrapper', true)
+				.append('div')
+				.classed('choice-tokens', true);
+
+			choiceState.subscribe(({count, total}) => {
+				tokenContainer.selectAll('*').remove();
+
+				tokenContainer
+					.selectAll('.choice-token')
+					.data(_.range(total))
+					.enter()
+					.append('span')
+					.classed({
+						'choice-token': true,
+						'off': index => index >= count,
+						'on': index => index < count,
+						'glyphicon': true,
+						'glyphicon-remove-sign': index => index >= count,
+						'glyphicon-ok-sign': index => index < count
+					});
+			});
+		}
 	};
 }
 

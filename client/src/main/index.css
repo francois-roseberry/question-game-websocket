@@ -1,11 +1,13 @@
 .outer-container {
 	position: absolute;
-	top: 10%;
+	top: 5%;
+	bottom: 5%;
 	width: 100%;
 }
 
 .inner-container {
 	width: 80%;
+	height: 100%;
 	margin: auto;
 }
 
@@ -39,13 +41,28 @@
 	font-weight: bold;
 }
 
-.answer-tokens {
-	text-align: center;
+.answer-tokens-wrapper,
+.choice-tokens-wrapper {
+	position: absolute;
+	left: 50%;
+	bottom: 0;
 	font-size: 7em;
-	margin-top: 100px;
 }
 
-.answer-token.on {
+.answer-tokens,
+.choice-tokens {
+	position: relative;
+	left: -50%;
+}
+
+.answer-token,
+.choice-token {
+	margin-left: 16px;
+	margin-right: 16px;
+}
+
+.answer-token.on,
+.choice-token.on {
 	color: #168446;
 }
 

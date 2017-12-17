@@ -12,6 +12,7 @@ class GameService {
 		var scores = new Rx.Subject();
 		var playerQuit = new Rx.Subject();
 		const answerState = new Rx.Subject();
+		const choiceState = new Rx.Subject();
 
 		this._socket = io();
 		this._players = players;
@@ -22,6 +23,7 @@ class GameService {
 		this._scores = scores;
 		this._playerQuit = playerQuit;
 		this._answerState = answerState;
+		this._choiceState = choiceState;
 
 		this._socket.on('players', playersArray => {
 			players.onNext(playersArray);
@@ -31,21 +33,20 @@ class GameService {
 			starting.onNext(remainingSeconds);
 		});
 
-		this._socket.on('question', (question, questionIndex, questionCount, playerCount) => {
-			questions.onNext({
-				question: question,
-				index: questionIndex,
-				total: questionCount,
-				playerCount: playerCount
-			});
+		this._socket.on('question', (question, index, total, playerCount) => {
+			questions.onNext({ question, index,	total, playerCount });
 		});
 
 		this._socket.on('answer state', state => {
 			answerState.onNext(state);
 		});
 
-		this._socket.on('choices', choicesArray => {
-			choices.onNext(choicesArray);
+		this._socket.on('choice state', state => {
+			choiceState.onNext(state);
+		});
+
+		this._socket.on('choices', (choicesArray, playerCount) => {
+			choices.onNext({ choices: choicesArray, playerCount });
 		});
 
 		this._socket.on('result', result => {
@@ -53,10 +54,7 @@ class GameService {
 		});
 
 		this._socket.on('scores', (scoresArray, isFinal) => {
-			scores.onNext({
-				scores: scoresArray,
-				isFinal: isFinal
-			});
+			scores.onNext({ scores: scoresArray, isFinal });
 		});
 
 		this._socket.on('quit', playerName => {
@@ -78,6 +76,10 @@ class GameService {
 
 	answerState() {
 		return this._answerState.asObservable();
+	}
+
+	choiceState() {
+		return this._choiceState.asObservable();
 	}
 
 	choices() {

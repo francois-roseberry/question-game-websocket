@@ -104,7 +104,7 @@ function onConnect(secondsBeforeStart, questions) {
 	});
 	game.choiceState().subscribe(choiceState => {
 		log('choice state : ', choiceState);
-		io.emit('choiceState', choiceState);
+		io.emit('choice state', choiceState);
 	});
 
 	return socket => {

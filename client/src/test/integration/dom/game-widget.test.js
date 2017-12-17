@@ -301,6 +301,26 @@ describeInDom('A Game widget', domContext => {
 						domContext.assertOneOf('.waiting');
 					});
 
+					describe('when choices are received and player is observer', () => {
+						const CHOICES = ['2','3','4','5'];
+						beforeEach(() => {
+							task.setObserver();
+							gameService.sendChoices(CHOICES);
+						});
+
+						it('render a small round icon for each player', () => {
+							const PLAYER_COUNT_RETURNED_BY_FAKE_GAME_SERVICE = 4;
+							domContext.assertElementCount('.choice-tokens .choice-token.off', PLAYER_COUNT_RETURNED_BY_FAKE_GAME_SERVICE);
+						});
+
+						it('when choice state is received, update the player tokens', () => {
+							gameService.sendChoiceState(1);
+							const PLAYER_COUNT_RETURNED_BY_FAKE_GAME_SERVICE = 4;
+							domContext.assertElementCount('.choice-tokens .choice-token.on', 1);
+							domContext.assertElementCount('.choice-tokens .choice-token.off', PLAYER_COUNT_RETURNED_BY_FAKE_GAME_SERVICE - 1);
+						});
+					});
+
 					describe('after choices are received', () => {
 						var choices = ['2','3','4','5'];
 						beforeEach(() => {

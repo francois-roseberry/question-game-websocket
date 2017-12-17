@@ -28,14 +28,25 @@ exports.start = gameService => {
 	});
 
 	gameService.answerState().subscribe(state => {
-			task._status.take(1).subscribe(status => {
-				status.match({
-					question: (question, index, total, answerState) => {
-						answerState.onNext(state);
-					},
-					waiting: _.noop
-				});
+		task._status.take(1).subscribe(status => {
+			status.match({
+				question: (question, index, total, answerState) => {
+					answerState.onNext(state);
+				},
+				waiting: _.noop
 			});
+		});
+	});
+
+	gameService.choiceState().subscribe(state => {
+		task._status.take(1).subscribe(status => {
+			status.match({
+				choosing: (choices, choiceState) => {
+					choiceState.onNext(state);
+				},
+				waiting: _.noop
+			});
+		});
 	});
 
 	gameService.starting().subscribe(remainingSeconds => {
@@ -50,9 +61,10 @@ exports.start = gameService => {
 		}
 	});
 
-	gameService.choices().subscribe(choices => {
+	gameService.choices().subscribe(({ choices, playerCount }) => {
 		if (task._playerName || task._isObserver) {
-			task._status.onNext(choosingStatus(choices, task._isObserver));
+			const choiceState = new Rx.BehaviorSubject({ count: 0, total: playerCount });
+			task._status.onNext(choosingStatus(choices, choiceState, task._isObserver));
 		}
 	});
 
@@ -166,9 +178,9 @@ const startingStatus = (remainingSeconds, isObserver) => ({
 	match: visitor => visitor.starting(remainingSeconds, isObserver)
 });
 
-const questionStatus = (question, questionIndex, questionCount, playerCount, isObserver, error) => ({
+const questionStatus = (question, questionIndex, questionCount, answerState, isObserver, error) => ({
 	name: 'question',
-	match: visitor => visitor.question(question, questionIndex, questionCount, playerCount, isObserver, error)
+	match: visitor => visitor.question(question, questionIndex, questionCount, answerState, isObserver, error)
 });
 
 const waitingStatus = () => ({
@@ -176,9 +188,9 @@ const waitingStatus = () => ({
 	match: visitor => visitor.waiting()
 });
 
-const choosingStatus = (choices, isObserver) => ({
+const choosingStatus = (choices, choiceState, isObserver) => ({
 	name: 'choosing',
-	match: visitor => visitor.choosing(choices, isObserver)
+	match: visitor => visitor.choosing(choices, choiceState, isObserver)
 });
 
 const resultsStatus = results => ({
