@@ -2,6 +2,7 @@ const _ = require('underscore');
 const Rx = require('rx');
 
 const GameStates = require('./states').GameStates;
+const QuestionBank = require('./question-bank').QuestionBank;
 const newPlayer = require('./player').newPlayer;
 const shuffle = require('./util').shuffle;
 
@@ -11,9 +12,9 @@ const POINTS_FOR_LIE = 500;
 class Game {
   constructor(config) {
     this._players = {};
-    this._questionIndex = 0;
     this._state = GameStates.NOT_STARTED;
     this._config = config;
+    this._questionBank = new QuestionBank(config.questions);
 
     this._startingSubject = new Rx.Subject();
     this._questionSubject = new Rx.Subject();
@@ -73,8 +74,8 @@ class Game {
     const onCountdownComplete = () => {
       if (this._state === GameStates.STARTING) {
         this._state = GameStates.STARTED;
-        this._questionSubject.onNext(
-          { index: this._questionIndex, question: this._config.questions[this._questionIndex].question, playerCount: _.size(this._players) });
+        const { index, question } = this._questionBank.currentQuestion();
+        this._questionSubject.onNext({ index, question, playerCount: _.size(this._players) });
       } else {
         this._state = GameStates.NOT_STARTED;
         this._playersSubject.onNext(this._players);
@@ -141,7 +142,7 @@ class Game {
   }
 
   answer(playerSocketId, answer) {
-    const truth = this._config.questions[this._questionIndex].answer;
+    const truth = this._questionBank.currentQuestion().answer;
     if (truth === answer) {
       throw new Error('TRUTH');
     }
@@ -163,20 +164,20 @@ class Game {
     this._choiceStateSubject.onNext(choiceState(this._players));
 
     if (hasEveryPlayerChosen(this._players)) {
-      const results = computeResults(this._config.questions, this._questionIndex, this._players);
-      this._questionIndex++;
+      const results = computeResults(this._questionBank, this._players);
+      this._questionBank.nextQuestion();
       resetAnswers(this._players);
 
       const delayBetweenResults = this._config.millisecondsPerSecond * this._config.secondsBetweenResults;
       oneByOne(delayBetweenResults, results).subscribe(result => {
         this._resultsSubject.onNext(result);
       }, _.noop, () => {
-          const scores = { array: scoresArray(this._players), final: this._questionIndex === this._config.questions.length };
+          const scores = { array: scoresArray(this._players), final: this._questionBank.isCompleted() };
           this._scoresSubject.onNext(scores);
           Rx.Observable.timer(this._config.secondsAfterScore * this._config.millisecondsPerSecond).subscribe(() => {
-            if (this._questionIndex < this._config.questions.length) {
-              this._questionSubject.onNext(
-                { index: this._questionIndex, question: this._config.questions[this._questionIndex].question, playerCount: _.size(this._players) });
+            if (!this._questionBank.isCompleted()) {
+              const { index, question } = this._questionBank.currentQuestion();
+              this._questionSubject.onNext({ index, question, playerCount: _.size(this._players) });
             }
           });
       });
@@ -186,8 +187,8 @@ class Game {
 
 const delay = milliseconds => Rx.Observable.timer(milliseconds).ignoreElements();
 
-const computeResults = (questions, index, players) => {
-  const truth = questions[index].answer;
+const computeResults = (questionBank, players) => {
+  const truth = questionBank.currentQuestion().answer;
   const resultsMap = computeResultsMap(truth, players);
   return placeResultsIntoArray(resultsMap, truth);
 };
@@ -238,7 +239,7 @@ const getResult = (resultsMap, player) => {
 		return result;
 	}
 
-	return {authors: [player.name], choosedBy:[]};
+	return { authors: [player.name], choosedBy:[] };
 }
 
 const placeResultsIntoArray = (resultsMap, truth) =>
