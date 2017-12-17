@@ -1,13 +1,21 @@
-var i18n = require('./i18n').i18n();
-var precondition = require('./contract').precondition;
+const precondition = require('./contract').precondition;
 
-var FORBIDDEN_CHARS = "!@£/\"\\$%?¢¤¬&*²¦²³";
+const PlayerLoginWidget = require('./player-login-widget');
+const PlayerListWidget = require('./player-list-widget');
+const StartWidget = require('./start-widget');
+const StartingWidget = require('./starting-widget');
+const QuestionWidget = require('./question-widget');
+const WaitingWidget = require('./waiting-widget');
+const ChoiceWidget = require('./choice-widget');
+const ResultWidget = require('./result-widget');
+const ScoreWidget = require('./score-widget');
+const QuitWidget = require('./quit-widget');
 
 exports.render = (container, task) => {
 	precondition(container, 'Game widget requires a container');
 	precondition(task, 'Game widget requires a game task');
 
-	var widgetContainer = d3.select(container[0]).append('div');
+	const widgetContainer = d3.select(container[0]).append('div');
 
 	task.status().subscribe(status => {
 		widgetContainer.selectAll('*').remove();
@@ -26,428 +34,42 @@ exports.render = (container, task) => {
 	});
 };
 
-function showPlayerLogin(container, task) {
-	return error => {
-		if (error) {
-			container.append('div')
-				.classed({
-					'name-error': true,
-					'alert': true,
-					'alert-danger': true
-				})
-				.text(i18n['NAME_ERROR_' + error]);
-		}
+const showPlayerLogin = (container, task) => error => {
+	PlayerLoginWidget.render(container, task, error);
+};
 
-		var form = container.append('div')
-			.classed('form-group', true);
+const showConnectedPlayers = container => players => {
+	PlayerListWidget.render(container, players);
+};
 
-		form.append('label')
-			.attr('for', 'txtPlayerName')
-			.text(i18n.PLAYER_NAME_LABEL)
-			.classed('lbl-player-name', true);
+const showStartButton = (container, task) => () => {
+	StartWidget.render(container, task);
+};
 
-		var txtPlayerName = form.append('input')
-			.attr({
-				id: 'txtPlayerName',
-				type: 'text',
-				placeholder: i18n.PLAYER_NAME_CUE,
-				maxlength: 15
-			})
-			.classed({
-				'txt-player-name': true,
-				'form-control': true
-			});
+const showStartingControls = (container, task) => (secondsRemaining, isObserver) => {
+	StartingWidget.render(container, task, secondsRemaining, isObserver);
+};
 
-		$(txtPlayerName[0]).keypress(({ which }) => {
-			var chr = String.fromCharCode(which);
-			if (FORBIDDEN_CHARS.indexOf(chr) > 0) {
-				return false;
-			}
-		});
+const showQuestion = (container, task) => (question, questionIndex, questionCount, answerState, isObserver, error) => {
+	QuestionWidget.render(container, task, question, questionIndex, questionCount, answerState, isObserver, error);
+};
 
-		var btnJoin = container.append('button')
-			.attr('disabled', true)
-			.classed({
-				'btn': true,
-				'btn-primary': true,
-				'btn-lg': true,
-				'btn-join-game': true
-			})
-			.text(i18n.JOIN_GAME)
-			.on('click', () => {
-				var playerName = $(txtPlayerName[0]).val();
-				task.setPlayerName(playerName);
-			});
+const showWaiting = container => () => {
+	WaitingWidget.render(container);
+};
 
-		$(txtPlayerName[0]).on('input', () => {
-			var hasText = $(txtPlayerName[0]).val() !== "";
-			if (hasText) {
-				$(btnJoin[0]).removeAttr('disabled');
-			} else {
-				$(btnJoin[0]).attr('disabled', true);
-			}
-		});
+const showChoices = (container, task) => (choices, choiceState, isObserver) => {
+	ChoiceWidget.render(container, task, choices, choiceState, isObserver);
+};
 
-		$(txtPlayerName[0]).on('keyup', ({ keyCode }) => {
-			if (keyCode === 13) {
-				$(btnJoin[0]).click();
-			}
-		});
+const showResults = container => result => {
+	ResultWidget.render(container, result);
+};
 
-		$(txtPlayerName[0]).focus();
+const showScores = container => (scores, isFinal) => {
+	ScoreWidget.render(container, scores, isFinal);
+};
 
-		container.append('br');
-		container.append('br');
-		container.append('br');
-
-		container.append('button')
-			.classed({
-				'btn': true,
-				'btn-primary': true,
-				'btn-lg': true,
-				'btn-observer': true
-			})
-			.text(i18n.OBSERVE)
-			.on('click', () => {
-				task.setObserver();
-			});
-	};
-}
-
-function showConnectedPlayers(container) {
-	return players => {
-		if (players.length === 0) {
-			container.append('div')
-				.classed({
-					'text-center': true,
-					'no-player': true
-				})
-				.text(i18n.NO_CONNECTED_PLAYERS);
-
-			return;
-		}
-
-		container.append('ul')
-			.classed('players', true)
-			.selectAll('.player')
-			.data(players)
-			.enter()
-			.append('li')
-			.classed('player', true)
-			.append('span')
-			.attr('data-player', player => player)
-			.text(player => player);
-	};
-}
-
-function showStartButton(container, task) {
-	return () => {
-		var btnStart = container.append('button')
-			.classed({
-				'btn': true,
-				'btn-primary': true,
-				'btn-lg': true,
-				'btn-start-game': true
-			})
-			.text(i18n.START_GAME)
-			.on('click', () => {
-				task.startGame();
-			});
-
-		$(btnStart[0]).focus();
-	};
-}
-
-function showStartingControls(container, task) {
-	return (secondsRemaining, isObserver) => {
-		container.append('p')
-			.classed({
-				'game-starting': true,
-				'observer': isObserver
-			})
-			.text(i18n.STARTING_SOON.replace('{seconds}', secondsRemaining));
-
-		if (window['Audio'] && isObserver && secondsRemaining > 0) {
-			var snd = new Audio("sounds/A_tone.mp3");
-			snd.play();
-		}
-
-		if (!isObserver) {
-			var btnCancel = container.append('button')
-				.classed({
-					'btn': true,
-					'btn-primary': true,
-					'btn-lg': true,
-					'btn-cancel': true
-				})
-				.text(i18n.CANCEL)
-				.on('click', () => {
-					task.cancelStart();
-				});
-
-			$(btnCancel[0]).focus();
-		}
-	};
-}
-
-function showQuestion(container, task) {
-	return (question, questionIndex, questionCount, answerState, isObserver, error) => {
-		if (error) {
-			container.append('div')
-				.classed({
-					'answer-error': true,
-					'alert': true,
-					'alert-danger': true
-				})
-				.text(i18n['ANSWER_ERROR_' + error]);
-		}
-
-		container.append('span')
-			.classed({
-				'badge': true,
-				'question-number': true,
-				'observer': isObserver
-			})
-			.text(questionIndex + '/' + questionCount);
-
-		container.append('p')
-			.classed({
-				'question': true,
-				'observer': isObserver
-			})
-			.text(question);
-
-		if (isObserver) {
-			const tokenContainer = container
-			  .append('div')
-				.classed('answer-tokens-wrapper', true)
-				.append('div')
-				.classed('answer-tokens', true);
-
-			answerState.subscribe(({count, total}) => {
-				tokenContainer.selectAll('*').remove();
-
-				tokenContainer
-					.selectAll('.answer-token')
-					.data(_.range(total))
-					.enter()
-					.append('span')
-					.classed({
-						'answer-token': true,
-						'off': index => index >= count,
-						'on': index => index < count,
-						'glyphicon': true,
-						'glyphicon-remove-sign': index => index >= count,
-						'glyphicon-ok-sign': index => index < count
-					});
-			});
-		}
-
-		if (!isObserver) {
-			var txtAnswer = container.append('div')
-				.classed('form-group', true)
-				.append('input')
-				.attr({
-					type: 'text',
-					placeholder: i18n.ANSWER_CUE,
-					maxlength: 25
-				})
-				.classed({
-					'txt-answer': true,
-					'form-control': true
-				});
-
-			$(txtAnswer[0]).keypress(({ which }) => {
-				var chr = String.fromCharCode(which);
-				if (FORBIDDEN_CHARS.indexOf(chr) > 0) {
-					return false;
-				}
-			});
-
-			var btnSubmit = container.append('button')
-				.attr('disabled', true)
-				.classed({
-					'btn': true,
-					'btn-primary': true,
-					'btn-lg': true,
-					'btn-submit-answer': true
-				})
-				.text(i18n.SUBMIT_ANSWER)
-				.on('click', () => {
-					var answer = $(txtAnswer[0]).val();
-					task.submitAnswer(answer);
-				});
-
-			$(txtAnswer[0]).on('input', () => {
-				var hasText = $(txtAnswer[0]).val() !== "";
-				if (hasText) {
-					$(btnSubmit[0]).removeAttr('disabled');
-				} else {
-					$(btnSubmit[0]).attr('disabled', true);
-				}
-			});
-
-			$(txtAnswer[0]).on('keyup', ({ keyCode }) => {
-				if (keyCode === 13) {
-					$(btnSubmit[0]).click();
-				}
-			});
-
-			$(txtAnswer[0]).focus();
-		}
-
-		if (isObserver && ('speechSynthesis' in window)) {
-			var msg = new SpeechSynthesisUtterance(question);
-			msg.rate = 1;
-			window.speechSynthesis.speak(msg);
-		}
-	};
-}
-
-function showWaiting(container) {
-	return () => {
-		container.append('p')
-			.classed('waiting', true)
-			.text(i18n.WAITING);
-
-		container.append('div')
-			.classed('loading-container', true)
-			.append('p')
-			.classed({
-				'fa': true,
-				'fa-spinner': true,
-				'fa-spin': true,
-				'loading': true
-			});
-	};
-}
-
-function showChoices(container, task) {
-	return (choices, choiceState, isObserver) => {
-		container
-			.selectAll('.btn-choice')
-			.data(choices)
-			.enter()
-			.append(isObserver ? 'div' : 'button')
-			.classed({
-				'btn': !isObserver,
-				'btn-primary': !isObserver,
-				'btn-block': !isObserver,
-				'btn-md': !isObserver,
-				'btn-choice': true,
-				'observer': isObserver,
-				'col-md-4': isObserver,
-				'col-centered': isObserver
-			})
-			.attr('data-index', (choice, index) => index)
-			.text(choice => choice)
-			.on('click', choice => {
-				task.submitChoice(choice);
-			});
-
-		if (isObserver) {
-			const tokenContainer = container
-			  .append('div')
-				.classed('choice-tokens-wrapper', true)
-				.append('div')
-				.classed('choice-tokens', true);
-
-			choiceState.subscribe(({count, total}) => {
-				tokenContainer.selectAll('*').remove();
-
-				tokenContainer
-					.selectAll('.choice-token')
-					.data(_.range(total))
-					.enter()
-					.append('span')
-					.classed({
-						'choice-token': true,
-						'off': index => index >= count,
-						'on': index => index < count,
-						'glyphicon': true,
-						'glyphicon-remove-sign': index => index >= count,
-						'glyphicon-ok-sign': index => index < count
-					});
-			});
-		}
-	};
-}
-
-function showResults(container) {
-	return result => {
-		container.append('div')
-			.classed('result-choice', true)
-			.text(i18n.RESULT_CHOICE.replace('{choice}', result.choice));
-
-		container.append('ul')
-			.classed('result-authors', true)
-			.selectAll('.result-author')
-			.data(result.authors)
-			.enter()
-			.append('li')
-			.classed({
-				'result-author': true,
-				'result-truth': author => author === 'TRUTH',
-				'result-lie': author => author !== 'TRUTH'
-			})
-			.attr('data-author', author => author)
-			.text(author => {
-				if (author === 'TRUTH') {
-					return i18n.RESULT_CHOICE_TRUTH;
-				}
-
-				return i18n.RESULT_CHOICE_LIE
-					.replace('{author}', author);
-			});
-
-		container.append('div')
-			.classed('result-choosers', true)
-			.selectAll('.result-chooser')
-			.data(result.choosedBy)
-			.enter()
-			.append('div')
-			.classed('result-chooser', true)
-			.attr('data-chooser', chooser => chooser)
-			.text(chooser => i18n.RESULT_CHOOSED_BY
-					.replace('{chooser}', chooser));
-	};
-}
-
-function showScores(container) {
-	return (scores, isFinal) => {
-		container.append('div')
-			.classed('scores-header', true)
-			.text(isFinal ? i18n.FINAL_SCORES : i18n.INTERMEDIATE_SCORES);
-
-		var scoreElements = container.append('div')
-			.classed('scores', true)
-			.selectAll('.score')
-			.data(scores)
-			.enter()
-			.append('div')
-			.classed('score', true)
-			.attr('data-player', score => score.name);
-
-		scoreElements.append('span')
-			.classed({
-				'score-name': true,
-				'pull-left': true
-			})
-			.text(score => score.name);
-
-		scoreElements.append('span')
-			.classed({
-				'score-value': true,
-				'pull-right': true
-			})
-			.text(score => score.score);
-	};
-}
-
-function showQuitMessage(container) {
-	return playerName => {
-		container.append('p')
-			.classed('player-quit', true)
-			.text(i18n.PLAYER_QUIT.replace('{player}', playerName));
-	};
-}
+const showQuitMessage = container => playerName => {
+	QuitWidget.render(container, playerName);
+};
