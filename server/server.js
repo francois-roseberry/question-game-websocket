@@ -100,7 +100,7 @@ function onConnect(secondsBeforeStart, questions) {
 	});
 	game.answerState().subscribe(answerState => {
 		log('answer state : ', answerState);
-		io.emit('answerState', answerState);
+		io.emit('answer state', answerState);
 	});
 	game.choiceState().subscribe(choiceState => {
 		log('choice state : ', choiceState);

@@ -18,12 +18,24 @@ exports.start = gameService => {
 
 	var task = new PlayGameTask(gameService);
 
-	gameService.questions().subscribe(({question, index, total, playerCount}) => {
+	gameService.questions().subscribe(({ question, index, total, playerCount }) => {
 		if (task._playerName || task._isObserver) {
+			const answerState = new Rx.BehaviorSubject({ count: 0, total: playerCount });
 			task._status.onNext(
-				questionStatus(question, index, total, playerCount, task._isObserver)
+				questionStatus(question, index, total, answerState, task._isObserver)
 			);
 		}
+	});
+
+	gameService.answerState().subscribe(state => {
+			task._status.take(1).subscribe(status => {
+				status.match({
+					question: (question, index, total, answerState) => {
+						answerState.onNext(state);
+					},
+					waiting: _.noop
+				});
+			});
 	});
 
 	gameService.starting().subscribe(remainingSeconds => {
@@ -118,7 +130,8 @@ class PlayGameTask {
 						if (success) {
 							status.onNext(waitingStatus());
 						} else {
-							status.onNext(questionStatus(question, questionIndex, questionCount, playerCount, isObserver, error));
+							const answerState = new Rx.BehaviorSubject({ count: 0, total: playerCount });
+							status.onNext(questionStatus(question, questionIndex, questionCount, answerState, isObserver, error));
 						}
 					});
 				}

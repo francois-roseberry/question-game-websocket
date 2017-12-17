@@ -191,7 +191,7 @@ function showStartingControls(container, task) {
 }
 
 function showQuestion(container, task) {
-	return (question, questionIndex, questionCount, playerCount, isObserver, error) => {
+	return (question, questionIndex, questionCount, answerState, isObserver, error) => {
 		if (error) {
 			container.append('div')
 				.classed({
@@ -216,6 +216,29 @@ function showQuestion(container, task) {
 				'observer': isObserver
 			})
 			.text(question);
+
+		if (isObserver) {
+			const tokenContainer = container.append('div')
+				.classed('answer-tokens', true);
+
+			answerState.subscribe(({count, total}) => {
+				tokenContainer.selectAll('*').remove();
+
+				tokenContainer
+					.selectAll('.answer-token')
+					.data(_.range(total))
+					.enter()
+					.append('span')
+					.classed({
+						'answer-token': true,
+						'off': index => index >= count,
+						'on': index => index < count,
+						'glyphicon': true,
+						'glyphicon-remove-sign': index => index >= count,
+						'glyphicon-ok-sign': index => index < count
+					});
+			});
+		}
 
 		if (!isObserver) {
 			var txtAnswer = container.append('div')

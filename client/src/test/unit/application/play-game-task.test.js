@@ -210,6 +210,21 @@ describe('A Play game task', () => {
 					expect(currentStatus.name).to.eql('question');
 				});
 
+				describe('when an answer state is received', () => {
+					it('sends the answer state inside the existing status question', done => {
+						currentStatus.match({
+							'question': (question, index, total, answerState) => {
+								answerState.take(2).takeLast(1).subscribe(({ count, total }) => {
+									expect(count).to.eql(1);
+									expect(total).to.eql(4);
+									done();
+								});
+							}
+						});
+						gameService.sendAnswerState(1);
+					});
+				});
+
 				describe('after submitting an answer', () => {
 					beforeEach(() => {
 						task.submitAnswer('4');

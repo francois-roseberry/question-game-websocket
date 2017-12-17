@@ -11,6 +11,7 @@ class GameService {
 		var results = new Rx.Subject();
 		var scores = new Rx.Subject();
 		var playerQuit = new Rx.Subject();
+		const answerState = new Rx.Subject();
 
 		this._socket = io();
 		this._players = players;
@@ -20,6 +21,7 @@ class GameService {
 		this._results = results;
 		this._scores = scores;
 		this._playerQuit = playerQuit;
+		this._answerState = answerState;
 
 		this._socket.on('players', playersArray => {
 			players.onNext(playersArray);
@@ -34,8 +36,12 @@ class GameService {
 				question: question,
 				index: questionIndex,
 				total: questionCount,
-				playerCount: playeCount
+				playerCount: playerCount
 			});
+		});
+
+		this._socket.on('answer state', state => {
+			answerState.onNext(state);
 		});
 
 		this._socket.on('choices', choicesArray => {
@@ -68,6 +74,10 @@ class GameService {
 
 	questions() {
 		return this._questions.asObservable();
+	}
+
+	answerState() {
+		return this._answerState.asObservable();
 	}
 
 	choices() {

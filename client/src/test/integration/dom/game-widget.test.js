@@ -219,13 +219,29 @@ describeInDom('A Game widget', domContext => {
 				expect(currentStatus.name).to.eql('before');
 			});
 
-			it('when question is received and player is observer, ' +
-				'does not render answer box and button', () => {
+			describe('when question is received and player is observer', () => {
+				beforeEach(() => {
 					task.setObserver();
 					gameService.sendQuestion('2 + 2 = ?');
+				});
+
+				it('does not render answer box and button', () => {
 					domContext.assertNothingOf('.txt-answer');
 					domContext.assertNothingOf('.btn-submit-answer');
 				});
+
+				it('render a small round red icon for each player', () => {
+					const PLAYER_COUNT_RETURNED_BY_FAKE_GAME_SERVICE = 4;
+					domContext.assertElementCount('.answer-tokens .answer-token.off', PLAYER_COUNT_RETURNED_BY_FAKE_GAME_SERVICE);
+				});
+
+				it('when answer state is received, update the player tokens', () => {
+					gameService.sendAnswerState(1);
+					const PLAYER_COUNT_RETURNED_BY_FAKE_GAME_SERVICE = 4;
+					domContext.assertElementCount('.answer-tokens .answer-token.on', 1);
+					domContext.assertElementCount('.answer-tokens .answer-token.off', PLAYER_COUNT_RETURNED_BY_FAKE_GAME_SERVICE - 1);
+				});
+			});
 
 			describe('after question is received', () => {
 				beforeEach(() => {

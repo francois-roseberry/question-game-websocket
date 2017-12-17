@@ -13,6 +13,7 @@ class FakeGameService {
 		this._results = new Rx.Subject();
 		this._scores = new Rx.Subject();
 		this._playerQuit = new Rx.Subject();
+		this._answerState = new Rx.Subject();
 	}
 
 	static create() {
@@ -55,6 +56,10 @@ class FakeGameService {
 			count: 10,
 			playerCount: 4
 		});
+	}
+
+	sendAnswerState(answerCount) {
+		this._answerState.onNext({ count: answerCount, total: 4 })
 	}
 
 	sendChoices(choices) {
@@ -114,6 +119,10 @@ class FakeGameService {
 
 	questions() {
 		return this._questions.asObservable();
+	}
+
+	answerState() {
+		return this._answerState.asObservable();
 	}
 
 	choices() {
