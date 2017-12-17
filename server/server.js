@@ -79,16 +79,16 @@ function onConnect(secondsBeforeStart, questions) {
 		io.emit('quit', playerName);
 	});
 	game.questions().subscribe(({ index, question, playerCount }) => {
-		log('sending question : ', question);
+		log('sending question ', index + 1, '/', questions.length, ' : ', question);
 		io.emit('question', question, index + 1, questions.length, playerCount);
 	});
 	game.starting().subscribe(seconds => {
 		log('starting in ', seconds, ' seconds');
 		io.emit('starting', seconds);
 	});
-	game.choices().subscribe(choices => {
+	game.choices().subscribe(({ choices, playerCount }) => {
 		log('sending choices : ', choices);
-		io.emit('choices', choices);
+		io.emit('choices', choices, playerCount);
 	});
 	game.results().subscribe(result => {
 		log('sending result : ', result);

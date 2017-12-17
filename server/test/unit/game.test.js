@@ -172,22 +172,29 @@ describe('A game', () => {
     const TRUTH = QUESTIONS[0].answer;
     const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };
 
+    it('along with the number of players', done => {
+      gameStartedAnswered(ANSWERS, (game, player1, player2, { choices, playerCount }) => {
+        expect(playerCount).to.eql(2);
+        done();
+      });
+    });
+
     it('containing the truth', done => {
-      gameStartedAnswered(ANSWERS, (game, player1, player2, choices) => {
+      gameStartedAnswered(ANSWERS, (game, player1, player2, { choices, playerCount }) => {
         expect(choices).to.contain(TRUTH);
         done();
       });
     });
 
     it('containing unique choices', done => {
-      gameStartedAnswered(ANSWERS, (game, player1, player2, choices) => {
+      gameStartedAnswered(ANSWERS, (game, player1, player2, { choices, playerCount }) => {
         expect(choices.length).to.eql(_.uniq(choices).length);
         done();
       });
     });
 
     it('containing the answer of each player', done => {
-      gameStartedAnswered(ANSWERS, (game, player1, player2, choices) => {
+      gameStartedAnswered(ANSWERS, (game, player1, player2, { choices, playerCount }) => {
         expect(choices).to.contain(player1.lastAnswer);
         expect(choices).to.contain(player2.lastAnswer);
         done();

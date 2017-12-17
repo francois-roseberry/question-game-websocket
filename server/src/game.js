@@ -153,7 +153,7 @@ class Game {
       let choices = computeChoices(truth, this._players);
       shuffle(choices);
       Rx.Observable.timer(1).subscribe(() => {
-        this._choicesSubject.onNext(choices);
+        this._choicesSubject.onNext({ choices: choices, playerCount: _.size(this._players) });
       });
     }
   }
