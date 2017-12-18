@@ -2,6 +2,7 @@ const Rx = require('rx');
 const _ = require('underscore');
 const expect = require('chai').expect;
 
+const QuestionBank = require('../../src/question-bank').QuestionBank;
 const Game = require('../../src/game').Game;
 const newPlayer = require('../../src/player').newPlayer;
 
@@ -11,22 +12,18 @@ exports.QUESTIONS = [
   { question: 'C ?', answer: '1'}
 ];
 
-exports.CONFIG = {
-  questions: exports.QUESTIONS,
+exports.createConfig = () => ({
+  questionBank: new QuestionBank(exports.QUESTIONS),
   secondsBeforeStart: 5,
   secondsAfterScore: 5,
   secondsBetweenResults: 5,
   millisecondsPerSecond: 5 // we put 5 for testing so we have quasi-instant events
-};
+});
 
 exports.assertResultsDoNotContainChoice = (choice, results) => expect(results.filter(result => result.choice == choice).length).to.eql(0);
 
-exports.GameCreator = {
-  create: () => Game.create(exports.CONFIG)
-}
-
 const game = callback => {
-  const game = exports.GameCreator.create();
+  const game = Game.create(exports.createConfig())
   const player1 = newPlayer('bob');
   const player2 = newPlayer('alice');
   player2.socketId = 2;

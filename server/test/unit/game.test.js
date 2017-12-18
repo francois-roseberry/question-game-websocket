@@ -13,18 +13,18 @@ const gameCompleted = require('./unit-test-utils').gameCompleted;
 const contains = require('./unit-test-utils').contains;
 const assertResultsDoNotContainChoice = require('./unit-test-utils').assertResultsDoNotContainChoice;
 const QUESTIONS = require('./unit-test-utils').QUESTIONS;
-const CONFIG = require('./unit-test-utils').CONFIG;
+const createConfig = require('./unit-test-utils').createConfig;
 
 const TOLERANCE_MILLIS = 3;
 
 describe('A game', () => {
   it('can be created', () => {
-    Game.create(CONFIG);
+    Game.create(createConfig());
   });
 
   describe('adding a player', () => {
     it('sends the player list with that player in it', done => {
-      const game = Game.create(CONFIG);
+      const game = Game.create(createConfig());
       game.players().take(1).subscribe(players => {
         expect(_.contains(players, 'bob'));
         done();
@@ -33,7 +33,7 @@ describe('A game', () => {
     });
 
     it('throws an error if a player already has that name', () => {
-      const game = Game.create(CONFIG);
+      const game = Game.create(createConfig());
       game.addPlayer(newPlayer('bob'));
 
       expect(() => {
@@ -42,7 +42,7 @@ describe('A game', () => {
     });
 
     it('throws an error if game is already started', () => {
-      const game = Game.create(CONFIG);
+      const game = Game.create(createConfig());
       game.addPlayer(newPlayer('bob'));
       game.start();
 
@@ -54,7 +54,7 @@ describe('A game', () => {
 
   describe('removing a player', () => {
     it('removes it from the game', done => {
-      const game = Game.create(CONFIG);
+      const game = Game.create(createConfig());
       const player = newPlayer('bob');
       game.players().skip(1).take(1).subscribe(players => {
         expect(players).to.eql([]);
@@ -65,7 +65,7 @@ describe('A game', () => {
     });
 
     it('sends a player quit event', done => {
-      const game = Game.create(CONFIG);
+      const game = Game.create(createConfig());
       const player = newPlayer('bob');
       game.playerQuit().take(1).subscribe(playerName => {
         expect(playerName).to.eql(player.name);
@@ -88,10 +88,10 @@ describe('A game', () => {
     });
 
     it('send one starting event per second to start, then send the first question with the number of players', done => {
-      const game = Game.create(CONFIG);
+      const game = Game.create(createConfig());
       game.starting().take(5).toArray().subscribe(seconds => {
         expect(seconds).to.eql([5,4,3,2,1]);
-        game.questions().take(1).timeout(CONFIG.millisecondsPerSecond + TOLERANCE_MILLIS).subscribe(({index, question, playerCount}) => {
+        game.questions().take(1).timeout(createConfig().millisecondsPerSecond + TOLERANCE_MILLIS).subscribe(({index, question, playerCount}) => {
           expect(index).to.eql(0);
           expect(question).to.eql(QUESTIONS[0].question);
           expect(playerCount).to.eql(0);
@@ -104,7 +104,7 @@ describe('A game', () => {
 
     describe('when game is cancelled before countdown reaches zero', () => {
       it('stops sending starting events', done => {
-        const game = Game.create(CONFIG);
+        const game = Game.create(createConfig());
         game.starting().take(1).subscribe(() => {
           done(new Error('should never be called'));
         });
@@ -114,7 +114,7 @@ describe('A game', () => {
       });
 
       it('sends the player list', done => {
-        const game = Game.create(CONFIG);
+        const game = Game.create(createConfig());
         game.players().take(1).subscribe(players => {
           done();
         });
@@ -126,7 +126,7 @@ describe('A game', () => {
     // TODO : game is cancelled automatically if player quits during countdown
     // Works live, but somehow unit test fails
     it.skip('should cancel start if player quits suddenly', done => {
-      const game = Game.create(CONFIG);
+      const game = Game.create(createConfig());
       const player = newPlayer('bob');
       game.addPlayer(player);
       game.starting().take(5).toArray().subscribe(() => {

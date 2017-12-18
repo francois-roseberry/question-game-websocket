@@ -1,36 +1,19 @@
-var express = require('express');
-var app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var program = require('commander');
-var _ = require('underscore');
-var fs = require('fs');
-var log = require('debug')('question-game');
+const express = require('express');
+const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+const program = require('commander');
+const _ = require('underscore');
+const fs = require('fs');
+const log = require('debug')('question-game');
 
-var shuffle = require('./src/util').shuffle;
-var newPlayer = require('./src/player').newPlayer;
+const QuestionBank = require('./src/question-bank').QuestionBank;
+const shuffle = require('./src/util').shuffle;
+const newPlayer = require('./src/player').newPlayer;
 const Game = require('./src/game').Game;
 
 const PORT = 3000;
 const SECONDS_BEFORE_START = 5;
-
-/*var POINTS_FOR_TRUTH = 1000;
-var POINTS_FOR_LIE = 500;
-
-var TIME_BETWEEN_RESULTS = 5000;
-var TIME_AFTER_SCORES = 5000;
-var SECONDS_BEFORE_START = 5;
-
-var countdownObject = {};
-var resultCooldownTimer = null;
-var scoreCooldownTimer = null;
-var players = {};
-var questionIndex = 0;*/
-
-// TODO : replace these variables with a state variable
-// BEFORE, STARTING, STARTED, ENDED, and eventually PAUSED, but for now quitting stops the game and doesn't pause
-/*var gameStarted = false;
-var gameEnded = false;*/
 
 program
 	.version('0.1')
@@ -38,8 +21,6 @@ program
 	.option('-q, --question <file>', 'The question file')
 	.option('-c, --countdown [seconds]', 'Countdown to start in seconds. Must be greater than 0. Default value of 5 if not present')
 	.parse(process.argv);
-
-//const secondsBeforeStart = validCountdown(program.countdown);
 
 fs.readFile(program.question, 'utf-8', (err, data) => {
 	if (err) {
@@ -63,7 +44,7 @@ const validCountdown = countdown => {
 
 function onConnect(secondsBeforeStart, questions) {
 	const game = Game.create({
-		questions,
+		questionBank: new QuestionBank(questions),
 		secondsBeforeStart: secondsBeforeStart,
 	  secondsAfterScore: 5,
 	  secondsBetweenResults: 5,

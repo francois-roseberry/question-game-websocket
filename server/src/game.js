@@ -2,7 +2,6 @@ const _ = require('underscore');
 const Rx = require('rx');
 
 const GameStates = require('./states').GameStates;
-const QuestionBank = require('./question-bank').QuestionBank;
 const newPlayer = require('./player').newPlayer;
 const shuffle = require('./util').shuffle;
 
@@ -14,7 +13,7 @@ class Game {
     this._players = {};
     this._state = GameStates.NOT_STARTED;
     this._config = config;
-    this._questionBank = new QuestionBank(config.questions);
+    this._questionBank = config.questionBank;
 
     this._startingSubject = new Rx.Subject();
     this._questionSubject = new Rx.Subject();
