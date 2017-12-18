@@ -1,4 +1,4 @@
-# Trump yourself
+# The bluff & lie game
 
 [![CircleCI](https://circleci.com/gh/francois-roseberry/question-game-websocket.svg?style=shield&circle-token=127f68bf0984493ffae0e9b1a80da8438d75d47c)](https://circleci.com/gh/francois-roseberry/question-game-websocket)
 [![Built with Grunt](https://cdn.gruntjs.com/builtwith.svg)](https://gruntjs.com/)
