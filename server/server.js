@@ -31,7 +31,8 @@ fs.readFile(program.question, 'utf-8', (err, data) => {
 	const secondsBeforeStart = validCountdown(program.countdown);
 
 	app.use(express.static(program.webclient));
-	io.on('connection', onConnect(secondsBeforeStart, JSON.parse(data)));
+	const bank = QuestionBank.read(data);
+	io.on('connection', onConnect(secondsBeforeStart, bank));
 });
 
 const validCountdown = countdown => {
@@ -42,9 +43,9 @@ const validCountdown = countdown => {
 	return SECONDS_BEFORE_START;
 }
 
-function onConnect(secondsBeforeStart, questions) {
+function onConnect(secondsBeforeStart, questionBank) {
 	const game = Game.create({
-		questionBank: new QuestionBank(questions),
+		questionBank,
 		secondsBeforeStart: secondsBeforeStart,
 	  secondsAfterScore: 5,
 	  secondsBetweenResults: 5,
@@ -60,8 +61,8 @@ function onConnect(secondsBeforeStart, questions) {
 		io.emit('quit', playerName);
 	});
 	game.questions().subscribe(({ index, question, playerCount }) => {
-		log('sending question ', index + 1, '/', questions.length, ' : ', question);
-		io.emit('question', question, index + 1, questions.length, playerCount);
+		log('sending question ', index + 1, '/', questionBank.size(), ' : ', question);
+		io.emit('question', question, index + 1, questionBank.size(), playerCount);
 	});
 	game.starting().subscribe(seconds => {
 		log('starting in ', seconds, ' seconds');
@@ -90,10 +91,10 @@ function onConnect(secondsBeforeStart, questions) {
 
 	return socket => {
 		socket.on('name', onPlayerName(socket, game));
-		socket.on('start', onStart(socket, game, questions));
+		socket.on('start', onStart(socket, game));
 		socket.on('cancel', onCancel(socket, game));
-		socket.on('answer', onAnswer(socket, game, questions));
-		socket.on('choice', onChoice(socket, game, questions));
+		socket.on('answer', onAnswer(socket, game));
+		socket.on('choice', onChoice(socket, game));
 		socket.on('disconnect', onDisconnect(socket, game));
 	};
 }
@@ -113,7 +114,7 @@ function onPlayerName(socket, game) {
 	};
 }
 
-function onStart(socket, game, questions) {
+function onStart(socket, game) {
 	return () => {
 		try {
 			game.start();
@@ -134,7 +135,7 @@ function onCancel(socket, game) {
 	};
 }
 
-function onAnswer(socket, game, questions) {
+function onAnswer(socket, game) {
 	return answer => {
 		try {
 			game.answer(socket.id, answer);
@@ -147,7 +148,7 @@ function onAnswer(socket, game, questions) {
 	};
 }
 
-function onChoice(socket, game, questions) {
+function onChoice(socket, game) {
 	return choice => {
 		game.choose(socket.id, choice);
 		log('Player [' + game.playerName(socket.id) + '] has choosen ' + choice);

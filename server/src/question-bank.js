@@ -4,6 +4,10 @@ class QuestionBank {
     this._index = 0;
   }
 
+  static read(data) {
+    return new QuestionBank(JSON.parse(data));
+  }
+
   currentQuestion() {
     return {
       index: this._index,
@@ -18,6 +22,10 @@ class QuestionBank {
 
   isCompleted() {
     return this._index === this._questions.length;
+  }
+
+  size() {
+    return this._questions.length;
   }
 }
 
