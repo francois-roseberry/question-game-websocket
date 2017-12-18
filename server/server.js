@@ -43,7 +43,7 @@ const validCountdown = countdown => {
 	return SECONDS_BEFORE_START;
 }
 
-function onConnect(secondsBeforeStart, questionBank) {
+const onConnect = (secondsBeforeStart, questionBank) => {
 	const game = Game.create({
 		questionBank,
 		secondsBeforeStart: secondsBeforeStart,
@@ -52,7 +52,20 @@ function onConnect(secondsBeforeStart, questionBank) {
 	  millisecondsPerSecond: 1000
 	});
 
-  game.players().subscribe(players => {
+  attachGameOutput(game, io, questionBank);
+
+	return socket => {
+		socket.on('name', onPlayerName(socket, game));
+		socket.on('start', onStart(socket, game));
+		socket.on('cancel', onCancel(socket, game));
+		socket.on('answer', onAnswer(socket, game));
+		socket.on('choice', onChoice(socket, game));
+		socket.on('disconnect', onDisconnect(socket, game));
+	};
+}
+
+const attachGameOutput = (game, io, questionBank) => {
+	game.players().subscribe(players => {
 		log('sending list of players : ', players);
 		io.emit('players', players);
 	});
@@ -88,16 +101,7 @@ function onConnect(secondsBeforeStart, questionBank) {
 		log('choice state : ', choiceState);
 		io.emit('choice state', choiceState);
 	});
-
-	return socket => {
-		socket.on('name', onPlayerName(socket, game));
-		socket.on('start', onStart(socket, game));
-		socket.on('cancel', onCancel(socket, game));
-		socket.on('answer', onAnswer(socket, game));
-		socket.on('choice', onChoice(socket, game));
-		socket.on('disconnect', onDisconnect(socket, game));
-	};
-}
+};
 
 const onPlayerName = (socket, game) => name => {
 	try {
