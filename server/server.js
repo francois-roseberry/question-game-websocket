@@ -99,67 +99,55 @@ function onConnect(secondsBeforeStart, questionBank) {
 	};
 }
 
-function onPlayerName(socket, game) {
-	return name => {
-		try {
-			const player = newPlayer(name);
-			player.socketId = socket.id;
-			game.addPlayer(player);
-			log('A user identified as [' + name + "]");
-			socket.emit('name response', true);
-		} catch (error) {
-			log('User cannot join : ', error.message);
-			socket.emit('name response', false, error.message);
-		}
-	};
-}
+const onPlayerName = (socket, game) => name => {
+	try {
+		const player = newPlayer(name);
+		player.socketId = socket.id;
+		game.addPlayer(player);
+		log('A user identified as [' + name + "]");
+		socket.emit('name response', true);
+	} catch (error) {
+		log('User cannot join : ', error.message);
+		socket.emit('name response', false, error.message);
+	}
+};
 
-function onStart(socket, game) {
-	return () => {
-		try {
-			game.start();
-			log('Game started by [' + game.playerName(socket.id) + ']');
-		} catch (error) {
-			log('Could not start game : ', error.message);
-		}
-	};
-}
+const onStart = (socket, game) => () => {
+	try {
+		game.start();
+		log('Game started by [' + game.playerName(socket.id) + ']');
+	} catch (error) {
+		log('Could not start game : ', error.message);
+	}
+};
 
-function onCancel(socket, game) {
-	return () => {
-		const cancelled = game.cancel();
-		if (cancelled) {
-			log('Game start cancelled by [' + game.playerName(socket.id) + ']');
-			socket.emit('cancelled');
-		}
-	};
-}
+const onCancel = (socket, game) => () => {
+	const cancelled = game.cancel();
+	if (cancelled) {
+		log('Game start cancelled by [' + game.playerName(socket.id) + ']');
+		socket.emit('cancelled');
+	}
+};
 
-function onAnswer(socket, game) {
-	return answer => {
-		try {
-			game.answer(socket.id, answer);
-			log('Player [' + game.playerName(socket.id) + '] has answered ' + answer);
-			socket.emit('answer response', true);
-		} catch (error) {
-			log('Could not answer : ', error.message);
-			socket.emit('answer response', false, error.message);
-		}
-	};
-}
+const onAnswer = (socket, game) => answer => {
+	try {
+		game.answer(socket.id, answer);
+		log('Player [' + game.playerName(socket.id) + '] has answered ' + answer);
+		socket.emit('answer response', true);
+	} catch (error) {
+		log('Could not answer : ', error.message);
+		socket.emit('answer response', false, error.message);
+	}
+};
 
-function onChoice(socket, game) {
-	return choice => {
-		game.choose(socket.id, choice);
-		log('Player [' + game.playerName(socket.id) + '] has choosen ' + choice);
-	};
-}
+const onChoice = (socket, game) => choice => {
+	game.choose(socket.id, choice);
+	log('Player [' + game.playerName(socket.id) + '] has choosen ' + choice);
+};
 
-function onDisconnect(socket, game) {
-	return () => {
-		game.removePlayer(socket.id);
-	};
-}
+const onDisconnect = (socket, game) => () => {
+	game.removePlayer(socket.id);
+};
 
 http.listen(PORT, () => {
 	log('Question game server listening on port ' + PORT);
