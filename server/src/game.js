@@ -229,7 +229,11 @@ const resetAnswers = players => _.map(players, player => {
   player.lastAnswer = null;
 });
 
-const scoresArray = players => _.map(players, player => ({ name: player.name, score: player.score }));
+// TODO : scores should be ordered
+const scoresArray = players => _.chain(players)
+  .map(player => ({ name: player.name, score: player.score }))
+  .sortBy(player => -player.score)
+  .value();
 
 const getResult = (resultsMap, player) => {
 	if (resultsMap[player.lastAnswer]) {

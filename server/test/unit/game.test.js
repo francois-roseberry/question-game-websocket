@@ -229,19 +229,6 @@ describe('A game', () => {
       });
     });
 
-    it('after sending scores, should wait for specified time before sending new question', done => {
-      const TRUTH = QUESTIONS[0].answer;
-      const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };
-      const CHOICES = { player1: TRUTH + '1', player2: TRUTH };
-      gameStartedAnswered(ANSWERS, (game, player1, player2) => {
-        game.questions().take(1).subscribe(() => {
-          done();
-        });
-        game.choose(player1.socketId, CHOICES.player1);
-        game.choose(player2.socketId, CHOICES.player2);
-      });
-    });
-
     it('giving 1000 points to each player who found the truth', done => {
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '2' };
       const CHOICES = { player1: TRUTH, player2: TRUTH + '2' };
@@ -311,15 +298,31 @@ describe('A game', () => {
   });
 
   describe('after results are sent', () => {
-    it('send scores, with an entry for every player', done => {
+    it('send scores, in order, with an entry for every player', done => {
       const TRUTH = QUESTIONS[0].answer;
       const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '2' };
-      const CHOICES = { player1: TRUTH + '2', player2: TRUTH + '1' };
-      gameStartedAnsweredChosen(ANSWERS, CHOICES, (game, player1, player2, results, scores) => {
-        expect(contains(scores.array, { name: player1.name, score: 500 })).to.eql(true);
-        expect(contains(scores.array, { name: player2.name, score: 500 })).to.eql(true);
+      const CHOICES = { player1: TRUTH + '2', player2: TRUTH };
+      gameStartedAnsweredChosenWithTwoResults(ANSWERS, CHOICES, (game, player1, player2, results, scores) => {
+        expect(_.isEqual(scores.array, [
+          { name: 'alice', score: 1500 },
+          { name: 'bob', score: 0 }
+        ])).to.eql(true);
+        
         expect(scores.final).to.eql(false);
         done();
+      });
+    });
+
+    it('after sending scores, should wait for specified time before sending new question', done => {
+      const TRUTH = QUESTIONS[0].answer;
+      const ANSWERS = { player1: TRUTH + '1', player2: TRUTH + '1' };
+      const CHOICES = { player1: TRUTH + '1', player2: TRUTH };
+      gameStartedAnswered(ANSWERS, (game, player1, player2) => {
+        game.questions().take(1).subscribe(() => {
+          done();
+        });
+        game.choose(player1.socketId, CHOICES.player1);
+        game.choose(player2.socketId, CHOICES.player2);
       });
     });
   });
