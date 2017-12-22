@@ -113,7 +113,7 @@ exports.render = (container, task, question, questionIndex, questionCount, answe
 
   if (isObserver && ('speechSynthesis' in window)) {
     var msg = new SpeechSynthesisUtterance(question);
-    msg.rate = 1;
+    msg.rate = 0.8;
     window.speechSynthesis.speak(msg);
   }
 }
