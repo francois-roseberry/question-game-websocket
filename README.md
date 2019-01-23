@@ -27,6 +27,6 @@ Other dependencies will need to be installed. For this go in the server director
 
 In that same directory, it should now be possible to do ``npm run package``to build the client. Do ``npm run background``to launch the development server. This last command is blocking. In another terminal, do ``npm run check``to run the client tests.
 
-In the server directory, run the server tests with ``npm test``. Don't forget to start the server first.
+In the server directory, run the server tests with ``npm test``. Don't forget to start the server first (a running server is required for acceptance tests).
 
 For more info, you can check [circle.yml](./circle.yml) - CircleCI's configuration file - to see exactly how the project is built from scratch
